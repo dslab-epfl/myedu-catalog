@@ -1,0 +1,5 @@
+# Precompiled Python
+*.pyc
+
+# Backup files
+*~
