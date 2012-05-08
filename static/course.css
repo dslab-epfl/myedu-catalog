@@ -1,0 +1,18 @@
+body {
+	font-family: Arial, sans;
+	margin-left: auto;
+	margin-right: auto;
+	width: 800px;
+}
+
+.course-border {
+	padding: 10px;
+	background-color: #fafafa;
+	border: solid #ddd 1px;
+}
+
+h1 {
+	text-align: center;
+	border-bottom: solid #000 3px;
+	margin: 0px 0px 30px 0px;
+}

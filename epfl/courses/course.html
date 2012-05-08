@@ -2,10 +2,10 @@
 <html>
   <head>
     <title>{{ course.name }}</title>
-    <link rel="stylesheet" type="text/css" href="static/course.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/course.css"/>
   </head>
   <body>
-    <div>
+    <div class="course-border">
       <h1>{{ course.name }}</h1>
       <div>
         <p>Teacher{{ 's' if course.teachers|length > 1 }}: {{ course.teachers|join(", ") }}</p>

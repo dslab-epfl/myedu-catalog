@@ -2,17 +2,17 @@
 <html>
   <head>
     <title>EPFL Course Catalog</title>
-    <link rel="stylesheet" type="text/css" href="static/catalog.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/catalog.css"/>
   </head>
   <body>
     <h1>EPFL Course Catalog</h1>
     <table class="catalog">
-      {% for course in courses %}
+      {%- for course in courses %}
       <tr>
         <td>{{ loop.index }}</td>
         <td><a href="c/{{ course.key() }}">{{ course.name }}</a></td>
       </tr>
-      {% endfor %}
+      {%- endfor %}
     </table>
   </body>
 </html>
