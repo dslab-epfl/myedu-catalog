@@ -10,7 +10,7 @@
       {% for course in courses %}
       <tr>
         <td>{{ loop.index }}</td>
-        <td><a href="c/{{ course.key() }}">{{ course.name|title }}</a></td>
+        <td><a href="c/{{ course.key() }}">{{ course.name }}</a></td>
       </tr>
       {% endfor %}
     </table>
