@@ -7,3 +7,6 @@ threadsafe: true
 handlers:
 - url: /.*
   script: helloworld.app
+
+builtins:
+- remote_api: on

@@ -3,3 +3,7 @@
 
 # Backup files
 *~
+
+# Log files
+bulkloader-log-*
+bulkloader-progress-*
