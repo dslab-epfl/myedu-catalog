@@ -2,15 +2,18 @@
 <html>
   <head>
     <title>EPFL Course Catalog</title>
+    <link rel="stylesheet" type="text/css" href="static/catalog.css"/>
   </head>
   <body>
-    <h1>Course Catalog</h1>
-    <table>
+    <h1>EPFL Course Catalog</h1>
+    <table class="catalog">
       {% for course in courses %}
       <tr>
-        <td><a href="c/{{ course.key() }}">{{ course.name }}</a></td>
+        <td>{{ loop.index }}</td>
+        <td><a href="c/{{ course.key() }}">{{ course.name|title }}</a></td>
       </tr>
       {% endfor %}
     </table>
   </body>
 </html>
+
