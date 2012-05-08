@@ -6,7 +6,11 @@ threadsafe: true
 
 handlers:
 - url: /.*
-  script: helloworld.app
+  script: epfl.courses.course_catalog.app
 
 builtins:
 - remote_api: on
+
+libraries:
+- name: jinja2
+  version: latest
