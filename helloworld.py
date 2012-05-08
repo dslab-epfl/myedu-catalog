@@ -13,13 +13,13 @@ search_page = """
 """
 
 class MainPage(webapp2.RequestHandler):
-    def get(self):
-        self.response.out.write(search_page)
+  def get(self):
+    self.response.out.write(search_page)
 
 class ResultsPage(webapp2.RequestHandler):
-    def post(self):
-        self.response.out.write(
-            '<html><body>Looking for %s...</body></html>' % cgi.escape(self.request.get('content')))
+  def post(self):
+    self.response.out.write(
+      '<html><body>Looking for %s...</body></html>' % cgi.escape(self.request.get('content')))
 
 app = webapp2.WSGIApplication(
     [('/', MainPage),
