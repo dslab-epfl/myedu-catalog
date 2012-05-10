@@ -20,6 +20,7 @@
   </head>
   <body>
     <h1>EPFL Course Catalog</h1>
+    
     <div class="search_box">
       <form action="/" method="get">
         <div class="search_title">Search</div>
@@ -54,7 +55,7 @@
         {%- for course in courses %}
         <tr>
           <td>{{ loop.index }}</td>
-          <td><a href="c/{{ course.key() }}">{{ course.name }}</a></td>
+          <td><a href="/c/{{ course.key() }}">{{ course.name }}</a></td>
           <td>{{ course.teachers|join(", ") }}</td>
         </tr>
         {%- endfor %}

@@ -4,22 +4,28 @@
 __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 import jinja2
+import json
 import os
 import webapp2
 
 from google.appengine.api import search
 from google.appengine.ext import db
 
-jinja_environment = jinja2.Environment(
-    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
-
-language_mapping = {
+LANGUAGE_MAPPING = {
   "en": "English",
   "fr": "French"
 }
 
-index_name = 'courses-index'
+SPECIALIZATION_MAPPING = {
+  "IN": "Computer Science",
+  "SC": "Communication Sciences",
+  "SV": "Life Sciences"
+}
 
+INDEX_NAME = 'courses-index'
+
+jinja_environment = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class Course(db.Model):
   name = db.StringProperty(required=True)
@@ -45,7 +51,7 @@ class CatalogPage(webapp2.RequestHandler):
                                    ("title:%s" % search_title) if search_title else "",
                                    ("teacher:%s" % search_teacher) if search_teacher else "")
       
-      results = search.Index(name=index_name).search(query_string)
+      results = search.Index(name=INDEX_NAME).search(query_string)
       
       courses = db.get([document.doc_id for document in results])
       is_search = True
@@ -58,12 +64,54 @@ class CatalogPage(webapp2.RequestHandler):
     }
     template = jinja_environment.get_template('catalog.html')
     self.response.out.write(template.render(template_args))
+    
+    
+class ShowcasePage(webapp2.RequestHandler):
+  def get(self):
+    specializations = [ ]
+    
+    for spec in ["IN", "SC", "SV"]:
+      specializations.append({
+        "spec": spec,
+        "title": SPECIALIZATION_MAPPING[spec]
+      })
+                                     
+    template = jinja_environment.get_template('showcase.html')
+    self.response.out.write(template.render(specializations=specializations))
+    
+    
+class AjaxCourses(webapp2.RequestHandler):
+  def get(self):
+    spec = self.request.get("spec")
+    
+    courses = Course.all().order('name').run()
+    
+    if spec:
+      courses = filter(lambda course: self.IsCourseMatching(course, spec.upper()),
+                       courses)
+      
+    response_array = []
+    slide_template = jinja_environment.get_template('slide_.html')
+      
+    for course in courses:
+      response_array.append({ "content": slide_template.render(course=course)})
+    
+    self.response.headers['Content-Type'] = 'application/json'
+    self.response.out.write(json.dumps(response_array, indent=True))
+    
+  @staticmethod
+  def IsCourseMatching(course, spec_prefix):
+    for spec in course.orientations:
+      if spec.startswith(spec_prefix):
+        return True
+      
+    return False
 
 
 class CoursePage(webapp2.RequestHandler):
   def get(self, course_key):
     course = db.get(course_key)
-    course._language = language_mapping[course.language]
+    course._language = LANGUAGE_MAPPING[course.language]
     
     template = jinja_environment.get_template('course.html')
     self.response.out.write(template.render(course=course))
@@ -83,13 +131,13 @@ class BuildSearchIndex(webapp2.RequestHandler):
     courses = Course.all().run()
     documents = [self.CreateDocument(course) for course in courses]
     
-    docindex = search.Index(name=index_name)
+    docindex = search.Index(name=INDEX_NAME)
     docindex.add(documents)
     
     self.response.out.write('Created %d documents.' % len(documents))
     
   def DeleteAllDocuments(self):
-    docindex = search.Index(name=index_name)
+    docindex = search.Index(name=INDEX_NAME)
     
     while True:
       document_ids = [document.doc_id
@@ -108,6 +156,8 @@ class BuildSearchIndex(webapp2.RequestHandler):
 
 
 app = webapp2.WSGIApplication([
-   webapp2.Route('/', handler=CatalogPage, name='home'),
+   webapp2.Route('/', handler=ShowcasePage, name='showcase'),
+   webapp2.Route('/catalog', handler=CatalogPage, name='catalog'),
    webapp2.Route('/c/<course_key>', handler=CoursePage, name='course'),
+   webapp2.Route('/ajax/courses', handler=AjaxCourses, name='ajax_course'),
    webapp2.Route('/admin/search', handler=BuildSearchIndex, name='search_index')], debug=True)
