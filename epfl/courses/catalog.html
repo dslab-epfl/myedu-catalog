@@ -2,18 +2,51 @@
 <html>
   <head>
     <title>EPFL Course Catalog</title>
-    <link rel="stylesheet" type="text/css" href="/static/catalog.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/catalog.css"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   </head>
   <body>
     <h1>EPFL Course Catalog</h1>
-    <table class="catalog">
-      {%- for course in courses %}
-      <tr>
-        <td>{{ loop.index }}</td>
-        <td><a href="c/{{ course.key() }}">{{ course.name }}</a></td>
-      </tr>
-      {%- endfor %}
-    </table>
+    <div class="search_box">
+      <form action="/" method="get">
+        <div class="search_title">Search</div>
+        <p><input id="query" type="text" name="query" /></p>
+        
+        <div class="adv_search">
+          <div class="search_title">Advanced Search</div>
+          <p>
+            Course Title: <input id="course" type="text" name="course" />
+            Teacher: <input id="teacher" type="text" name="teacher" />
+          </p>
+          <p>
+            <input id="search" type="submit" value="Search" />
+          </p>
+        </div>
+      </form>
+    </div>
+    <div class="table_title">
+    {% if is_search %}
+      Search results:
+    {% else %}
+      All courses:
+    {% endif %}
+    </div>
+    <div class="table_margins">
+      <table class="catalog">
+        <tr class="header">
+          <th></th>
+          <th>Title</th>
+          <th>Teacher(s)</th>
+        </tr>
+        {%- for course in courses %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td><a href="c/{{ course.key() }}">{{ course.name }}</a></td>
+          <td>{{ course.teachers|join(", ") }}</td>
+        </tr>
+        {%- endfor %}
+      </table>
+    </div>
   </body>
 </html>
 

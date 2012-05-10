@@ -1,0 +1,92 @@
+body {
+	font-family: Arial, sans;
+}
+
+h1 {
+	text-align: center;
+}
+
+p {
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+}
+
+.table_title {
+	font-weight: bold;
+	margin-bottom: 15px;
+}
+
+table.catalog {
+	width: 100%;
+	border-collapse: collapse;
+	border: solid #999 1px;
+}
+
+table.catalog th {
+	font-weight: bold;
+	font-size: 0.75em;
+	text-align: left;
+	height: 2em;
+}
+
+table.catalog td:first-of-type {
+	width: 30px;
+	text-align: right;
+	color: #777;
+	padding-right: 5px;
+}
+
+table.catalog td:nth-of-type(2) {
+	padding-left: 5px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	width: 400px;
+	white-space: normal;
+}
+
+table.catalog td:nth-of-type(3) {
+	font-size: 0.75em;
+}
+
+table.catalog tr:nth-of-type(odd) {
+	background-color: #eee;
+}
+
+table.catalog tr:nth-of-type(even) {
+	background-color: #fff;
+}
+
+table.catalog tr:first-of-type {
+	background-color: #fed;
+}
+
+.table_margins {
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+.search_title {
+	font-weight: bold;
+}
+
+.adv_search {
+	font-size: 75%;
+}
+
+.search_box {
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 30px;
+	background-color: #fed;
+	width: 640px;
+	padding: 5px;
+	border: solid #edc 4px;
+}
+
+input#query {
+	width: 630px;
+}
+
+input#course, input#teacher {
+	width: 250px;
+}
