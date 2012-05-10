@@ -57,7 +57,7 @@ table.catalog tr:nth-of-type(even) {
 }
 
 table.catalog tr:first-of-type {
-	background-color: #fed;
+	background-color: #def;
 }
 
 .table_margins {
@@ -77,10 +77,10 @@ table.catalog tr:first-of-type {
 	margin-left: auto;
 	margin-right: auto;
 	margin-bottom: 30px;
-	background-color: #fed;
+	background-color: #def;
 	width: 640px;
 	padding: 5px;
-	border: solid #edc 4px;
+	border: solid #cde 4px;
 }
 
 input#query {
