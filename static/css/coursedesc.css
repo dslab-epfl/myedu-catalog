@@ -1,0 +1,48 @@
+body {
+	width: 1024px;
+	margin-left: auto;
+	margin-right: auto;
+	
+	font-family: Arial, sans;
+}
+
+h1#form_title {
+	text-align: center;
+}
+
+.subtitle {
+	text-align: center;
+	font-weight: bold;
+}
+
+#left_column {
+	float: left;
+	width: 50%;
+}
+
+#left_interior {
+	border-right: solid #aaa 1px;
+	padding-right: 10px;
+}
+
+#right_column {
+	float: right;
+	width: 50%;
+}
+
+#right_interior {
+	border-left: solid #aaa 1px;
+	padding-left: 10px;
+}
+
+input[type=text] {
+	width: 100%;
+}
+
+.field {
+	margin-bottom: 10px;
+}
+
+#submit_area {
+	text-align: center;
+}

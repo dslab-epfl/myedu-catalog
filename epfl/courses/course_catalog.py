@@ -34,6 +34,23 @@ class Course(db.Model):
   studies = db.StringListProperty()
   orientations = db.StringListProperty()
   urls = db.StringListProperty()
+  
+  
+class CourseDescription(db.Model):
+  title_en = db.StringProperty()
+  title_fr = db.StringProperty()
+  
+  language = db.StringProperty(choices=set(["en", "fr"]))
+  
+  teachers = db.StringListProperty()
+  ects_credits = db.IntegerProperty()
+  
+  course_points = db.IntegerProperty()
+  exercise_points = db.IntegerProperty()
+  project_points = db.IntegerProperty()
+  
+  objectives_en = db.TextProperty()
+  contents_en = db.TextProperty()
 
 
 class CatalogPage(webapp2.RequestHandler):
@@ -153,6 +170,35 @@ class BuildSearchIndex(webapp2.RequestHandler):
                                                     value=course.name),
                                    search.TextField(name='teacher',
                                                     value=", ".join(course.teachers))])
+    
+
+class SubmitCourseDescription(webapp2.RequestHandler):
+  def post(self):
+    course_desc = CourseDescription(
+      title_en=self.request.POST.get("title_en"),
+      title_fr=self.request.POST.get("title_fr"),
+      language=self.request.POST.get("language"), 
+  
+      teachers=[self.request.POST.get("teachers")],
+      ects_credits=int(self.request.POST.get("no_credits")),
+  
+      objectives_en = self.request.POST.get("objectives_en"),
+      contents_en = self.request.POST.get("contents_en")
+    )
+    
+    course_desc.put()
+    
+    self.response.headers['Content-Type'] = 'text/plain'
+    
+    self.response.out.write("Course description submitted.\n\nSUMMARY:\n")
+    for key in self.request.POST:
+      self.response.out.write("%s: %s\n" % (key, self.request.POST.get(key)))
+      
+
+class CourseDescriptionPage(webapp2.RequestHandler):
+  def get(self):
+    template = jinja_environment.get_template('coursedesc_simple.html')
+    self.response.out.write(template.render())
 
 
 app = webapp2.WSGIApplication([
@@ -160,4 +206,7 @@ app = webapp2.WSGIApplication([
    webapp2.Route('/catalog', handler=CatalogPage, name='catalog'),
    webapp2.Route('/c/<course_key>', handler=CoursePage, name='course'),
    webapp2.Route('/ajax/courses', handler=AjaxCourses, name='ajax_course'),
-   webapp2.Route('/admin/search', handler=BuildSearchIndex, name='search_index')], debug=True)
+   webapp2.Route('/admin/search', handler=BuildSearchIndex, name='search_index'),
+   webapp2.Route('/admin/submitcourse', handler=SubmitCourseDescription, name='submit_course'),
+   webapp2.Route('/submitcourse', handler=CourseDescriptionPage, name='csp')], debug=True)
+
