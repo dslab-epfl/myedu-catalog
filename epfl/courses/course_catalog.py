@@ -40,17 +40,32 @@ class CourseDescription(db.Model):
   title_en = db.StringProperty()
   title_fr = db.StringProperty()
   
+  homepage = db.StringProperty()
+  
   language = db.StringProperty(choices=set(["en", "fr"]))
   
-  teachers = db.StringListProperty()
-  ects_credits = db.IntegerProperty()
+  instructors = db.StringListProperty()
+  sections = db.StringListProperty()
   
+  ects_credits = db.IntegerProperty()
   course_points = db.IntegerProperty()
   exercise_points = db.IntegerProperty()
   project_points = db.IntegerProperty()
   
   objectives_en = db.TextProperty()
+  objectives_fr = db.TextProperty()
+  
   contents_en = db.TextProperty()
+  contents_fr = db.TextProperty()
+  
+  bibliography = db.TextProperty()
+  
+  prerequisites = db.StringListProperty()
+  
+  grading_method = db.StringProperty(choices=set(["sem", "writ", "oral", "sem_writ", "sem_oral"]))
+  grading_formula = db.StringProperty()
+  
+  notes = db.StringProperty()
 
 
 class CatalogPage(webapp2.RequestHandler):
@@ -174,31 +189,48 @@ class BuildSearchIndex(webapp2.RequestHandler):
 
 class SubmitCourseDescription(webapp2.RequestHandler):
   def post(self):
-    course_desc = CourseDescription(
-      title_en=self.request.POST.get("title_en"),
-      title_fr=self.request.POST.get("title_fr"),
-      language=self.request.POST.get("language"), 
-  
-      teachers=[self.request.POST.get("teachers")],
-      ects_credits=int(self.request.POST.get("no_credits")),
-  
-      objectives_en = self.request.POST.get("objectives_en"),
-      contents_en = self.request.POST.get("contents_en")
-    )
+    course_id = self.request.POST.get("course_id")
+    course_desc = None
+    
+    if course_id:
+      course_desc = db.get(course_id)
+    else:
+      course_desc = CourseDescription()
+      
+    course_desc.title_en = self.request.POST.get("title_en")
+    course_desc.title_fr = self.request.POST.get("title_fr")
+    
+    course_desc.homepage = self.request.POST.get("url")
+    
+    course_desc.language = self.request.POST.get("language") 
+
+    course_desc.objectives_en = self.request.POST.get("objectives_en")
+    course_desc.objectives_fr = self.request.POST.get("objectives_fr")
+    
+    course_desc.contents_en = self.request.POST.get("contents_en")
+    course_desc.contents_fr = self.request.POST.get("contents_fr")
+    
+    course_desc.bibliography = self.request.POST.get("bibliography")
+    
+    course_desc.grading_method = self.request.POST.get("grading_method")
+    course_desc.grading_formula = self.request.POST.get("grading_formula")
+    course_desc.notes = self.request.POST.get("notes")
     
     course_desc.put()
     
-    self.response.headers['Content-Type'] = 'text/plain'
-    
-    self.response.out.write("Course description submitted.\n\nSUMMARY:\n")
-    for key in self.request.POST:
-      self.response.out.write("%s: %s\n" % (key, self.request.POST.get(key)))
+    self.redirect('/update?course_id=%s' % course_desc.key())
       
 
 class CourseDescriptionPage(webapp2.RequestHandler):
   def get(self):
+    course_id = self.request.get("course_id")
+    course = None
+    
+    if course_id:
+      course = db.get(course_id)
+    
     template = jinja_environment.get_template('coursedesc.html')
-    self.response.out.write(template.render())
+    self.response.out.write(template.render(course=course))
 
 
 app = webapp2.WSGIApplication([

@@ -12,19 +12,25 @@
     <h2>Please use this form to provide the description of a new course,
     or to modify the description of an existing course.</h2>
     
+    {% if course %}
+    <p style="color:green; font-weight: bold;">Course saved successfully.
+    You may later edit the course description <a href="/update?course_id={{course.key()}}">here</a>.</p>
+    {% endif %}
+    
     <div id="enclose">
-    <form action="/admin/submitcourse" method="post" enctype="multipart/form-data">
+    <form id="upload_form" action="/admin/submitcourse" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="course_id" value="{{ course.key() if course }}"/>
     <!-- First row -->
     <div id="reg_titles" class="region">
       <table>
       <tr>
         <td>
           <span class="label">1a. Title</span> (in English) <br/>
-          <input type="text" name="title_en" required="required"/>
+          <input type="text" name="title_en" required="required" value="{{ course.title_en if course }}"/>
         </td>
         <td>
           <span class="label">1b. Titre</span> (en français) <br/>
-          <input type="text" name="title_fr" required="required"/>
+          <input type="text" name="title_fr" required="required" value="{{ course.title_fr if course }}"/>
         </td>
       </tr>
       </table>
@@ -36,12 +42,12 @@
         <tr>
           <td style="width: 75%;">
             <span class="label">2. Course homepage</span> <br/>
-            <input type="url" name="url" required="required" value="http://" />
+            <input type="url" name="url" required="required" value="{{ course.homepage if course else 'http://' }}" />
           </td>
           <td style="width: 25%;">
             <span class="label">3. Language</span> <br/>
-            <input type="radio" name="language" value="fr" id="lan_fr" /><label for="lan_fr">French</label>
-            <input type="radio" name="language" value="en" id="lan_en" /><label for="lan_en">English</label>
+            <input type="radio" name="language" value="fr" id="lan_fr" {{ "checked=''" if course and course.language == 'fr' }}/><label for="lan_fr">French</label>
+            <input type="radio" name="language" value="en" id="lan_en" {{ "checked=''" if course and course.language == 'en' }}/><label for="lan_en">English</label>
           </td>
         </tr>
       </table>
@@ -53,19 +59,19 @@
       <table>
       <tr>
         <td>
-          <select name="instructor1" required="required">
+          <select name="instructor1" required="required" disabled="disabled">
           </select>
         </td>
         <td>
-          <select name="instructor2">
+          <select name="instructor2" disabled="disabled">
           </select>
         </td>
         <td>
-          <select name="instructor3">
+          <select name="instructor3" disabled="disabled">
           </select>
         </td>
         <td>
-          <select name="instructor4">
+          <select name="instructor4" disabled="disabled">
           </select>
         </td>
       </tr>
@@ -75,32 +81,32 @@
     <div class="region" id="reg_section">
       <span class="label">5. Section</span> <br/>
       <div class="block_region">
-        <input type="checkbox" name="sec_sin" id="sec_sin"/> <label for="sec_sin">SIN</label>
-        <input type="checkbox" name="sec_ssc" id="sec_ssc"/> <label for="sec_ssc">SSC</label>
+        <input type="checkbox" name="sec_sin" id="sec_sin" disabled="disabled"/> <label for="sec_sin">SIN</label>
+        <input type="checkbox" name="sec_ssc" id="sec_ssc" disabled="disabled"/> <label for="sec_ssc">SSC</label>
       </div>
-      <input type="checkbox" name="sec_other" id="sec_other"/> <label for="sec_other">Other</label>
+      <input type="checkbox" name="sec_other" id="sec_other" disabled="disabled"/> <label for="sec_other">Other</label>
     </div>
     
     <div class="region" id="reg_credits">
       <span class="label">6. Credits</span> <br/>
       <div class="block_region">
         Total ECTS:
-        <input type="number" name="ects_total" value="0" min="1" />
+        <input type="number" name="ects_total" value="0" min="1" disabled="disabled" />
       </div>
       
       <div class="block_region">
         Lecture (cours):
-        <input type="number" name="ects_lecture" value="0" min="0 "/>
+        <input type="number" name="ects_lecture" value="0" min="0" disabled="disabled"/>
       </div>
       
       <div class="block_region">
         Recitation (exercices):
-        <input type="number" name="ects_recitation" value="0" min="0" />
+        <input type="number" name="ects_recitation" value="0" min="0" disabled="disabled"/>
       </div>
       
       <div class="block_region">
         Project:
-        <input type="number" name="ects_project" value="0" min="0" />
+        <input type="number" name="ects_project" value="0" min="0" disabled="disabled"/>
       </div>
     </div>
     
@@ -109,11 +115,11 @@
       <tr>
         <td>
           <span class="label">7a. Objectives</span> (in English, max 256 chars) <br/>
-          <textarea name="objectives_en" rows="4" required="required" maxlength="256"></textarea>
+          <textarea name="objectives_en" rows="4" required="required" maxlength="256">{{ course.objectives_en if course }}</textarea>
         </td>
         <td>
           <span class="label">7b. Objectifs</span> (en français, max 256 caractères) <br/>
-          <textarea name="objectives_fr" rows="4" required="required" maxlength="256"></textarea>
+          <textarea name="objectives_fr" rows="4" required="required" maxlength="256">{{ course.objectives_fr if course }}</textarea>
         </td>
       </tr>
       </table>
@@ -124,11 +130,11 @@
       <tr>
         <td>
           <span class="label">8a. Contents</span> (in English, max 512 chars) <br/>
-          <textarea name="contents_en" rows="4" required="required" maxlength="512"></textarea>
+          <textarea name="contents_en" rows="4" required="required" maxlength="512">{{ course.contents_en if course }}</textarea>
         </td>
         <td>
           <span class="label">8b. Contenu</span> (en français, max 512 caractères) <br/>
-          <textarea name="contents_fr" rows="4" required="required" maxlength="512"></textarea>
+          <textarea name="contents_fr" rows="4" required="required" maxlength="512">{{ course.contents_fr if course }}</textarea>
         </td>
       </tr>
       </table>
@@ -136,7 +142,7 @@
     
     <div class="region">
       <span class="label">9. Bibliography</span> <br/>
-      <textarea name="bibliography" rows="3"></textarea>
+      <textarea name="bibliography" rows="3">{{ course.bibliography if course }}</textarea>
     </div>
     
     <div class="region" id="reg_prereq">
@@ -144,19 +150,19 @@
       <table>
         <tr>
           <td>
-            <select name="prereq1">
+            <select name="prereq1" disabled="disabled">
             </select>
           </td>
           <td>
-            <select name="prereq2">
+            <select name="prereq2" disabled="disabled">
             </select>
           </td>
           <td>
-            <select name="prereq3">
+            <select name="prereq3" disabled="disabled">
             </select>
           </td>
           <td>
-            <select name="prereq4">
+            <select name="prereq4" disabled="disabled">
             </select>
           </td>
         </tr>
@@ -169,16 +175,16 @@
         <td>
           <span class="label">11. Grading method</span> <br/>
           <select name="grading_method" required="true">
-            <option val="sem">Throughout semester</option>
-            <option val="writ">Written (exam period)</option>
-            <option val="oral">Oral (exam period)</option>
-            <option val="sem_writ">Throughout semester + written (exam period)</option>
-            <option val="sem_oral">Throughout semester + oral (exam period)</option>
+            <option value="sem" {{ "selected=''" if course and course.grading_method == 'sem' }}>Throughout semester</option>
+            <option value="writ" {{ "selected=''" if course and course.grading_method == 'writ' }}>Written (exam period)</option>
+            <option value="oral" {{ "selected=''" if course and course.grading_method == 'oral' }}>Oral (exam period)</option>
+            <option value="sem_writ" {{ "selected=''" if course and course.grading_method == 'sem_writ' }}>Throughout semester + written (exam period)</option>
+            <option value="sem_oral" {{ "selected=''" if course and course.grading_method == 'sem_oral' }}>Throughout semester + oral (exam period)</option>
           </select>
         </td>
         <td>
           <span class="label">12. Grading formula</span> <br/>
-          <input type="text" name="grading_formula" required="true" placeholder="project 25%, midterm 30%, final exam 45%"/>
+          <input type="text" name="grading_formula" required="true" placeholder="project 25%, midterm 30%, final exam 45%" value="{{ course.grading_formula if course }}"/>
         </td>
       </tr>
       </table>
@@ -186,11 +192,12 @@
     
     <div class="region">
       <span class="label">13. Notes</span>
-      <textarea name="notes" rows="3"></textarea>
+      <textarea name="notes" rows="3">{{ course.notes if course }}</textarea>
     </div>
 
     <div id="reg_submit" class="region">
-      <input type="submit" value="Submit" />
+      <input type="button" value="Save" onclick="upload_form.submit();"/>
+      <input type="submit" value="Submit" disabled="disabled" />
     </div>
     </form>
     </div>
