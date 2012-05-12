@@ -197,7 +197,7 @@ class SubmitCourseDescription(webapp2.RequestHandler):
 
 class CourseDescriptionPage(webapp2.RequestHandler):
   def get(self):
-    template = jinja_environment.get_template('coursedesc_simple.html')
+    template = jinja_environment.get_template('coursedesc.html')
     self.response.out.write(template.render())
 
 
@@ -208,5 +208,5 @@ app = webapp2.WSGIApplication([
    webapp2.Route('/ajax/courses', handler=AjaxCourses, name='ajax_course'),
    webapp2.Route('/admin/search', handler=BuildSearchIndex, name='search_index'),
    webapp2.Route('/admin/submitcourse', handler=SubmitCourseDescription, name='submit_course'),
-   webapp2.Route('/submitcourse', handler=CourseDescriptionPage, name='csp')], debug=True)
+   webapp2.Route('/update', handler=CourseDescriptionPage, name='csp')], debug=True)
 

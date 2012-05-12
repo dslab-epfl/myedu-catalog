@@ -2,55 +2,197 @@
   <head>
     <title>EPFL Course Description 2012 - 2013</title>
     <link rel="stylesheet" type="text/css" href="/static/css/coursedesc.css"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+    <script src="/static/formalize/assets/js/jquery.formalize.js"></script>
   </head>
   <body>
-    <h1 id="form_title">EPFL Course Description 2012 - 2013</h1>
-    <form>
-    <div id="left_column">
-      <div id="left_interior">
-        <div class="subtitle">English</div>
-        
-        <div class="field title_field">
-          Title:
-          <input type="text" name="title_en" />
-        </div>
-        
-        <div class="field language_field">
-          Language: <br/>
-          <input type="radio" name="language" value="en" />English <br/>
-          <input type="radio" name="language" value="fr" />French
-        </div>
-        
-        <div class="field teacher_field">
-          Teacher(s):
-          <input type="text" name="teachers" />
-        </div>
-        
-        <div class="field">
-          No. credits:
-          <input type="text" name="no_credits" />
-        </div>
-        
-        <div class="field">
-          Objectives:
-          <input type="text" name="objectives_en" />
-        </div>
-        
-        <div class="field">
-          Contents:
-          <input type="text" name="contents_en" />
-        </div>
+    <h1>2012-2013 Course Description</h1>
+    <h2>Please use this form to provide the description of a new course,
+    or to modify the description of an existing course.</h2>
+    
+    <div id="enclose">
+    <form action="/admin/submitcourse" method="post" enctype="multipart/form-data">
+    <!-- First row -->
+    <div id="reg_titles" class="region">
+      <table>
+      <tr>
+        <td>
+          <span class="label">1a. Title</span> (in English) <br/>
+          <input type="text" name="title_en" required="required"/>
+        </td>
+        <td>
+          <span class="label">1b. Titre</span> (en français) <br/>
+          <input type="text" name="title_fr" required="required"/>
+        </td>
+      </tr>
+      </table>
+    </div>
+    
+    <!-- Second row -->
+    <div class="region" id="reg_url">
+      <table>
+        <tr>
+          <td style="width: 75%;">
+            <span class="label">2. Course homepage</span> <br/>
+            <input type="url" name="url" required="required" value="http://" />
+          </td>
+          <td style="width: 25%;">
+            <span class="label">3. Language</span> <br/>
+            <input type="radio" name="language" value="fr" id="lan_fr" /><label for="lan_fr">French</label>
+            <input type="radio" name="language" value="en" id="lan_en" /><label for="lan_en">English</label>
+          </td>
+        </tr>
+      </table>
+    </div>
+    
+    <!--  -->
+    <div class="region" id="reg_instructor">
+      <span class="label">4. Instructor(s)</span> <br/>
+      <table>
+      <tr>
+        <td>
+          <select name="instructor1" required="required">
+          </select>
+        </td>
+        <td>
+          <select name="instructor2">
+          </select>
+        </td>
+        <td>
+          <select name="instructor3">
+          </select>
+        </td>
+        <td>
+          <select name="instructor4">
+          </select>
+        </td>
+      </tr>
+      </table>
+    </div>
+    
+    <div class="region" id="reg_section">
+      <span class="label">5. Section</span> <br/>
+      <div class="block_region">
+        <input type="checkbox" name="sec_sin" id="sec_sin"/> <label for="sec_sin">SIN</label>
+        <input type="checkbox" name="sec_ssc" id="sec_ssc"/> <label for="sec_ssc">SSC</label>
+      </div>
+      <input type="checkbox" name="sec_other" id="sec_other"/> <label for="sec_other">Other</label>
+    </div>
+    
+    <div class="region" id="reg_credits">
+      <span class="label">6. Credits</span> <br/>
+      <div class="block_region">
+        Total ECTS:
+        <input type="number" name="ects_total" value="0" min="1" />
+      </div>
+      
+      <div class="block_region">
+        Lecture (cours):
+        <input type="number" name="ects_lecture" value="0" min="0 "/>
+      </div>
+      
+      <div class="block_region">
+        Recitation (exercices):
+        <input type="number" name="ects_recitation" value="0" min="0" />
+      </div>
+      
+      <div class="block_region">
+        Project:
+        <input type="number" name="ects_project" value="0" min="0" />
       </div>
     </div>
-    <div id="right_column">
-      <div id="right_interior">
-        <div class="subtitle">French</div>
-      </div>
+    
+    <div class="region" id="reg_objectives">
+      <table>
+      <tr>
+        <td>
+          <span class="label">7a. Objectives</span> (in English, max 256 chars) <br/>
+          <textarea name="objectives_en" rows="4" required="required" maxlength="256"></textarea>
+        </td>
+        <td>
+          <span class="label">7b. Objectifs</span> (en français, max 256 caractères) <br/>
+          <textarea name="objectives_fr" rows="4" required="required" maxlength="256"></textarea>
+        </td>
+      </tr>
+      </table>
     </div>
-    <div style="clear: both;"></div>
-    <div id="submit_area">
+    
+    <div class="region" id="reg_contents">
+      <table>
+      <tr>
+        <td>
+          <span class="label">8a. Contents</span> (in English, max 512 chars) <br/>
+          <textarea name="contents_en" rows="4" required="required" maxlength="512"></textarea>
+        </td>
+        <td>
+          <span class="label">8b. Contenu</span> (en français, max 512 caractères) <br/>
+          <textarea name="contents_fr" rows="4" required="required" maxlength="512"></textarea>
+        </td>
+      </tr>
+      </table>
+    </div>
+    
+    <div class="region">
+      <span class="label">9. Bibliography</span> <br/>
+      <textarea name="bibliography" rows="3"></textarea>
+    </div>
+    
+    <div class="region" id="reg_prereq">
+      <span class="label">10. Prerequisite course(s)</span> <br/>
+      <table>
+        <tr>
+          <td>
+            <select name="prereq1">
+            </select>
+          </td>
+          <td>
+            <select name="prereq2">
+            </select>
+          </td>
+          <td>
+            <select name="prereq3">
+            </select>
+          </td>
+          <td>
+            <select name="prereq4">
+            </select>
+          </td>
+        </tr>
+      </table>    
+    </div>
+    
+    <div class="region" id="reg_grading">
+      <table>
+      <tr>
+        <td>
+          <span class="label">11. Grading method</span> <br/>
+          <select name="grading_method" required="true">
+            <option val="sem">Throughout semester</option>
+            <option val="writ">Written (exam period)</option>
+            <option val="oral">Oral (exam period)</option>
+            <option val="sem_writ">Throughout semester + written (exam period)</option>
+            <option val="sem_oral">Throughout semester + oral (exam period)</option>
+          </select>
+        </td>
+        <td>
+          <span class="label">12. Grading formula</span> <br/>
+          <input type="text" name="grading_formula" required="true" placeholder="project 25%, midterm 30%, final exam 45%"/>
+        </td>
+      </tr>
+      </table>
+    </div>
+    
+    <div class="region">
+      <span class="label">13. Notes</span>
+      <textarea name="notes" rows="3"></textarea>
+    </div>
+
+    <div id="reg_submit" class="region">
       <input type="submit" value="Submit" />
     </div>
     </form>
+    </div>
   </body>
 </html>

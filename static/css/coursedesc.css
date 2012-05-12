@@ -1,48 +1,126 @@
+@import '/static/formalize/assets/css/reset.css';
+@import '/static/formalize/assets/css/text.css';
+@import '/static/formalize/assets/css/formalize.css';
+
 body {
-	width: 1024px;
-	margin-left: auto;
-	margin-right: auto;
-	
-	font-family: Arial, sans;
+	width: 800px;
+	margin: 15px auto;
+	background: #fff;
+  	color: #000;
 }
 
-h1#form_title {
-	text-align: center;
+h1 {
+	font-size: 2em;
+	margin-top: 20px;
+	margin-bottom: 0px;
 }
 
-.subtitle {
-	text-align: center;
+h2 {
+	font-size: 1em;
+	font-weight: normal;
+	font-style: italic;
+}
+
+.label {
 	font-weight: bold;
 }
 
-#left_column {
-	float: left;
-	width: 50%;
+/* Layout */
+
+table {
+	width: 100%;
+	margin-bottom: 0px;
 }
 
-#left_interior {
-	border-right: solid #aaa 1px;
-	padding-right: 10px;
+#enclose {
+	padding-top: 15px;
+	padding-bottom: 30px;
 }
 
-#right_column {
-	float: right;
-	width: 50%;
+.region {
+	margin-bottom: 5px;
+	background-color: #f6f6f6;
+	padding: 5px;
+	border-radius: 3px;
 }
 
-#right_interior {
-	border-left: solid #aaa 1px;
-	padding-left: 10px;
-}
-
-input[type=text] {
+#reg_titles input {
 	width: 100%;
 }
 
-.field {
-	margin-bottom: 10px;
+#reg_titles td {
+	padding-right: 5px;
 }
 
-#submit_area {
+#reg_url input[type=url] {
+	width: 100%;
+}
+
+#reg_url td {
+	padding-right: 10px;
+}
+
+#reg_instructor select {
+	width: 100%;
+}
+
+#reg_instructor td {
+	width: 25%;
+	padding-right: 5px;
+}
+
+#reg_section .block_region {
+	display: inline-block;
+	margin-right: 15px;
+}
+
+#reg_credits .block_region {
+	display: inline-block;
+	margin-right: 15px;
+}
+
+#reg_credits input {
+	width: 50px;
+}
+
+#reg_objectives td, #reg_contents td {
+	padding-right: 5px;
+	width: 50%;
+}
+
+#reg_prereq select {
+	width: 100%;
+}
+
+#reg_prereq td {
+	padding-right: 5px;
+	width: 25%;
+}
+
+#reg_grading input, #reg_grading select {
+	width: 100%;
+}
+
+#reg_grading td {
+	padding-right: 5px;
+	width: 50%;
+}
+
+#reg_submit {
 	text-align: center;
+	background-color: #fff;
+}
+
+/* Errors */
+
+label.error {
+  background: #ffc;
+  color: #c00;
+  font-style: italic;
+}
+
+input.error,
+select.error,
+textarea.error {
+  background-color: #fee;
 }
