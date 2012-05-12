@@ -18,6 +18,12 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     
+      function preSelectOptions(sel_elem, value) {
+        for (var i = 0; i < sel_elem.length; i++) {
+          if (sel_elem.options[i].value == value)
+            sel_elem.options[i].selected = "selected";
+        }
+      }
     </script>
   </head>
   <body>
@@ -90,15 +96,12 @@
         <td>
           <select name="instructor{{ i }}" id="instructor{{ i }}">
           {% for instructor in instructors %}
-            <option value="{{ instructor[0] }}">{{ instructor[1] }}</option>
+            <option value="{{ instructor }}">{{ instructor }}</option>
           {% endfor %}
           </select>
           <script type="text/javascript">
-            var instr_list = document.getElementById("instructor{{ i }}");
-            for (var i = 0; i < instr_list.length; i++) {
-              if (instr_list.options[i].value == "{{ instr_values[i-1] }}")
-                instr_list.options[i].selected = "selected";
-            }
+          	preSelectOptions(document.getElementById("instructor{{ i }}"),
+          			"{{ instr_values[i-1] }}");
           </script>
         </td>
         {% endfor %}
@@ -121,22 +124,59 @@
       <span class="label">6. Credits</span> <br/>
       <div class="block_region">
         Total ECTS:
-        <input type="number" name="ects_total" value="{{ course.ects_credits }}" min="0"/>
+        <select name="ects_total" id="ects_total">
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+          <option>7</option>
+        </select>
+        <script type="text/javascript">
+          preSelectOptions(document.getElementById("ects_total"), "{{ course.ects_credits }}");
+        </script>
       </div>
       
       <div class="block_region">
         Lecture (cours):
-        <input type="number" name="ects_lecture" value="{{ course.course_points }}" min="0"/>
+        <select name="ects_lecture" id="ects_lecture">
+          <option>0</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+        </select>h
+        <script type="text/javascript">
+          preSelectOptions(document.getElementById("ects_lecture"), "{{ course.course_points }}");
+        </script>
       </div>
       
       <div class="block_region">
         Recitation (exercices):
-        <input type="number" name="ects_recitation" value="{{ course.exercise_points }}" min="0"/>
+        <select name="ects_recitation" id="ects_recitation">
+          <option>0</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+        </select>h
+        <script type="text/javascript">
+          preSelectOptions(document.getElementById("ects_recitation"), "{{ course.exercise_points }}");
+        </script>
       </div>
       
       <div class="block_region">
         Project:
-        <input type="number" name="ects_project" value="{{ course.project_points }}" min="0"/>
+        <select name="ects_project" id="ects_project">
+          <option>0</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+        </select>h
+        <script type="text/javascript">
+          preSelectOptions(document.getElementById("ects_project"), "{{ course.project_points }}");
+        </script>
       </div>
     </div>
     
@@ -191,11 +231,7 @@
             {% endfor %}
             </select>
             <script type="text/javascript">
-              var prereq_list = document.getElementById("prereq{{ i }}");
-              for (var i = 0; i < prereq_list.length; i++) {
-                if (prereq_list.options[i].value == "{{ prereq_values[i-1] }}")
-                  prereq_list.options[i].selected = "selected";
-              }
+              preSelectOptions(document.getElementById("prereq{{ i }}"), "{{ prereq_values[i-1] }}");
             </script>
           </td>
           {% endfor %}
@@ -217,11 +253,7 @@
           </select>
           {% if course %}
           <script type="text/javascript">
-          	var grading_method = document.getElementById("grading_method");
-          	for (var i = 0; i < grading_method.length; i++) {
-          		if (grading_method.options[i].value == "{{ course.grading_method }}")
-          			grading_method.options[i].selected = "selected";
-          	}
+            preSelectOptions(document.getElementById("grading_method"), "{{ course.grading_method }}");
           </script>
           {% endif %}
         </td>

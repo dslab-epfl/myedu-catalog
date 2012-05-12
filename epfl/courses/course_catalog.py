@@ -219,8 +219,8 @@ class SubmitCourseDescription(webapp2.RequestHandler):
     # Instructors
     instructors = []
     for i in range(1, 5):
-      instructor = self.request.POST.get("instructor%d" % i, "none")
-      if instructor != "none":
+      instructor = self.request.POST.get("instructor%d" % i, "None")
+      if instructor != "None":
         instructors.append(instructor)
     course_desc.instructors = instructors
     
@@ -238,7 +238,7 @@ class SubmitCourseDescription(webapp2.RequestHandler):
     course_desc.sections = list(sections)
 
     # Credits
-    course_desc.ects_credits = int(self.request.POST.get("ects_total", "0"))
+    course_desc.ects_credits = int(self.request.POST.get("ects_total", "2"))
     course_desc.course_points = int(self.request.POST.get("ects_lecture", "0"))
     course_desc.exercise_points = int(self.request.POST.get("ects_recitation", "0"))
     course_desc.project_points = int(self.request.POST.get("ects_project", "0"))
@@ -283,9 +283,9 @@ class CourseDescriptionPage(webapp2.RequestHandler):
     if course_id:
       course = db.get(course_id)
       
-    instr_list = [("none", "None")]
-    instr_list.extend([(inst[2], ", ".join([inst[1], inst[0]]).decode("utf-8"))
-                      for inst in sorted(static_courses.INSTRUCTORS,
+    instr_list = ["None"]
+    instr_list.extend([", ".join([inst[1], inst[0]]).decode("utf-8")
+                      for inst in sorted(static_courses.INSTRUCTORS_NEW,
                                         key=lambda inst: inst[1].lower())])
     
     prereq_list = [("none", "None")]
@@ -299,7 +299,7 @@ class CourseDescriptionPage(webapp2.RequestHandler):
       'instructors': instr_list,
       'prerequisites': prereq_list,
       
-      'instr_values': ['none', 'none', 'none', 'none'],
+      'instr_values': ['None', 'None', 'None', 'None'],
       
       'prereq_values': ['none', 'none', 'none', 'none'],
       

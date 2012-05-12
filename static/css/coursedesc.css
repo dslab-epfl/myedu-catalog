@@ -52,7 +52,7 @@ table {
 	padding-right: 5px;
 }
 
-#reg_url input[type=url] {
+#reg_url input[type=text] {
 	width: 100%;
 }
 
