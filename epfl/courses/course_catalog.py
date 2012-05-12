@@ -24,6 +24,49 @@ SPECIALIZATION_MAPPING = {
 
 INDEX_NAME = 'courses-index'
 
+INSTRUCTORS = [
+  ("Anastasia", "Ailamaki", "anastasia.ailamaki@epfl.ch"),
+  ("George", "Candea", "george.candea@epfl.ch"),
+  ("Giovanni", "de Micheli", "giovanni.demicheli@epfl.ch"),
+  ("Pierre", "Dillenbourg", "pierre.dillenbourg@epfl.ch"),
+  ("Babak", "Falsafi", "babak.falsafi@epfl.ch"),
+  ("Boi", "Faltings", "boi.faltings@epfl.ch"),
+  ("Pascal", "Fua", "pascal.fua@epfl.ch"),
+  ("Wulfram", "Gerstner", "wulfram.gerstner@epfl.ch"), 
+  ("Roger", "Hersch", "rd.hersch@epfl.ch"), 
+  ("Jeffrey", "Huang", "jeffrey.huang@epfl.ch"), 
+  ("Paolo", "Ienne", "paolo.ienne@epfl.ch"), 
+  ("Christoph", "Koch", "christoph.koch@epfl.ch"), 
+  ("Bernard", "Moret", "bernard.moret@epfl.ch"), 
+  ("Martin", "Odersky", "martin.odersky@epfl.ch"), 
+  ("Mark", "Pauly", "mark.pauly@epfl.ch"), 
+  ("Claude", "Petitpierre", "claude.petitpierre@epfl.ch"), 
+  ("Ronan", "Boulic", "ronan.boulic@epfl.ch"), 
+  ("Christina", "Fragouli", "christina.fragouli@epfl.ch"), 
+  ("Dejan", "Kostic", "dejan.kostic@epfl.ch"), 
+  ("Viktor", "Kuncak", "viktor.kuncak@epfl.ch"), 
+  ("Pearl", "Pu Faltings", "pearl.pu@epfl.ch"), 
+  ("Martin", "Rajman", "martin.rajman@epfl.ch"), 
+  ("Matthias", "Seeger", "matthias.seeger@epfl.ch"), 
+  ("Philippe", "Janson", "philippe.janson@epfl.ch"), 
+  ("Christian", "Piguet", "christian.piguet@epfl.ch"), 
+  ("Eduardo", "Sanchez", "eduardo.sanchez@epfl.ch"), 
+  ("Manuel", "Acevedo", "manuel.acevedo@epfl.ch"), 
+  ("René", "Beuchat", "rene.beuchat@epfl.ch"), 
+  ("Jean-Cédric", "Chappelier", "jean-cedric.chappelier@epfl.ch"), 
+  ("Jean-Luc", "Desbiolles", "jean-luc.desbiolles@epfl.ch"), 
+  ("Patrick", "Jermann", "patrick.jermann@epfl.ch"), 
+  ("Ties", "Kluter", "ties.kluter@epfl.ch"), 
+  ("Hendrik Ole", "Knoche", "hendrik.knoche@epfl.ch"), 
+  ("Marc", "Lecoultre", "marc.lecoultre@epfl.ch"), 
+  ("Vincent", "Lepetit", "vincent.lepetit@epfl.ch"), 
+  ("Thomas", "Lochmatter", "thomas.lochmatter@epfl.ch"), 
+  ("Jean-Philippe", "Pellet", "jean-philippe.pellet@epfl.ch"), 
+  ("Pierre-Yves", "Rochat", "pierre-yves.rochat@epfl.ch"), 
+  ("Jamila", "Sam", "jamila.sam@epfl.ch"), 
+  ("Michel", "Schinz", "michel.schinz@epfl.ch")
+]
+
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
