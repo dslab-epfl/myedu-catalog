@@ -6,6 +6,19 @@
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
     <script src="/static/formalize/assets/js/jquery.formalize.js"></script>
+    <script type="text/javascript">
+    
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-373800-15']);
+      _gaq.push(['_trackPageview']);
+    
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    
+    </script>
   </head>
   <body>
     <h1>2012-2013 Course Description</h1>
@@ -13,24 +26,37 @@
     or to modify the description of an existing course.</h2>
     
     {% if course %}
-    <p style="color:green; font-weight: bold;">Course saved successfully.
-    You may continue working on the description, or later edit it <a href="/update?course_id={{course.key()}}">here</a>.</p>
+    
+    {% if saved %}
+    <p style="color:green; font-weight: bold;">Course saved successfully.</p>
     {% endif %}
     
+    <p>Course ID: <span style="font-weight: bold;"><a href="/update?course_id={{course.key()}}">{{ course.key() }}</a></span><br/>
+    {% if not course.submitted_ %}
+    <span style="font-weight: bold; color: red;">The course changes have not been yet submitted.</span>
+    {% else %}
+    <span style="font-weight: bold;">The course is submitted. You may still update it.</span>
+    {% endif %}
+    </p>
+    
     <div id="enclose">
-    <form id="upload_form" action="/admin/submitcourse" method="post" enctype="multipart/form-data">
+    <form id="upload_form" action="/admin/submit" method="post" enctype="multipart/form-data">
     <input type="hidden" name="course_id" value="{{ course.key() if course }}"/>
     <!-- First row -->
     <div id="reg_titles" class="region">
       <table>
       <tr>
         <td>
-          <span class="label">1a. Title</span> (in English) <br/>
-          <input type="text" name="title_en" required="required" value="{{ course.title_en if course }}"/>
+          <span class="label">1a. Title</span><br/>
+          <input type="text" name="title_en"
+            value="{{ course.title_en if course }}"
+            placeholder="in English"/>
         </td>
         <td>
-          <span class="label">1b. Titre</span> (en français) <br/>
-          <input type="text" name="title_fr" required="required" value="{{ course.title_fr if course }}"/>
+          <span class="label">1b. Titre</span> <br/>
+          <input type="text" name="title_fr"
+            value="{{ course.title_fr if course }}"
+            placeholder="en français"/>
         </td>
       </tr>
       </table>
@@ -42,12 +68,14 @@
         <tr>
           <td style="width: 75%;">
             <span class="label">2. Course homepage</span> <br/>
-            <input type="url" name="url" required="required" value="{{ course.homepage if course else 'http://' }}" />
+            <input type="text" name="url" value="{{ course.homepage if course else 'http://' }}" />
           </td>
           <td style="width: 25%;">
             <span class="label">3. Language</span> <br/>
-            <input type="radio" name="language" value="fr" id="lan_fr" {{ "checked=''" if course and course.language == 'fr' }}/><label for="lan_fr">French</label>
-            <input type="radio" name="language" value="en" id="lan_en" {{ "checked=''" if course and course.language == 'en' }}/><label for="lan_en">English</label>
+            <input type="radio" name="language" value="fr" id="lan_fr"
+              {{ "checked=''" if course and course.language == 'fr' }}/><label for="lan_fr">French</label>
+            <input type="radio" name="language" value="en" id="lan_en"
+              {{ "checked=''" if course and course.language == 'en' }}/><label for="lan_en">English</label>
           </td>
         </tr>
       </table>
@@ -58,55 +86,57 @@
       <span class="label">4. Instructor(s)</span> <br/>
       <table>
       <tr>
+        {% for i in range(1, 5) %}
         <td>
-          <select name="instructor1" required="required" disabled="disabled">
+          <select name="instructor{{ i }}" id="instructor{{ i }}">
+          {% for instructor in instructors %}
+            <option value="{{ instructor[0] }}">{{ instructor[1] }}</option>
+          {% endfor %}
           </select>
+          <script type="text/javascript">
+            var instr_list = document.getElementById("instructor{{ i }}");
+            for (var i = 0; i < instr_list.length; i++) {
+              if (instr_list.options[i].value == "{{ instr_values[i-1] }}")
+                instr_list.options[i].selected = "selected";
+            }
+          </script>
         </td>
-        <td>
-          <select name="instructor2" disabled="disabled">
-          </select>
-        </td>
-        <td>
-          <select name="instructor3" disabled="disabled">
-          </select>
-        </td>
-        <td>
-          <select name="instructor4" disabled="disabled">
-          </select>
-        </td>
+        {% endfor %}
       </tr>
       </table>
     </div>
     
     <div class="region" id="reg_section">
       <span class="label">5. Section</span> <br/>
-      <div class="block_region">
-        <input type="checkbox" name="sec_sin" id="sec_sin" disabled="disabled"/> <label for="sec_sin">SIN</label>
-        <input type="checkbox" name="sec_ssc" id="sec_ssc" disabled="disabled"/> <label for="sec_ssc">SSC</label>
+      <div class="block_region" style="vertical-align: middle;">
+        <input type="checkbox" name="sec_in" id="sec_in" {{ "checked=''" if sec_in }}/> <label for="sec_in">IN</label>
+        <input type="checkbox" name="sec_sc" id="sec_sc" {{ "checked=''" if sec_sc }}/> <label for="sec_sc">SC</label>
       </div>
-      <input type="checkbox" name="sec_other" id="sec_other" disabled="disabled"/> <label for="sec_other">Other</label>
+      <span style="vertical-align: middle;">Other:</span>
+      <input type="text" name="sec_other" id="sec_other" value="{{ sec_other }}"
+        placeholder="e.g.: EDIC, EL, MA, MX, PH, SV"/>
     </div>
     
     <div class="region" id="reg_credits">
       <span class="label">6. Credits</span> <br/>
       <div class="block_region">
         Total ECTS:
-        <input type="number" name="ects_total" value="0" min="1" disabled="disabled" />
+        <input type="number" name="ects_total" value="{{ course.ects_credits }}" min="0"/>
       </div>
       
       <div class="block_region">
         Lecture (cours):
-        <input type="number" name="ects_lecture" value="0" min="0" disabled="disabled"/>
+        <input type="number" name="ects_lecture" value="{{ course.course_points }}" min="0"/>
       </div>
       
       <div class="block_region">
         Recitation (exercices):
-        <input type="number" name="ects_recitation" value="0" min="0" disabled="disabled"/>
+        <input type="number" name="ects_recitation" value="{{ course.exercise_points }}" min="0"/>
       </div>
       
       <div class="block_region">
         Project:
-        <input type="number" name="ects_project" value="0" min="0" disabled="disabled"/>
+        <input type="number" name="ects_project" value="{{ course.project_points }}" min="0"/>
       </div>
     </div>
     
@@ -114,12 +144,14 @@
       <table>
       <tr>
         <td>
-          <span class="label">7a. Objectives</span> (in English, max 256 chars) <br/>
-          <textarea name="objectives_en" rows="4" required="required" maxlength="256">{{ course.objectives_en if course }}</textarea>
+          <span class="label">7a. Objectives</span> (max 256 chars) <br/>
+          <textarea name="objectives_en" rows="4" maxlength="256"
+            placeholder="in English">{{ course.objectives_en if course }}</textarea>
         </td>
         <td>
-          <span class="label">7b. Objectifs</span> (en français, max 256 caractères) <br/>
-          <textarea name="objectives_fr" rows="4" required="required" maxlength="256">{{ course.objectives_fr if course }}</textarea>
+          <span class="label">7b. Objectifs</span> (max 256 caractères) <br/>
+          <textarea name="objectives_fr" rows="4" maxlength="256"
+            placeholder="en français">{{ course.objectives_fr if course }}</textarea>
         </td>
       </tr>
       </table>
@@ -129,12 +161,14 @@
       <table>
       <tr>
         <td>
-          <span class="label">8a. Contents</span> (in English, max 512 chars) <br/>
-          <textarea name="contents_en" rows="4" required="required" maxlength="512">{{ course.contents_en if course }}</textarea>
+          <span class="label">8a. Contents</span> (max 512 chars) <br/>
+          <textarea name="contents_en" rows="4" maxlength="512"
+            placeholder="in English">{{ course.contents_en if course }}</textarea>
         </td>
         <td>
-          <span class="label">8b. Contenu</span> (en français, max 512 caractères) <br/>
-          <textarea name="contents_fr" rows="4" required="required" maxlength="512">{{ course.contents_fr if course }}</textarea>
+          <span class="label">8b. Contenu</span> (max 512 caractères) <br/>
+          <textarea name="contents_fr" rows="4" maxlength="512"
+            placeholder="en français">{{ course.contents_fr if course }}</textarea>
         </td>
       </tr>
       </table>
@@ -149,22 +183,22 @@
       <span class="label">10. Prerequisite course(s)</span> <br/>
       <table>
         <tr>
+          {% for i in range(1, 5) %}
           <td>
-            <select name="prereq1" disabled="disabled">
+            <select name="prereq{{ i }}" id="prereq{{ i }}">
+            {% for prereq in prerequisites %}
+              <option value="{{ prereq[0] }}">{{ prereq[1] }}</option>
+            {% endfor %}
             </select>
+            <script type="text/javascript">
+              var prereq_list = document.getElementById("prereq{{ i }}");
+              for (var i = 0; i < prereq_list.length; i++) {
+                if (prereq_list.options[i].value == "{{ prereq_values[i-1] }}")
+                  prereq_list.options[i].selected = "selected";
+              }
+            </script>
           </td>
-          <td>
-            <select name="prereq2" disabled="disabled">
-            </select>
-          </td>
-          <td>
-            <select name="prereq3" disabled="disabled">
-            </select>
-          </td>
-          <td>
-            <select name="prereq4" disabled="disabled">
-            </select>
-          </td>
+          {% endfor %}
         </tr>
       </table>    
     </div>
@@ -174,17 +208,26 @@
       <tr>
         <td>
           <span class="label">11. Grading method</span> <br/>
-          <select name="grading_method" required="true">
-            <option value="sem" {{ "selected=''" if course and course.grading_method == 'sem' }}>Throughout semester</option>
-            <option value="writ" {{ "selected=''" if course and course.grading_method == 'writ' }}>Written (exam period)</option>
-            <option value="oral" {{ "selected=''" if course and course.grading_method == 'oral' }}>Oral (exam period)</option>
-            <option value="sem_writ" {{ "selected=''" if course and course.grading_method == 'sem_writ' }}>Throughout semester + written (exam period)</option>
-            <option value="sem_oral" {{ "selected=''" if course and course.grading_method == 'sem_oral' }}>Throughout semester + oral (exam period)</option>
+          <select name="grading_method" id="grading_method">
+            <option value="sem">Throughout semester</option>
+            <option value="writ">Written (exam period)</option>
+            <option value="oral">Oral (exam period)</option>
+            <option value="sem_writ">Throughout semester + written (exam period)</option>
+            <option value="sem_oral">Throughout semester + oral (exam period)</option>
           </select>
+          {% if course %}
+          <script type="text/javascript">
+          	var grading_method = document.getElementById("grading_method");
+          	for (var i = 0; i < grading_method.length; i++) {
+          		if (grading_method.options[i].value == "{{ course.grading_method }}")
+          			grading_method.options[i].selected = "selected";
+          	}
+          </script>
+          {% endif %}
         </td>
         <td>
           <span class="label">12. Grading formula</span> <br/>
-          <input type="text" name="grading_formula" required="true" placeholder="project 25%, midterm 30%, final exam 45%" value="{{ course.grading_formula if course }}"/>
+          <input type="text" name="grading_formula" placeholder="project 25%, midterm 30%, final exam 45%" value="{{ course.grading_formula if course }}"/>
         </td>
       </tr>
       </table>
@@ -196,10 +239,23 @@
     </div>
 
     <div id="reg_submit" class="region">
-      <input type="button" value="Save" onclick="upload_form.submit();"/>
-      <input type="submit" value="Submit" disabled="disabled" />
+      <input type="submit" name="update_btn" value="Save" />
+      <input type="submit" name="update_btn" value="Submit" />
     </div>
     </form>
     </div>
+    {% else %}
+    <form id="create_form" action="/admin/submit" method="post" enctype="multipart/form-data">
+    Create new course description: <input type="submit" value="Create" />
+    </form>
+    
+    <div style="margin-top: 10px; margin-bottom: 10px; color: #999;">or</div>
+    
+    <form id="update_form" action="/update" method="get">
+    Update existing description:
+    <input type="text" name="course_id" placeholder="Course ID" />
+    <input type="submit" value="Update" />
+    </form>
+    {% endif %}
   </body>
 </html>

@@ -11,6 +11,8 @@ import webapp2
 from google.appengine.api import search
 from google.appengine.ext import db
 
+import static_courses
+
 LANGUAGE_MAPPING = {
   "en": "English",
   "fr": "French"
@@ -24,48 +26,7 @@ SPECIALIZATION_MAPPING = {
 
 INDEX_NAME = 'courses-index'
 
-INSTRUCTORS = [
-  ("Anastasia", "Ailamaki", "anastasia.ailamaki@epfl.ch"),
-  ("George", "Candea", "george.candea@epfl.ch"),
-  ("Giovanni", "de Micheli", "giovanni.demicheli@epfl.ch"),
-  ("Pierre", "Dillenbourg", "pierre.dillenbourg@epfl.ch"),
-  ("Babak", "Falsafi", "babak.falsafi@epfl.ch"),
-  ("Boi", "Faltings", "boi.faltings@epfl.ch"),
-  ("Pascal", "Fua", "pascal.fua@epfl.ch"),
-  ("Wulfram", "Gerstner", "wulfram.gerstner@epfl.ch"), 
-  ("Roger", "Hersch", "rd.hersch@epfl.ch"), 
-  ("Jeffrey", "Huang", "jeffrey.huang@epfl.ch"), 
-  ("Paolo", "Ienne", "paolo.ienne@epfl.ch"), 
-  ("Christoph", "Koch", "christoph.koch@epfl.ch"), 
-  ("Bernard", "Moret", "bernard.moret@epfl.ch"), 
-  ("Martin", "Odersky", "martin.odersky@epfl.ch"), 
-  ("Mark", "Pauly", "mark.pauly@epfl.ch"), 
-  ("Claude", "Petitpierre", "claude.petitpierre@epfl.ch"), 
-  ("Ronan", "Boulic", "ronan.boulic@epfl.ch"), 
-  ("Christina", "Fragouli", "christina.fragouli@epfl.ch"), 
-  ("Dejan", "Kostic", "dejan.kostic@epfl.ch"), 
-  ("Viktor", "Kuncak", "viktor.kuncak@epfl.ch"), 
-  ("Pearl", "Pu Faltings", "pearl.pu@epfl.ch"), 
-  ("Martin", "Rajman", "martin.rajman@epfl.ch"), 
-  ("Matthias", "Seeger", "matthias.seeger@epfl.ch"), 
-  ("Philippe", "Janson", "philippe.janson@epfl.ch"), 
-  ("Christian", "Piguet", "christian.piguet@epfl.ch"), 
-  ("Eduardo", "Sanchez", "eduardo.sanchez@epfl.ch"), 
-  ("Manuel", "Acevedo", "manuel.acevedo@epfl.ch"), 
-  ("René", "Beuchat", "rene.beuchat@epfl.ch"), 
-  ("Jean-Cédric", "Chappelier", "jean-cedric.chappelier@epfl.ch"), 
-  ("Jean-Luc", "Desbiolles", "jean-luc.desbiolles@epfl.ch"), 
-  ("Patrick", "Jermann", "patrick.jermann@epfl.ch"), 
-  ("Ties", "Kluter", "ties.kluter@epfl.ch"), 
-  ("Hendrik Ole", "Knoche", "hendrik.knoche@epfl.ch"), 
-  ("Marc", "Lecoultre", "marc.lecoultre@epfl.ch"), 
-  ("Vincent", "Lepetit", "vincent.lepetit@epfl.ch"), 
-  ("Thomas", "Lochmatter", "thomas.lochmatter@epfl.ch"), 
-  ("Jean-Philippe", "Pellet", "jean-philippe.pellet@epfl.ch"), 
-  ("Pierre-Yves", "Rochat", "pierre-yves.rochat@epfl.ch"), 
-  ("Jamila", "Sam", "jamila.sam@epfl.ch"), 
-  ("Michel", "Schinz", "michel.schinz@epfl.ch")
-]
+
 
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -109,6 +70,8 @@ class CourseDescription(db.Model):
   grading_formula = db.StringProperty()
   
   notes = db.StringProperty()
+  
+  submitted_ = db.BooleanProperty()
 
 
 class CatalogPage(webapp2.RequestHandler):
@@ -238,42 +201,123 @@ class SubmitCourseDescription(webapp2.RequestHandler):
     if course_id:
       course_desc = db.get(course_id)
     else:
-      course_desc = CourseDescription()
+      course_desc = CourseDescription(submitted_=False)
+    
+    # Submission state
+    course_desc.submitted_ = (self.request.POST.get("update_btn") == "Submit")
       
-    course_desc.title_en = self.request.POST.get("title_en")
-    course_desc.title_fr = self.request.POST.get("title_fr")
+    # Course title
+    course_desc.title_en = self.request.POST.get("title_en", "")
+    course_desc.title_fr = self.request.POST.get("title_fr", "")
     
-    course_desc.homepage = self.request.POST.get("url")
+    # Course URL
+    course_desc.homepage = self.request.POST.get("url", "http://")
     
-    course_desc.language = self.request.POST.get("language") 
+    # Language
+    course_desc.language = self.request.POST.get("language", "") 
+    
+    # Instructors
+    instructors = []
+    for i in range(1, 5):
+      instructor = self.request.POST.get("instructor%d" % i, "none")
+      if instructor != "none":
+        instructors.append(instructor)
+    course_desc.instructors = instructors
+    
+    # Sections
+    sections = set()
+    if self.request.POST.get("sec_in"):
+      sections.add("IN")
+    if self.request.POST.get("sec_sc"):
+      sections.add("SC")
+    other_sections = self.request.POST.get("sec_other")
+    if other_sections:
+      for section in other_sections.split(","):
+        sections.add(section.strip().upper())
+    
+    course_desc.sections = list(sections)
 
-    course_desc.objectives_en = self.request.POST.get("objectives_en")
-    course_desc.objectives_fr = self.request.POST.get("objectives_fr")
+    # Credits
+    course_desc.ects_credits = int(self.request.POST.get("ects_total", "0"))
+    course_desc.course_points = int(self.request.POST.get("ects_lecture", "0"))
+    course_desc.exercise_points = int(self.request.POST.get("ects_recitation", "0"))
+    course_desc.project_points = int(self.request.POST.get("ects_project", "0"))
+
+    # Objectives
+    course_desc.objectives_en = self.request.POST.get("objectives_en", "")
+    course_desc.objectives_fr = self.request.POST.get("objectives_fr", "")
     
-    course_desc.contents_en = self.request.POST.get("contents_en")
-    course_desc.contents_fr = self.request.POST.get("contents_fr")
+    # Contents
+    course_desc.contents_en = self.request.POST.get("contents_en", "")
+    course_desc.contents_fr = self.request.POST.get("contents_fr", "")
     
-    course_desc.bibliography = self.request.POST.get("bibliography")
+    # Bibliography
+    course_desc.bibliography = self.request.POST.get("bibliography", "")
     
-    course_desc.grading_method = self.request.POST.get("grading_method")
-    course_desc.grading_formula = self.request.POST.get("grading_formula")
-    course_desc.notes = self.request.POST.get("notes")
+    # Prerequisites
+    prerequisites = []
+    for i in range(1, 5):
+      prereq = self.request.POST.get("prereq%d" % i, "none")
+      if prereq != "none":
+        prerequisites.append(prereq)
+    course_desc.prerequisites = prerequisites
+    
+    # Grading method & formula
+    course_desc.grading_method = self.request.POST.get("grading_method", "")
+    course_desc.grading_formula = self.request.POST.get("grading_formula", "")
+    
+    # Notes
+    course_desc.notes = self.request.POST.get("notes", "")
     
     course_desc.put()
     
-    self.redirect('/update?course_id=%s' % course_desc.key())
+    self.redirect('/update?course_id=%s&saved=1' % course_desc.key())
       
 
 class CourseDescriptionPage(webapp2.RequestHandler):
   def get(self):
     course_id = self.request.get("course_id")
+    saved_flag = self.request.get("saved")
     course = None
     
     if course_id:
       course = db.get(course_id)
+      
+    instr_list = [("none", "None")]
+    instr_list.extend([(inst[2], ", ".join([inst[1], inst[0]]).decode("utf-8"))
+                      for inst in sorted(static_courses.INSTRUCTORS,
+                                        key=lambda inst: inst[1].lower())])
+    
+    prereq_list = [("none", "None")]
+    prereq_list.extend([(prereq[0].lower(),
+                         " ".join([prereq[0], prereq[1]]).decode("utf-8"))
+                        for prereq in static_courses.PREREQUISITES])
+      
+    template_args = {
+      'course': course,
+      'saved': saved_flag,
+      'instructors': instr_list,
+      'prerequisites': prereq_list,
+      
+      'instr_values': ['none', 'none', 'none', 'none'],
+      
+      'prereq_values': ['none', 'none', 'none', 'none'],
+      
+      'sec_in': 'IN' in course.sections if course else None,
+      'sec_sc': 'SC' in course.sections if course else None,
+      'sec_other': ', '.join(filter(lambda sec: sec not in ['IN', 'SC'],
+                                     course.sections)) if course else None
+    }
+    
+    if course:
+      for i in range(len(course.instructors)):
+        template_args["instr_values"][i] = course.instructors[i]
+      
+      for i in range(len(course.prerequisites)):
+        template_args['prereq_values'][i] = course.prerequisites[i]
     
     template = jinja_environment.get_template('coursedesc.html')
-    self.response.out.write(template.render(course=course))
+    self.response.out.write(template.render(template_args))
 
 
 app = webapp2.WSGIApplication([
@@ -282,6 +326,6 @@ app = webapp2.WSGIApplication([
    webapp2.Route('/c/<course_key>', handler=CoursePage, name='course'),
    webapp2.Route('/ajax/courses', handler=AjaxCourses, name='ajax_course'),
    webapp2.Route('/admin/search', handler=BuildSearchIndex, name='search_index'),
-   webapp2.Route('/admin/submitcourse', handler=SubmitCourseDescription, name='submit_course'),
+   webapp2.Route('/admin/submit', handler=SubmitCourseDescription, name='submit_course'),
    webapp2.Route('/update', handler=CourseDescriptionPage, name='csp')], debug=True)
 

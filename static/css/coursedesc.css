@@ -79,6 +79,10 @@ table {
 	margin-right: 15px;
 }
 
+#reg_section input[type=text] {
+	width: 250px;
+}
+
 #reg_credits input {
 	width: 50px;
 }
