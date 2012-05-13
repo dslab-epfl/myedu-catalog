@@ -13,6 +13,7 @@ import static_courses
 authenticated = base_handler.BaseCourseDescriptionHandler.authenticated
 
 jinja_environment = jinja2.Environment(
+    autoescape=True,
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class CourseDescription(db.Model):
