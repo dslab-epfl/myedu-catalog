@@ -239,9 +239,9 @@ class SubmitCourseDescription(webapp2.RequestHandler):
 
     # Credits
     course_desc.ects_credits = int(self.request.POST.get("ects_total", "2"))
-    course_desc.course_points = int(self.request.POST.get("ects_lecture", "0"))
-    course_desc.exercise_points = int(self.request.POST.get("ects_recitation", "0"))
-    course_desc.project_points = int(self.request.POST.get("ects_project", "0"))
+    course_desc.course_points = int(self.request.POST.get("ects_lecture", "0h")[0:1])
+    course_desc.exercise_points = int(self.request.POST.get("ects_recitation", "0h")[0:1])
+    course_desc.project_points = int(self.request.POST.get("ects_project", "0h")[0:1])
 
     # Objectives
     course_desc.objectives_en = self.request.POST.get("objectives_en", "")

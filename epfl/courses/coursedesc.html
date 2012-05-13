@@ -37,22 +37,40 @@
   </head>
   <body>
     <h1>2012-2013 Course Description</h1>
-    <h2>Please use this form to provide the description of a new course,
-    or to modify the description of an existing course.</h2>
+    {% if course %}
+    <div style="float:right; border: solid #333 1px; padding: 3px 10px;">
+      Course key:
+      <span style="font-weight: bold;">
+        <a href="/update?course_id={{course.key().id()}}">{{ course.key().id() }}</a>
+      </span>
+      <br/>
+      Status:
+      {% if not course.submitted_ %}
+      <span style="color: red;">in progress</span>
+      {% else %}
+      <span style="color: green;">submitted</span>
+      {% endif %}
+    </div>
+    
+    <h2>
+      Please use this form to provide the description of an existing/new course. <br/>
+      You can save intermediate results by clicking "Save" at the bottom. <br/>
+      When done, click "Submit" -- no further modifications will be possible.
+    </h2>
+    {% else %}
+    <h2>
+      Please use this form to provide the description of an existing/new course.
+      Click "Start" to begin a description. <br/> You can save intermediate results
+      and return later to continue; for this, you will need to provide a
+      system-supplied key in the "Edit" field.
+    </h2>
+    {% endif %}
     
     {% if course %}
     
     {% if saved %}
     <p style="color:green; font-weight: bold;">Course saved successfully.</p>
     {% endif %}
-    
-    <p>Course ID: <span style="font-weight: bold;"><a href="/update?course_id={{course.key().id()}}">{{ course.key().id() }}</a></span><br/>
-    {% if not course.submitted_ %}
-    <span style="font-weight: bold; color: red;">The course changes have not been yet submitted.</span>
-    {% else %}
-    <span style="font-weight: bold;">The course is submitted and can no longer be updated.</span>
-    {% endif %}
-    </p>
     
     {% macro readonly(disable_=False) -%}
     {% if disable_ %}
@@ -91,14 +109,15 @@
     <div class="region" id="reg_url">
       <table>
         <tr>
-          <td style="width: 75%;">
+          <td style="width: 50%;">
             <span class="label">2. Course homepage</span> <br/>
             <input type="text" name="url" value="{{ course.homepage if course else 'http://' }}" {{ readonly() }}/>
           </td>
-          <td style="width: 25%;">
+          <td style="width: 50%; text-align: center;">
             <span class="label">3. Language</span> <br/>
             <input type="radio" name="language" value="fr" id="lan_fr"
               {{ "checked=''" if course and course.language == 'fr' }} {{ readonly(True) }} /><label for="lan_fr">French</label>
+            <span style="display: inline-block; width: 1em;"></span>
             <input type="radio" name="language" value="en" id="lan_en"
               {{ "checked=''" if course and course.language == 'en' }} {{ readonly(True) }} /><label for="lan_en">English</label>
           </td>
@@ -119,6 +138,7 @@
           {% endfor %}
           </select>
           <script type="text/javascript">
+          	document.getElementById("instructor1").options[0].innerHTML = "Choose";
           	preSelectOptions(document.getElementById("instructor{{ i }}"),
           			"{{ instr_values[i-1] }}");
           </script>
@@ -159,42 +179,42 @@
       <div class="block_region">
         Lecture (cours):
         <select name="ects_lecture" id="ects_lecture" {{ readonly(True) }}>
-          <option>0</option>
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-        </select>h
+          <option>0h</option>
+          <option>1h</option>
+          <option>2h</option>
+          <option>3h</option>
+          <option>4h</option>
+        </select>
         <script type="text/javascript">
-          preSelectOptions(document.getElementById("ects_lecture"), "{{ course.course_points }}");
+          preSelectOptions(document.getElementById("ects_lecture"), "{{ course.course_points }}h");
         </script>
       </div>
       
       <div class="block_region">
         Recitation (exercices):
         <select name="ects_recitation" id="ects_recitation" {{ readonly(True) }}>
-          <option>0</option>
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-        </select>h
+          <option>0h</option>
+          <option>1h</option>
+          <option>2h</option>
+          <option>3h</option>
+          <option>4h</option>
+        </select>
         <script type="text/javascript">
-          preSelectOptions(document.getElementById("ects_recitation"), "{{ course.exercise_points }}");
+          preSelectOptions(document.getElementById("ects_recitation"), "{{ course.exercise_points }}h");
         </script>
       </div>
       
       <div class="block_region">
         Project:
         <select name="ects_project" id="ects_project" {{ readonly(True) }}>
-          <option>0</option>
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-        </select>h
+          <option>0h</option>
+          <option>1h</option>
+          <option>2h</option>
+          <option>3h</option>
+          <option>4h</option>
+        </select>
         <script type="text/javascript">
-          preSelectOptions(document.getElementById("ects_project"), "{{ course.project_points }}");
+          preSelectOptions(document.getElementById("ects_project"), "{{ course.project_points }}h");
         </script>
       </div>
     </div>
@@ -205,7 +225,7 @@
         <td>
           <span class="label">7a. Objectives</span> <br/>
           <textarea name="objectives_en" rows="4" maxlength="256" id="objectives_en"
-            placeholder="in English (max 256 chars)" {{ readonly() }}>{{ course.objectives_en if course }}</textarea>
+            placeholder="in English (max 256 characters)" {{ readonly() }}>{{ course.objectives_en if course }}</textarea>
         </td>
         <td>
           <span class="label">7b. Objectifs</span> <br/>
@@ -221,12 +241,12 @@
       <tr>
         <td>
           <span class="label">8a. Contents</span><br/>
-          <textarea name="contents_en" rows="4" maxlength="512" id="contents_en"
-            placeholder="in English (max 512 chars)" {{ readonly() }}>{{ course.contents_en if course }}</textarea>
+          <textarea name="contents_en" rows="8" maxlength="512" id="contents_en"
+            placeholder="in English (max 512 characters)" {{ readonly() }}>{{ course.contents_en if course }}</textarea>
         </td>
         <td>
           <span class="label">8b. Contenu</span><br/>
-          <textarea name="contents_fr" rows="4" maxlength="512" id="contents_fr"
+          <textarea name="contents_fr" rows="8" maxlength="512" id="contents_fr"
             placeholder="en français (max 512 caractères)" {{ readonly() }}>{{ course.contents_fr if course }}</textarea>
         </td>
       </tr>
@@ -264,7 +284,7 @@
         <td>
           <span class="label">11. Grading method</span> <br/>
           <select name="grading_method" id="grading_method" {{ readonly(True) }}>
-            <option value="sem">Throughout semester</option>
+            <option value="sem">Throughout semester (contrôle continu)</option>
             <option value="writ">Written (exam period)</option>
             <option value="oral">Oral (exam period)</option>
             <option value="sem_writ">Throughout semester + written (exam period)</option>
@@ -278,7 +298,7 @@
         </td>
         <td>
           <span class="label">12. Grading formula</span> <br/>
-          <input type="text" name="grading_formula" placeholder="project 25%, midterm 30%, final exam 45%" value="{{ course.grading_formula if course }}" {{ readonly() }}/>
+          <input type="text" name="grading_formula" placeholder="e.g., project 25%, midterm 30%, final exam 45%" value="{{ course.grading_formula if course }}" {{ readonly() }}/>
         </td>
       </tr>
       </table>
@@ -286,7 +306,9 @@
     
     <div class="region">
       <span class="label">13. Notes</span>
-      <textarea name="notes" rows="3" {{ readonly() }}>{{ course.notes if course }}</textarea>
+      <textarea name="notes" rows="3"
+        placeholder="use this field for any additional information that is not contained in the form"
+        {{ readonly() }}>{{ course.notes if course }}</textarea>
     </div>
 
     {% if not course.submitted_ %}
@@ -298,17 +320,21 @@
     </form>
     </div>
     {% else %}
-    <form id="create_form" action="/admin/submit" method="post" enctype="multipart/form-data">
-    Create new course description: <input type="submit" value="Create" />
-    </form>
+    <div>
+      <form id="create_form" action="/admin/submit" method="post" enctype="multipart/form-data">
+        <input type="submit" value="Start" /> Start describing a course
+      </form>
+    </div>
     
-    <div style="margin-top: 10px; margin-bottom: 10px; color: #999;">or</div>
+    <!-- <div style="margin-top: 10px; margin-bottom: 10px; color: #999;">or</div> -->
     
-    <form id="update_form" action="/update" method="get">
-    Update existing description:
-    <input type="text" name="course_id" placeholder="Course ID" />
-    <input type="submit" value="Update" />
-    </form>
+    <div style="margin-top: 10px;">
+      <form id="update_form" action="/update" method="get">
+        <input type="submit" value="Edit" />
+        <input type="text" name="course_id" placeholder="Course key" style="width: 75px;"/>
+        Edit an in-progress description, using the corresponding key
+      </form>
+    </div>
     {% endif %}
   </body>
 </html>
