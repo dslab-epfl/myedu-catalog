@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Course Not Found{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    body {
+      margin-left: 3em;
+      margin-top: 3em;
+    }
+  </style>
+{% endblock head %}
+
+{% block content %}
+<h1>Course Not Found</h1>
+  {% if course_id %}
+  <p>Course <span style="font-weight: bold;">{{ course_id }}</span> was not found in the database.</p>
+  {% else %}
+  <p>The course was not found in the database.</p>
+  {% endif %}
+{% endblock content %}

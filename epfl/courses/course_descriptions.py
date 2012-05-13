@@ -156,7 +156,7 @@ class CourseDescriptionPage(base_handler.BaseCourseDescriptionHandler):
       try:
         course_id = int(course_id)
       except ValueError:
-        course_id = None
+        return self.HandleCourseNotFound()
     
     if not self.Authenticate():
       # Save the state in order to restore it after Tequilla redirects back
@@ -174,6 +174,8 @@ class CourseDescriptionPage(base_handler.BaseCourseDescriptionHandler):
     
     if course_id:
       course = CourseDescription.get_by_id(course_id)
+      if not course:
+        return self.HandleCourseNotFound(course_id)
       
     instr_list = ["None"]
     instr_list.extend([", ".join([inst[1], inst[0]]).decode("utf-8")
@@ -211,3 +213,8 @@ class CourseDescriptionPage(base_handler.BaseCourseDescriptionHandler):
     
     template = jinja_environment.get_template('coursedesc.html')
     self.response.out.write(template.render(template_args))
+    
+  def HandleCourseNotFound(self, course_id=None):
+    self.error(400)
+    template = jinja_environment.get_template('course_not_found.html')
+    self.response.out.write(template.render(course_id=course_id))

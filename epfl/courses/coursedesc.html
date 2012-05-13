@@ -80,14 +80,14 @@
       <td>
         <span class="label">1a. Title</span><br/>
         <input type="text" name="title_en"
-          value="{{ course.title_en if course }}"
+          value="{{ course.title_en if course }}" maxlength="500"
           placeholder="in English"
           {{ readonly() }} />
       </td>
       <td>
         <span class="label">1b. Titre</span> <br/>
         <input type="text" name="title_fr"
-          value="{{ course.title_fr if course }}"
+          value="{{ course.title_fr if course }}" maxlength="500"
           placeholder="en français"
           {{ readonly() }} />
       </td>
@@ -101,15 +101,18 @@
       <tr>
         <td style="width: 50%;">
           <span class="label">2. Course homepage</span> <br/>
-          <input type="text" name="url" value="{{ course.homepage if course else 'http://' }}" {{ readonly() }}/>
+          <input type="text" name="url" maxlength="500"
+            value="{{ course.homepage if course else 'http://' }}" {{ readonly() }}/>
         </td>
         <td style="width: 50%; text-align: center;">
-          <span class="label">3. Language</span> <br/>
-          <input type="radio" name="language" value="fr" id="lan_fr"
-            {{ "checked=''" if course and course.language == 'fr' }} {{ readonly(True) }} /><label for="lan_fr">French</label>
-          <span style="display: inline-block; width: 1em;"></span>
-          <input type="radio" name="language" value="en" id="lan_en"
-            {{ "checked=''" if course and course.language == 'en' }} {{ readonly(True) }} /><label for="lan_en">English</label>
+          <div style="display: inline-block; text-align: left;">
+            <span class="label">3. Language</span> <br/>
+            <input type="radio" name="language" value="fr" id="lan_fr"
+              {{ "checked=''" if course and course.language == 'fr' }} {{ readonly(True) }} /><label for="lan_fr">French</label>
+            <span style="display: inline-block; width: 1em;"></span>
+            <input type="radio" name="language" value="en" id="lan_en"
+              {{ "checked=''" if course and course.language == 'en' }} {{ readonly(True) }} /><label for="lan_en">English</label>
+          </div>
         </td>
       </tr>
     </table>
@@ -145,7 +148,7 @@
       <input type="checkbox" name="sec_sc" id="sec_sc" {{ "checked=''" if sec_sc }} {{ readonly(True) }}/> <label for="sec_sc">SC</label>
     </div>
     <span style="vertical-align: middle;">Other:</span>
-    <input type="text" name="sec_other" id="sec_other" value="{{ sec_other }}"
+    <input type="text" name="sec_other" id="sec_other" value="{{ sec_other }}" maxlength="500"
       placeholder="e.g.: EDIC, EL, MA, MX, PH, SV" {{ readonly() }}/>
   </div>
   
@@ -220,7 +223,7 @@
       <td>
         <span class="label">7b. Objectifs</span> <br/>
         <textarea name="objectives_fr" rows="4" maxlength="256" id="objectives_fr"
-          placeholder="en français (max 256 caractres)" {{ readonly() }}>{{ course.objectives_fr if course }}</textarea>
+          placeholder="en français (max 256 caractères)" {{ readonly() }}>{{ course.objectives_fr if course }}</textarea>
       </td>
     </tr>
     </table>
@@ -237,7 +240,7 @@
       <td>
         <span class="label">8b. Contenu</span><br/>
         <textarea name="contents_fr" rows="8" maxlength="512" id="contents_fr"
-          placeholder="en français (max 512 caractres)" {{ readonly() }}>{{ course.contents_fr if course }}</textarea>
+          placeholder="en français (max 512 caractères)" {{ readonly() }}>{{ course.contents_fr if course }}</textarea>
       </td>
     </tr>
     </table>
@@ -288,7 +291,8 @@
       </td>
       <td>
         <span class="label">12. Grading formula</span> <br/>
-        <input type="text" name="grading_formula" placeholder="e.g., project 25%, midterm 30%, final exam 45%" value="{{ course.grading_formula if course }}" {{ readonly() }}/>
+        <input type="text" name="grading_formula" maxlength="500"
+          placeholder="e.g., project 25%, midterm 30%, final exam 45%" value="{{ course.grading_formula if course }}" {{ readonly() }}/>
       </td>
     </tr>
     </table>
