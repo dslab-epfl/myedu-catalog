@@ -1,3 +1,15 @@
 @import '/static/formalize/assets/css/reset.css';
 @import '/static/formalize/assets/css/text.css';
 @import '/static/formalize/assets/css/formalize.css';
+
+body {
+	text-align: center;
+}
+
+div#wrapper {
+	text-align: left;
+
+	margin: 15px auto;
+	background: #fff;
+	color: #000;
+}

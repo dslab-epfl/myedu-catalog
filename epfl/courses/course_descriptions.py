@@ -52,7 +52,7 @@ class CourseDescription(db.Model):
 
 
 class LogoutHandler(base_handler.BaseCourseDescriptionHandler):
-  logout_url = r"https://tequila.epfl.ch/cgi-bin/tequila/login"
+  logout_url = r"https://tequila.epfl.ch/cgi-bin/tequila/logout"
   
   @authenticated
   def get(self):
@@ -219,3 +219,4 @@ class CourseDescriptionPage(base_handler.BaseCourseDescriptionHandler):
     self.error(400)
     template = jinja_environment.get_template('course_not_found.html')
     self.response.out.write(template.render(course_id=course_id))
+

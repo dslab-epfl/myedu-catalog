@@ -1,10 +1,7 @@
 @import '/static/maxlength/jquery.maxlength.css';
 
-body {
+div#wrapper {
 	width: 800px;
-	margin: 15px auto;
-	background: #fff;
-  	color: #000;
 }
 
 h1 {
@@ -49,7 +46,7 @@ table {
 	padding-right: 5px;
 }
 
-#reg_url input[type=text] {
+#reg_url input {
 	width: 100%;
 }
 
@@ -76,7 +73,7 @@ table {
 	margin-right: 15px;
 }
 
-#reg_section input[type=text] {
+#reg_section input#sec_other {
 	width: 250px;
 }
 
