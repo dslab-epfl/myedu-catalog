@@ -37,8 +37,15 @@
   </head>
   <body>
     <h1>2012-2013 Course Description</h1>
-    {% if course %}
     <div style="float:right; border: solid #333 1px; padding: 3px 10px;">
+      <div>
+        <form action="/admin/logout" />
+        <span style="vertical-align: middle;">Logged in as: <span style="font-weight: bold;">{{ login }}</span></span>
+        <input type="submit" value="Logout" />
+        </form>
+      </div>
+      {% if course %} 
+      <br/>
       Course key:
       <span style="font-weight: bold;">
         <a href="/update?course_id={{course.key().id()}}">{{ course.key().id() }}</a>
@@ -50,8 +57,10 @@
       {% else %}
       <span style="color: green;">submitted</span>
       {% endif %}
+      {% endif %}
     </div>
     
+    {% if course %}
     <h2>
       Please use this form to provide the description of an existing/new course. <br/>
       You can save intermediate results by clicking "Save" at the bottom. <br/>
@@ -80,7 +89,7 @@
     {% endif %}
     {%- endmacro %}
     
-    <div id="enclose">
+    <div id="enclose" style="clear: both;" >
     <form id="upload_form" action="/admin/submit" method="post" enctype="multipart/form-data">
     <input type="hidden" name="course_id" value="{{ course.key().id() if course }}"/>
     <!-- First row -->

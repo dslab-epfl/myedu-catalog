@@ -5,11 +5,15 @@ __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 import jinja2
 import json
+import logging
 import os
 import webapp2
 
 from google.appengine.api import search
+from google.appengine.api import urlfetch
 from google.appengine.ext import db
+
+from webapp2_extras import sessions
 
 import static_courses
 
@@ -25,8 +29,6 @@ SPECIALIZATION_MAPPING = {
 }
 
 INDEX_NAME = 'courses-index'
-
-
 
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -193,8 +195,83 @@ class BuildSearchIndex(webapp2.RequestHandler):
                                                     value=", ".join(course.teachers))])
     
 
-class SubmitCourseDescription(webapp2.RequestHandler):
+################################################################################
+
+class BaseCourseDescriptionHandler(webapp2.RequestHandler):
+  tequilla_key_url = r"http://pocketcampus.epfl.ch/tequila_auth/tequila_proxy.php?app_name=MyEdu&app_url=http://myedu.pocketcampus.org/update"
+  tequilla_data_url = r"http://pocketcampus.epfl.ch/tequila_auth/tequila_proxy.php?key=%s"
+  
+  def dispatch(self):
+    self.session_store = sessions.get_store(request=self.request)
+    
+    try:
+      webapp2.RequestHandler.dispatch(self)
+    finally:
+      self.session_store.save_sessions(self.response)
+      
+  @webapp2.cached_property
+  def session(self):
+    return self.session_store.get_session()
+  
+  @classmethod
+  def GetTequillaKey(cls):
+    result = urlfetch.fetch(cls.tequilla_key_url)
+    data = json.loads(result.content)
+    return data
+  
+  @classmethod
+  def GetTequillaData(cls, key):
+    result = urlfetch.fetch(cls.tequilla_data_url % key)
+    if result.status_code != 200:
+      return None
+    data = json.loads(result.content)
+    return data
+  
+  @webapp2.cached_property
+  def user_name(self):
+    return " ".join([self.session['tequilla_attributes']["firstname"],
+                     self.session['tequilla_attributes']['name']])
+  
+  def Authenticate(self):
+    if not self.session.get('tequilla_key'):
+      # Produce the authentication redirect
+      auth_coord = self.GetTequillaKey()
+      self.session['tequilla_key'] = str(auth_coord["key"])
+      self.session['tequilla_redirect'] = str(auth_coord["redirect"])
+      
+      self.redirect(self.session['tequilla_redirect'])
+      return False
+    
+    if not self.session.get('tequilla_attributes'):
+      # Obtain authentication info
+      auth_data = self.GetTequillaData(self.session['tequilla_key'])
+      if not auth_data:
+        self.redirect(self.session['tequilla_redirect'])
+        return False
+      if auth_data["status"] != 200:
+        self.redirect(self.session['tequilla_redirect'])
+        return False
+      
+      self.session['tequilla_attributes'] = auth_data["attributes"]
+      logging.info("User authenticated: %s" % self.user_name)
+      
+      
+    return True
+
+
+class LogoutHandler(BaseCourseDescriptionHandler):
+  logout_url = r"https://tequila.epfl.ch/cgi-bin/tequila/login"
+  
+  def get(self):
+    self.session.clear()
+    self.redirect(self.logout_url)
+
+
+class SubmitCourseDescription(BaseCourseDescriptionHandler):
   def post(self):
+    if not self.Authenticate():
+      return
+    
     course_id = self.request.POST.get("course_id")
     course_desc = None
     
@@ -271,15 +348,18 @@ class SubmitCourseDescription(webapp2.RequestHandler):
     
     course_desc.put()
     
-    self.redirect('/update?course_id=%d&saved=%s' % (
-        course_desc.key().id(),
-        "1" if self.request.POST.get("update_btn") == "Save" else ""))
+    if self.request.POST.get("update_btn") == "Save":
+      self.session.add_flash("saved")
+    
+    self.redirect('/update?course_id=%d' % course_desc.key().id())
       
 
-class CourseDescriptionPage(webapp2.RequestHandler):
+class CourseDescriptionPage(BaseCourseDescriptionHandler):
   def get(self):
+    if not self.Authenticate():
+      return
+    
     course_id = self.request.get("course_id")
-    saved_flag = self.request.get("saved")
     course = None
     
     if course_id:
@@ -300,7 +380,8 @@ class CourseDescriptionPage(webapp2.RequestHandler):
       
     template_args = {
       'course': course,
-      'saved': saved_flag,
+      'login': self.user_name,
+      'saved': "saved" in self.session.get_flashes(),
       'instructors': instr_list,
       'prerequisites': prereq_list,
       
@@ -324,6 +405,10 @@ class CourseDescriptionPage(webapp2.RequestHandler):
     template = jinja_environment.get_template('coursedesc.html')
     self.response.out.write(template.render(template_args))
 
+config = {}
+config['webapp2_extras.sessions'] = {
+  'secret_key': 'our secret plan is world domination'
+}
 
 app = webapp2.WSGIApplication([
    webapp2.Route('/', handler=ShowcasePage, name='showcase'),
@@ -332,5 +417,7 @@ app = webapp2.WSGIApplication([
    webapp2.Route('/ajax/courses', handler=AjaxCourses, name='ajax_course'),
    webapp2.Route('/admin/search', handler=BuildSearchIndex, name='search_index'),
    webapp2.Route('/admin/submit', handler=SubmitCourseDescription, name='submit_course'),
-   webapp2.Route('/update', handler=CourseDescriptionPage, name='csp')], debug=True)
+   webapp2.Route('/admin/logout', handler=LogoutHandler, name='logout'),
+   webapp2.Route('/update', handler=CourseDescriptionPage, name='csp')],
+   debug=True, config=config)
 
