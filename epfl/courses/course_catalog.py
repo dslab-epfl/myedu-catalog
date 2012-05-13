@@ -199,7 +199,7 @@ class SubmitCourseDescription(webapp2.RequestHandler):
     course_desc = None
     
     if course_id:
-      course_desc = db.get(course_id)
+      course_desc = CourseDescription.get_by_id(int(course_id))
     else:
       course_desc = CourseDescription(submitted_=False)
     
@@ -271,7 +271,9 @@ class SubmitCourseDescription(webapp2.RequestHandler):
     
     course_desc.put()
     
-    self.redirect('/update?course_id=%s&saved=1' % course_desc.key())
+    self.redirect('/update?course_id=%d&saved=%s' % (
+        course_desc.key().id(),
+        "1" if self.request.POST.get("update_btn") == "Save" else ""))
       
 
 class CourseDescriptionPage(webapp2.RequestHandler):
@@ -281,7 +283,10 @@ class CourseDescriptionPage(webapp2.RequestHandler):
     course = None
     
     if course_id:
-      course = db.get(course_id)
+      try:
+        course = CourseDescription.get_by_id(int(course_id))
+      except ValueError:
+        pass
       
     instr_list = ["None"]
     instr_list.extend([", ".join([inst[1], inst[0]]).decode("utf-8")

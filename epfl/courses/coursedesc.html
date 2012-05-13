@@ -6,6 +6,8 @@
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
     <script src="/static/formalize/assets/js/jquery.formalize.js"></script>
+    
+    <script src="/static/maxlength/jquery.maxlength.js"></script>
     <script type="text/javascript">
     
       var _gaq = _gaq || [];
@@ -24,6 +26,13 @@
             sel_elem.options[i].selected = "selected";
         }
       }
+      
+      {% if not (course and course.submitted_) %}
+      $(function () { $('#objectives_en').maxlength({max: 256, feedbackText: "{r} characters remaining"}); });
+      $(function () { $('#objectives_fr').maxlength({max: 256, feedbackText: "{r} characters remaining"}); });
+      $(function () { $('#contents_en').maxlength({max: 512, feedbackText: "{r} characters remaining"}); });
+      $(function () { $('#contents_fr').maxlength({max: 512, feedbackText: "{r} characters remaining"}); });
+      {% endif %}
     </script>
   </head>
   <body>
@@ -37,17 +46,21 @@
     <p style="color:green; font-weight: bold;">Course saved successfully.</p>
     {% endif %}
     
-    <p>Course ID: <span style="font-weight: bold;"><a href="/update?course_id={{course.key()}}">{{ course.key() }}</a></span><br/>
+    <p>Course ID: <span style="font-weight: bold;"><a href="/update?course_id={{course.key().id()}}">{{ course.key().id() }}</a></span><br/>
     {% if not course.submitted_ %}
     <span style="font-weight: bold; color: red;">The course changes have not been yet submitted.</span>
     {% else %}
-    <span style="font-weight: bold;">The course is submitted. You may still update it.</span>
+    <span style="font-weight: bold;">The course is submitted and can no longer be updated.</span>
     {% endif %}
     </p>
     
+    {% macro readonly() -%}
+    {{ "disabled='disabled'" if course.submitted_ }}
+    {%- endmacro %}
+    
     <div id="enclose">
     <form id="upload_form" action="/admin/submit" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="course_id" value="{{ course.key() if course }}"/>
+    <input type="hidden" name="course_id" value="{{ course.key().id() if course }}"/>
     <!-- First row -->
     <div id="reg_titles" class="region">
       <table>
@@ -56,13 +69,15 @@
           <span class="label">1a. Title</span><br/>
           <input type="text" name="title_en"
             value="{{ course.title_en if course }}"
-            placeholder="in English"/>
+            placeholder="in English"
+            {{ readonly() }} />
         </td>
         <td>
           <span class="label">1b. Titre</span> <br/>
           <input type="text" name="title_fr"
             value="{{ course.title_fr if course }}"
-            placeholder="en français"/>
+            placeholder="en français"
+            {{ readonly() }} />
         </td>
       </tr>
       </table>
@@ -74,14 +89,14 @@
         <tr>
           <td style="width: 75%;">
             <span class="label">2. Course homepage</span> <br/>
-            <input type="text" name="url" value="{{ course.homepage if course else 'http://' }}" />
+            <input type="text" name="url" value="{{ course.homepage if course else 'http://' }}" {{ readonly() }}/>
           </td>
           <td style="width: 25%;">
             <span class="label">3. Language</span> <br/>
             <input type="radio" name="language" value="fr" id="lan_fr"
-              {{ "checked=''" if course and course.language == 'fr' }}/><label for="lan_fr">French</label>
+              {{ "checked=''" if course and course.language == 'fr' }} {{ readonly() }} /><label for="lan_fr">French</label>
             <input type="radio" name="language" value="en" id="lan_en"
-              {{ "checked=''" if course and course.language == 'en' }}/><label for="lan_en">English</label>
+              {{ "checked=''" if course and course.language == 'en' }} {{ readonly() }} /><label for="lan_en">English</label>
           </td>
         </tr>
       </table>
@@ -94,7 +109,7 @@
       <tr>
         {% for i in range(1, 5) %}
         <td>
-          <select name="instructor{{ i }}" id="instructor{{ i }}">
+          <select name="instructor{{ i }}" id="instructor{{ i }}" {{ readonly() }}>
           {% for instructor in instructors %}
             <option value="{{ instructor }}">{{ instructor }}</option>
           {% endfor %}
@@ -112,19 +127,19 @@
     <div class="region" id="reg_section">
       <span class="label">5. Section</span> <br/>
       <div class="block_region" style="vertical-align: middle;">
-        <input type="checkbox" name="sec_in" id="sec_in" {{ "checked=''" if sec_in }}/> <label for="sec_in">IN</label>
-        <input type="checkbox" name="sec_sc" id="sec_sc" {{ "checked=''" if sec_sc }}/> <label for="sec_sc">SC</label>
+        <input type="checkbox" name="sec_in" id="sec_in" {{ "checked=''" if sec_in }} {{ readonly() }}/> <label for="sec_in">IN</label>
+        <input type="checkbox" name="sec_sc" id="sec_sc" {{ "checked=''" if sec_sc }} {{ readonly() }}/> <label for="sec_sc">SC</label>
       </div>
       <span style="vertical-align: middle;">Other:</span>
       <input type="text" name="sec_other" id="sec_other" value="{{ sec_other }}"
-        placeholder="e.g.: EDIC, EL, MA, MX, PH, SV"/>
+        placeholder="e.g.: EDIC, EL, MA, MX, PH, SV" {{ readonly() }}/>
     </div>
     
     <div class="region" id="reg_credits">
       <span class="label">6. Credits</span> <br/>
       <div class="block_region">
         Total ECTS:
-        <select name="ects_total" id="ects_total">
+        <select name="ects_total" id="ects_total" {{ readonly() }}>
           <option>2</option>
           <option>3</option>
           <option>4</option>
@@ -139,7 +154,7 @@
       
       <div class="block_region">
         Lecture (cours):
-        <select name="ects_lecture" id="ects_lecture">
+        <select name="ects_lecture" id="ects_lecture" {{ readonly() }}>
           <option>0</option>
           <option>1</option>
           <option>2</option>
@@ -153,7 +168,7 @@
       
       <div class="block_region">
         Recitation (exercices):
-        <select name="ects_recitation" id="ects_recitation">
+        <select name="ects_recitation" id="ects_recitation" {{ readonly() }}>
           <option>0</option>
           <option>1</option>
           <option>2</option>
@@ -167,7 +182,7 @@
       
       <div class="block_region">
         Project:
-        <select name="ects_project" id="ects_project">
+        <select name="ects_project" id="ects_project" {{ readonly() }}>
           <option>0</option>
           <option>1</option>
           <option>2</option>
@@ -184,14 +199,14 @@
       <table>
       <tr>
         <td>
-          <span class="label">7a. Objectives</span> (max 256 chars) <br/>
-          <textarea name="objectives_en" rows="4" maxlength="256"
-            placeholder="in English">{{ course.objectives_en if course }}</textarea>
+          <span class="label">7a. Objectives</span> <br/>
+          <textarea name="objectives_en" rows="4" maxlength="256" id="objectives_en"
+            placeholder="in English (max 256 chars)" {{ readonly() }}>{{ course.objectives_en if course }}</textarea>
         </td>
         <td>
-          <span class="label">7b. Objectifs</span> (max 256 caractères) <br/>
-          <textarea name="objectives_fr" rows="4" maxlength="256"
-            placeholder="en français">{{ course.objectives_fr if course }}</textarea>
+          <span class="label">7b. Objectifs</span> <br/>
+          <textarea name="objectives_fr" rows="4" maxlength="256" id="objectives_fr"
+            placeholder="en français (max 256 caractères)" {{ readonly() }}>{{ course.objectives_fr if course }}</textarea>
         </td>
       </tr>
       </table>
@@ -201,14 +216,14 @@
       <table>
       <tr>
         <td>
-          <span class="label">8a. Contents</span> (max 512 chars) <br/>
-          <textarea name="contents_en" rows="4" maxlength="512"
-            placeholder="in English">{{ course.contents_en if course }}</textarea>
+          <span class="label">8a. Contents</span><br/>
+          <textarea name="contents_en" rows="4" maxlength="512" id="contents_en"
+            placeholder="in English (max 512 chars)" {{ readonly() }}>{{ course.contents_en if course }}</textarea>
         </td>
         <td>
-          <span class="label">8b. Contenu</span> (max 512 caractères) <br/>
-          <textarea name="contents_fr" rows="4" maxlength="512"
-            placeholder="en français">{{ course.contents_fr if course }}</textarea>
+          <span class="label">8b. Contenu</span><br/>
+          <textarea name="contents_fr" rows="4" maxlength="512" id="contents_fr"
+            placeholder="en français (max 512 caractères)" {{ readonly() }}>{{ course.contents_fr if course }}</textarea>
         </td>
       </tr>
       </table>
@@ -216,7 +231,7 @@
     
     <div class="region">
       <span class="label">9. Bibliography</span> <br/>
-      <textarea name="bibliography" rows="3">{{ course.bibliography if course }}</textarea>
+      <textarea name="bibliography" rows="3" {{ readonly() }}>{{ course.bibliography if course }}</textarea>
     </div>
     
     <div class="region" id="reg_prereq">
@@ -225,7 +240,7 @@
         <tr>
           {% for i in range(1, 5) %}
           <td>
-            <select name="prereq{{ i }}" id="prereq{{ i }}">
+            <select name="prereq{{ i }}" id="prereq{{ i }}" {{ readonly() }}>
             {% for prereq in prerequisites %}
               <option value="{{ prereq[0] }}">{{ prereq[1] }}</option>
             {% endfor %}
@@ -244,7 +259,7 @@
       <tr>
         <td>
           <span class="label">11. Grading method</span> <br/>
-          <select name="grading_method" id="grading_method">
+          <select name="grading_method" id="grading_method" {{ readonly() }}>
             <option value="sem">Throughout semester</option>
             <option value="writ">Written (exam period)</option>
             <option value="oral">Oral (exam period)</option>
@@ -259,7 +274,7 @@
         </td>
         <td>
           <span class="label">12. Grading formula</span> <br/>
-          <input type="text" name="grading_formula" placeholder="project 25%, midterm 30%, final exam 45%" value="{{ course.grading_formula if course }}"/>
+          <input type="text" name="grading_formula" placeholder="project 25%, midterm 30%, final exam 45%" value="{{ course.grading_formula if course }}" {{ readonly() }}/>
         </td>
       </tr>
       </table>
@@ -267,13 +282,15 @@
     
     <div class="region">
       <span class="label">13. Notes</span>
-      <textarea name="notes" rows="3">{{ course.notes if course }}</textarea>
+      <textarea name="notes" rows="3" {{ readonly() }}>{{ course.notes if course }}</textarea>
     </div>
 
+    {% if not course.submitted_ %}
     <div id="reg_submit" class="region">
       <input type="submit" name="update_btn" value="Save" />
       <input type="submit" name="update_btn" value="Submit" />
     </div>
+    {% endif %}
     </form>
     </div>
     {% else %}

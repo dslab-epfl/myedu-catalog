@@ -2,6 +2,8 @@
 @import '/static/formalize/assets/css/text.css';
 @import '/static/formalize/assets/css/formalize.css';
 
+@import '/static/maxlength/jquery.maxlength.css';
+
 body {
 	width: 800px;
 	margin: 15px auto;

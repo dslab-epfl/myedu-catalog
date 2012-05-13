@@ -204,7 +204,7 @@ input[type="text"][disabled],
 input[type="time"][disabled],
 input[type="url"][disabled],
 input[type="week"][disabled] {
-  background-color: #eeeeee;
+  background-color: #fafafa;
 }
 
 button[disabled],
@@ -221,7 +221,7 @@ textarea[disabled] {
   -webkit-user-select: none;
   -khtml-user-select: none;
   user-select: none;
-  color: #888888;
+  color: #222222;
   cursor: default;
 }
 
