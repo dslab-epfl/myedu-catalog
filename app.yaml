@@ -9,7 +9,7 @@ handlers:
   static_dir: static
 
 - url: /.*
-  script: epfl.courses.course_catalog.app
+  script: epfl.courses.main.app
 
 builtins:
 - remote_api: on

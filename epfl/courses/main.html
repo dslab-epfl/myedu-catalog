@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}EPFL MyEdu{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    body {
+      width: 1024px;
+      margin-left: auto;
+      margin-right: auto;
+      
+      text-align: center;
+      padding-top: 20px;
+    }
+  </style>
+{% endblock head %}
+
+{% block content %}
+<h1>EPFL MyEdu</h1>
+
+<p>Access the <a href="/update">course description form</a>.</p>
+{% endblock content %}

@@ -1,0 +1,40 @@
+<html>
+  <head>
+    {% block head %}
+    <title>{% block title %} {% endblock %}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="/static/css/common.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+    <script type="text/javascript">
+    
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-373800-15']);
+      _gaq.push(['_trackPageview']);
+    
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    {% endblock head %}
+  </head>
+  <body>
+    <div id="body">
+      <div id="content">
+        {% block content %}
+        {% endblock %}
+      </div>
+      <div id="footer" style="color: #777; text-align: center; margin-top: 10px; padding-bottom: 10px;">
+        {% block footer %}
+        {% if login is defined %}
+        <form action="/admin/logout" />
+          <span style="vertical-align: middle;">Logged in as: <span style="font-weight: bold;">{{ login }}</span></span>
+          <input type="submit" value="Logout" />
+        </form>
+        {% endif %}
+        {% endblock %}
+      </div>
+    </div>
+  </body>
+</html>

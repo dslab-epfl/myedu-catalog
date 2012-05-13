@@ -1,7 +1,3 @@
-@import '/static/formalize/assets/css/reset.css';
-@import '/static/formalize/assets/css/text.css';
-@import '/static/formalize/assets/css/formalize.css';
-
 @import '/static/maxlength/jquery.maxlength.css';
 
 body {
@@ -36,7 +32,6 @@ table {
 
 #enclose {
 	padding-top: 15px;
-	padding-bottom: 30px;
 }
 
 .region {

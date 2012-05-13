@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""Static data about instructors and courses."""
+
+__author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
+
 INSTRUCTORS = [
   ("Anastasia", "Ailamaki", "anastasia.ailamaki@epfl.ch"),
   ("George", "Candea", "george.candea@epfl.ch"),
