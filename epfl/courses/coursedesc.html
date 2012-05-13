@@ -54,8 +54,12 @@
     {% endif %}
     </p>
     
-    {% macro readonly() -%}
+    {% macro readonly(disable_=False) -%}
+    {% if disable_ %}
     {{ "disabled='disabled'" if course.submitted_ }}
+    {% else %}
+    {{ "readonly='readonly'" if course.submitted_ }}
+    {% endif %}
     {%- endmacro %}
     
     <div id="enclose">
@@ -94,9 +98,9 @@
           <td style="width: 25%;">
             <span class="label">3. Language</span> <br/>
             <input type="radio" name="language" value="fr" id="lan_fr"
-              {{ "checked=''" if course and course.language == 'fr' }} {{ readonly() }} /><label for="lan_fr">French</label>
+              {{ "checked=''" if course and course.language == 'fr' }} {{ readonly(True) }} /><label for="lan_fr">French</label>
             <input type="radio" name="language" value="en" id="lan_en"
-              {{ "checked=''" if course and course.language == 'en' }} {{ readonly() }} /><label for="lan_en">English</label>
+              {{ "checked=''" if course and course.language == 'en' }} {{ readonly(True) }} /><label for="lan_en">English</label>
           </td>
         </tr>
       </table>
@@ -109,7 +113,7 @@
       <tr>
         {% for i in range(1, 5) %}
         <td>
-          <select name="instructor{{ i }}" id="instructor{{ i }}" {{ readonly() }}>
+          <select name="instructor{{ i }}" id="instructor{{ i }}" {{ readonly(True) }}>
           {% for instructor in instructors %}
             <option value="{{ instructor }}">{{ instructor }}</option>
           {% endfor %}
@@ -127,8 +131,8 @@
     <div class="region" id="reg_section">
       <span class="label">5. Section</span> <br/>
       <div class="block_region" style="vertical-align: middle;">
-        <input type="checkbox" name="sec_in" id="sec_in" {{ "checked=''" if sec_in }} {{ readonly() }}/> <label for="sec_in">IN</label>
-        <input type="checkbox" name="sec_sc" id="sec_sc" {{ "checked=''" if sec_sc }} {{ readonly() }}/> <label for="sec_sc">SC</label>
+        <input type="checkbox" name="sec_in" id="sec_in" {{ "checked=''" if sec_in }} {{ readonly(True) }}/> <label for="sec_in">IN</label>
+        <input type="checkbox" name="sec_sc" id="sec_sc" {{ "checked=''" if sec_sc }} {{ readonly(True) }}/> <label for="sec_sc">SC</label>
       </div>
       <span style="vertical-align: middle;">Other:</span>
       <input type="text" name="sec_other" id="sec_other" value="{{ sec_other }}"
@@ -139,7 +143,7 @@
       <span class="label">6. Credits</span> <br/>
       <div class="block_region">
         Total ECTS:
-        <select name="ects_total" id="ects_total" {{ readonly() }}>
+        <select name="ects_total" id="ects_total" {{ readonly(True) }}>
           <option>2</option>
           <option>3</option>
           <option>4</option>
@@ -154,7 +158,7 @@
       
       <div class="block_region">
         Lecture (cours):
-        <select name="ects_lecture" id="ects_lecture" {{ readonly() }}>
+        <select name="ects_lecture" id="ects_lecture" {{ readonly(True) }}>
           <option>0</option>
           <option>1</option>
           <option>2</option>
@@ -168,7 +172,7 @@
       
       <div class="block_region">
         Recitation (exercices):
-        <select name="ects_recitation" id="ects_recitation" {{ readonly() }}>
+        <select name="ects_recitation" id="ects_recitation" {{ readonly(True) }}>
           <option>0</option>
           <option>1</option>
           <option>2</option>
@@ -182,7 +186,7 @@
       
       <div class="block_region">
         Project:
-        <select name="ects_project" id="ects_project" {{ readonly() }}>
+        <select name="ects_project" id="ects_project" {{ readonly(True) }}>
           <option>0</option>
           <option>1</option>
           <option>2</option>
@@ -240,7 +244,7 @@
         <tr>
           {% for i in range(1, 5) %}
           <td>
-            <select name="prereq{{ i }}" id="prereq{{ i }}" {{ readonly() }}>
+            <select name="prereq{{ i }}" id="prereq{{ i }}" {{ readonly(True) }}>
             {% for prereq in prerequisites %}
               <option value="{{ prereq[0] }}">{{ prereq[1] }}</option>
             {% endfor %}
@@ -259,7 +263,7 @@
       <tr>
         <td>
           <span class="label">11. Grading method</span> <br/>
-          <select name="grading_method" id="grading_method" {{ readonly() }}>
+          <select name="grading_method" id="grading_method" {{ readonly(True) }}>
             <option value="sem">Throughout semester</option>
             <option value="writ">Written (exam period)</option>
             <option value="oral">Oral (exam period)</option>
