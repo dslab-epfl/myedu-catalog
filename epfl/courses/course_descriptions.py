@@ -49,6 +49,10 @@ class CourseDescription(db.Model):
   
   submitted_ = db.BooleanProperty()
   in_progress_ = db.BooleanProperty()
+  
+  created_time_ = db.DateTimeProperty(auto_now_add=True)
+  last_modified_time_ = db.DateTimeProperty(auto_now=True)
+  last_modified_by_ = db.TextProperty()
 
 
 class LogoutHandler(base_handler.BaseCourseDescriptionHandler):
@@ -79,6 +83,9 @@ class SubmitCourseDescription(base_handler.BaseCourseDescriptionHandler):
       course_desc.submitted_ = True
     if self.request.POST.get("update_btn") == "Save":
       course_desc.in_progress_ = True
+      
+    # Author of modifications
+    course_desc.last_modified_by_ = self.user_name
     
     course_desc.put()
     
@@ -151,6 +158,8 @@ class SubmitCourseDescription(base_handler.BaseCourseDescriptionHandler):
 
 class CourseDescriptionPage(base_handler.BaseCourseDescriptionHandler):
   def get(self):
+    """Authentication is done explicitly, inside the handler."""
+    
     course = None
     course_id = self.request.get('course_id')
     if course_id:

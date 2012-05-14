@@ -42,10 +42,19 @@ class BaseCourseDescriptionHandler(webapp2.RequestHandler):
     data = json.loads(result.content)
     return data
   
+  def _ParseTequillaNameField(self, field):
+    return field.split(",", 1)[0].strip()
+  
   @webapp2.cached_property
   def user_name(self):
-    return " ".join([self.session['tequilla_attributes']["firstname"],
-                     self.session['tequilla_attributes']['name']])
+    if not self.session.get('tequilla_attributes'):
+      return None
+    
+    first_name = self.session['tequilla_attributes']['firstname']
+    last_name = self.session['tequilla_attributes']['name']
+    
+    return " ".join([self._ParseTequillaNameField(first_name),
+                     self._ParseTequillaNameField(last_name)])
     
   @classmethod
   def authenticated(cls, handler_method):
