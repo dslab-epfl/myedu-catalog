@@ -52,7 +52,7 @@
       padding-right: 5px;
     }
     
-    #reg_url input {
+    #reg_url input#url {
       width: 100%;
     }
     
@@ -227,7 +227,7 @@
       <tr>
         <td style="width: 50%;">
           <span class="label">2. Course homepage</span> <br/>
-          <input type="text" name="url" maxlength="500"
+          <input type="text" name="url" maxlength="500" id="url"
             value="{{ course.homepage if course else 'http://' }}" {{ readonly() }}/>
         </td>
         <td style="width: 50%; text-align: center;">
