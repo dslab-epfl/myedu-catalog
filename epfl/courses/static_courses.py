@@ -111,7 +111,8 @@ INSTRUCTORS_NEW = [
   ("Serge", "Vaudenay"),
   ("Martin", "Vetterli"),
   ("Alain", "Wegmann"),
-  ("Willy", "Zwaenepoel"), 
+  ("Willy", "Zwaenepoel"),
+  ("Olivier", "Lévêque"),
 ]
 
 PREREQUISITES = [

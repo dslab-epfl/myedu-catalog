@@ -12,7 +12,11 @@ from google.appengine.api import urlfetch
 
 from webapp2_extras import sessions
 
+# TODO(bucur): Split in two base classes: a base one (includes Jinja
+# configuration), and a session-based one, which offers authentication.
+
 class BaseCourseDescriptionHandler(webapp2.RequestHandler):
+  # TODO(bucur): Move into separate configuration file
   tequilla_key_url = r"http://pocketcampus.epfl.ch/tequila_auth/tequila_proxy.php?app_name=MyEdu&app_url=http://myedu.pocketcampus.org/update"
   tequilla_data_url = r"http://pocketcampus.epfl.ch/tequila_auth/tequila_proxy.php?key=%s"
   

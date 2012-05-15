@@ -1,66 +1,95 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
-  <head>
-    <title>EPFL Course Catalog</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/catalog.css"/>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <script type="text/javascript">
-    
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-373800-15']);
-      _gaq.push(['_trackPageview']);
-    
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    
-    </script>
-  </head>
-  <body>
-    <h1>EPFL Course Catalog</h1>
-    
-    <div class="search_box">
-      <form action="/" method="get">
-        <div class="search_title">Search</div>
-        <p><input id="query" type="text" name="query" /></p>
-        
-        <div class="adv_search">
-          <div class="search_title">Advanced Search</div>
-          <p>
-            Course Title: <input id="course" type="text" name="title" />
-            Teacher: <input id="teacher" type="text" name="teacher" />
-          </p>
-          <p>
-            <input id="search" type="submit" value="Search" />
-          </p>
-        </div>
-      </form>
-    </div>
-    <div class="table_title">
-    {% if is_search %}
-      Search results:
-    {% else %}
-      All courses:
-    {% endif %}
-    </div>
-    <div class="table_margins">
-      <table class="catalog">
-        <tr class="header">
-          <th></th>
-          <th>Title</th>
-          <th>Teacher(s)</th>
-        </tr>
-        {%- for course in courses %}
-        <tr>
-          <td>{{ loop.index }}</td>
-          <td><a href="/c/{{ course.key() }}">{{ course.name }}</a></td>
-          <td>{{ course.teachers|join(", ") }}</td>
-        </tr>
-        {%- endfor %}
-      </table>
-    </div>
-  </body>
-</html>
+{% extends "base.html" %}
+{% block title %}EPFL Course Catalog{% endblock %}
 
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" type="text/css" href="/static/css/catalog.css"/>
+  
+  <script type="text/javascript">
+  	$(document).ready(function() {
+  		$("#adv_search").hide();
+  		$("#adv_search_title").click(function() {
+  			$("#adv_search").slideToggle(200);
+  			$("#adv_search_title").slideToggle(200);
+  		});
+  	});
+  </script>
+{% endblock head %}
+
+{% block content %}
+  <h1>EPFL Course Catalog</h1>
+  
+  <div id="search_box">
+    <form action="/catalog" method="get">
+    <div id="search_title">Search</div>
+      <div id="query_box">
+        <input id="query" type="text" name="q" value="{{ query }}"/>
+      </div>
+      
+      <div id="adv_search_title">
+        <a href="#">
+          Advanced Search
+        </a>
+      </div>
+      <div id="adv_search">
+        <table style="border-collapse: collapse;">
+          <tr>
+            <td class="adv_label">Title:</td>
+            <td><input id="course" type="text" name="aq_title" /></td>
+            <td class="adv_label">Instructor:</td>
+            <td><input id="instructor" type="text" name="aq_instructor" /></td>
+          </tr>
+          <tr>
+            <td class="adv_label">Section:</td>
+            <td><input id="section" type="text" name="aq_section" /></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td colspan="4"><div style="height:10px;"></div></td>
+          </tr>
+          <tr>
+            <td class="adv_label">Has exact words:</td>
+            <td><input id="has_words" type="text" name="aq_has_words" /></td>
+            <td class="adv_label">Doesn't have words:</td>
+            <td><input id="doesnt_have_words" type="text" name="aq_doesnt_have_words" /></td>
+          </tr>
+        </table>
+          
+          
+      </div>
+      <div style="text-align: center;">
+        <input id="search" type="submit" value="Search" />
+      </div>
+    </form>
+  </div>
+  
+  {% if courses %}
+  <div class="table_header">
+    Showing {{ "the first" if courses|length < total_found }} 
+      <span style="font-weight: bold;">{{ courses|length }}</span>
+    results out of {{ "about" if courses|length < total_found }}
+      <span style="font-weight: bold;">{{ total_found }}</span>:
+  </div>
+  <table class="catalog" id="results">
+    <tr class="header">
+      <th></th>
+      <th>Title</th>
+      <th>Instructor(s)</th>
+      <th>Section(s)</th>
+    </tr>
+    {%- for course in courses %}
+    <tr>
+      <td class="td_index">{{ loop.index }}</td>
+      <td class="td_title"><a href="/c/{{ course.key() }}">{{ course.title }}</a></td>
+      <td class="td_instr">{{ course.instructors|join(", ") }}</td>
+      <td class="td_section">{{ course.sections|join(", ") }}</td>
+    </tr>
+    {%- endfor %}
+  </table>
+  {% elif query %}
+  <div class="table_header">
+  No search results.
+  </div>
+  {% endif %}
+{% endblock content %}
+ 

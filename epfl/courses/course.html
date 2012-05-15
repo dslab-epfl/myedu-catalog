@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
   <head>
-    <title>{{ course.name }}</title>
+    <title>{{ course.title }}</title>
     <link rel="stylesheet" type="text/css" href="/static/css/course.css"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script type="text/javascript">
@@ -20,21 +20,17 @@
   </head>
   <body>
     <div class="course-border">
-      <h1>{{ course.name }}</h1>
+      <h1>{{ course.title }}</h1>
       <div>
-        <p>Teacher{{ 's' if course.teachers|length > 1 }}: {{ course.teachers|join(", ") }}</p>
+        <p>Instructor{{ 's' if course.instructors|length > 1 }}: {{ course.instructors|join(", ") }}</p>
         <p>Language: {{ course._language }}</p>
-        <p>Specialization: {{ course.orientations|join(", ") }}</p>
-        <p>Study plan: {{ course.studies|join(", ") }}</p>
-        {% if course.urls|length > 1 %}
-        <p>URLs:
-          {% for url in course.urls %}
-          <a href="{{ url }}">[{{ loop.index }}]</a>
+        <p>
+          Sections:
+          {% for section, url in course._sections %}
+            <a href="{{ url }}">{{ section }}</a>{{ "," if not loop.last }}
           {% endfor %}
         </p>
-        {% else %}
-        <p>URL: <a href="{{ course.urls[0] }}">[Click here]</a></p>
-        {% endif %}
+        <p>Study plans: {{ course.study_plans|join(", ") }}</p>
       </div>
     </div>
   </body>
