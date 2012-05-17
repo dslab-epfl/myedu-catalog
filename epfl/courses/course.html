@@ -6,9 +6,9 @@
   <link rel="stylesheet" type="text/css" href="/static/css/course.css"/>
 {% endblock head %}
 
-{% macro searchable(content, query_field, query_value=None) %}
+{% macro searchable(content, query_field, query_value=None) -%}
   <a href='/catalog?q={{query_field}}:"{% if query_value %}{{query_value}}{% else %}{{content}}{% endif %}"'>{{ content }}</a>
-{% endmacro %}
+{%- endmacro %}
 
 {% block content %}
 <div class="course-border">
@@ -38,7 +38,7 @@
         <td>&nbsp;</td>
       </tr>
       <tr>
-        <td class="label">Course books (external links):</td>
+        <td class="label">Homepage (external links):</td>
         <td class="value">
           {% for section, url in course.sections_ %}
             <a href="{{ url }}">[{{ section }}]</a>{{ "," if not loop.last }}
@@ -67,7 +67,7 @@
           {% if course.credit_count %}
             {{ searchable(course.credit_count, "credits") }}
           {% else %}
-            Not available
+            N/A
           {% endif %}
           ({{ course.lecture_time|default(0, True) }}-{{ course.recitation_time|default(0, True) }}-{{ course.project_time|default(0, True) + course.practical_time|default(0, True) }})
         </td>

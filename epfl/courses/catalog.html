@@ -16,6 +16,10 @@
   </script>
 {% endblock head %}
 
+{% macro jumpoffset(target_offset, label) -%}
+<a href="/catalog?q={{query}}&offset={{target_offset}}">{{ label }}</a>
+{%- endmacro %}
+
 {% block content %}
   <h1>EPFL Course Catalog</h1>
   
@@ -65,29 +69,51 @@
   
   {% if courses %}
   <div class="table_header">
-    Showing {{ "the first" if courses|length < total_found }} 
-      <span style="font-weight: bold;">{{ courses|length }}</span>
-    results out of {{ "about" if courses|length < total_found }}
+    Showing results  
+      <span style="font-weight: bold;">
+        {{ offset + 1 }}-{{ offset + courses|length }}</span>
+    out of {{ "about" if courses|length < total_found }}
       <span style="font-weight: bold;">{{ total_found }}</span>:
   </div>
   <table class="catalog" id="results">
     <tr class="header">
-      <th></th>
-      <th>Title</th>
-      <th>Credits</th>
-      <th>Instructor(s)</th>
-      <th>Section(s)</th>
+      <th class="td_index"></th>
+      <th class="td_title">Title</th>
+      <th class="td_credits">Credits</th>
+      <th class="td_instr">Instructor(s)</th>
+      <th class="td_section">Section(s)</th>
     </tr>
     {%- for course in courses %}
     <tr>
-      <td class="td_index">{{ loop.index }}</td>
+      <td class="td_index">{{ offset + loop.index }}</td>
       <td class="td_title"><a href="/c/{{ course.key() }}">{{ course.title }}</a></td>
       <td class="td_credits">{{ course.credit_count|default("N/A", True) }}</td>
-      <td class="td_instr">{{ course.instructors|join(", ") }}</td>
+      <td class="td_instr">{{ course.instructors|default("N/A", True)|join(", ") }}</td>
       <td class="td_section">{{ course.sections|join(", ") }}</td>
     </tr>
     {%- endfor %}
   </table>
+  {% if total_found %}
+  <div id="page_nav">
+  {% if prev_offset %}
+    {{ jumpoffset(prev_offset, "Previous") }}
+  {% else %}
+    <span style="font-weight: bold;">Previous</span>
+  {% endif %}
+  {% for crt_page, crt_offset in pages %}
+    {% if crt_page == page %}
+      <span style="font-weight: bold;">{{ crt_page + 1}}</span> 
+    {% else %}
+      {{ jumpoffset(crt_offset, crt_page + 1) }}
+    {% endif %}
+  {% endfor %}
+  {% if next_offset %}
+    {{ jumpoffset(next_offset, "Next") }}
+  {% else %}
+    <span style="font-weight: bold;">Next</span>
+  {% endif %}
+  </div>
+  {% endif %}
   {% elif query %}
   <div class="table_header">
   No search results.

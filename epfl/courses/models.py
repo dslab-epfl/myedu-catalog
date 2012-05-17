@@ -6,6 +6,7 @@ __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 
 from google.appengine.ext import db
+from google.appengine.ext.db import stats
 
 
 LANGUAGE_MAPPING = {
@@ -51,3 +52,9 @@ class Course(db.Model):
   exam_form_detail = db.TextProperty()
 
   needs_indexing_ = db.BooleanProperty(default=True)
+  
+  @classmethod
+  def TotalCount(cls):
+    stat = stats.KindStat.all().filter("kind_name =", cls.__name__).get()
+    return stat.count
+    

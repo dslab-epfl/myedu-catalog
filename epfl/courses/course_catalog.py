@@ -41,21 +41,55 @@ class CatalogPage(webapp2.RequestHandler):
     return query.strip(), qdict
     
   def get(self):
-    RESULT_LIST_LIMIT = 50
+    PAGE_SIZE = 50
+    ACCURACY = 200
     
-    query_string, qdict = self._ParseSearchQuery()
+    query_string, _ = self._ParseSearchQuery()
     courses = None
-    total_found = None
+    total_found = models.Course.TotalCount()
+    
+    offset = 0
+    next_offset = None
+    prev_offset = None
+    page = None
+    total_pages = None
+    pages = []
+    
+    if self.request.get("offset"):
+      try:
+        offset = int(self.request.get("offset"))
+        if offset < 0:
+          offset = 0
+      except ValueError:
+        pass
     
     if query_string:
       try:
         logging.info("Invoking search query '%s'" % query_string)
         query = search.Query(query_string,
-                             search.QueryOptions(limit=RESULT_LIST_LIMIT))
+                             search.QueryOptions(limit=PAGE_SIZE,
+                                                 number_found_accuracy=ACCURACY,
+                                                 offset=offset,
+                                                 ids_only=True))
         search_results = search.Index(name=models.INDEX_NAME).search(query)
         
         courses = db.get([document.doc_id for document in search_results.results])
-        total_found = search_results.number_found
+        
+        if search_results.number_found < total_found:
+          total_found = search_results.number_found
+        
+        if total_found:
+          total_pages = (total_found-1)/PAGE_SIZE + 1
+          for i in range(total_pages):
+            pages.append((i, i*PAGE_SIZE))
+          
+          page = offset/PAGE_SIZE
+          
+          if page > 0:
+            prev_offset = (min(page, total_pages) - 1)*PAGE_SIZE
+          if page < total_pages - 1:
+            next_offset = (page + 1)*PAGE_SIZE
+        
       except:
         logging.exception("Could not perform query")
     
@@ -63,7 +97,12 @@ class CatalogPage(webapp2.RequestHandler):
       'courses': courses,
       'total_found': total_found,
       'query': query_string,
-      'qdict': qdict
+      'offset': offset,
+      'next_offset': next_offset,
+      'prev_offset': prev_offset,
+      'page': page,
+      'total_pages': total_pages,
+      'pages': pages
     }
     template = jinja_environment.get_template('catalog.html')
     self.response.out.write(template.render(template_args))

@@ -4,9 +4,7 @@ h1 {
 }
 
 div#wrapper {
-	margin-left: 100px;
-	margin-right: 100px;
-	min-width: 1024px;	
+	width: 800px;	
 }
 
 /* Search box */
@@ -107,7 +105,6 @@ table.catalog .td_index {
 	width: 30px;
 	text-align: right;
 	color: #777;
-	padding-right: 5px;
 }
 
 table.catalog .td_title {
@@ -115,4 +112,6 @@ table.catalog .td_title {
 	white-space: normal;
 }
 
-
+#page_nav {
+	text-align: center;
+}
