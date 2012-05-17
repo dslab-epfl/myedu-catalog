@@ -9,6 +9,7 @@ import jinja2
 import json
 import logging
 import os
+import pprint
 import webapp2
 
 
@@ -179,6 +180,10 @@ class BuildSearchIndexHandler(webapp2.RequestHandler):
       doc_fields.append(search.TextField(name='title', 
                                          value=course.title))
       
+    if course.language is not None:
+      doc_fields.append(search.TextField(name='language',
+                                         value=models.LANGUAGE_MAPPING[course.language]))
+      
     if course.instructors is not None:
       doc_fields.append(search.TextField(name='instructor',
                                          value=", ".join(course.instructors)))
@@ -186,6 +191,10 @@ class BuildSearchIndexHandler(webapp2.RequestHandler):
     if course.sections is not None:
       doc_fields.append(search.TextField(name='section',
                                          value=", ".join(course.sections)))
+      
+    if course.study_plans is not None:
+      doc_fields.append(search.TextField(name='plan',
+                                         value=", ".join(course.study_plans)))
       
     if course.credit_count is not None:
       doc_fields.append(search.NumberField(name='credits',
@@ -307,3 +316,21 @@ class BuildSearchIndexHandler(webapp2.RequestHandler):
       self.response.out.write('OK.\n')
     else:
       self.response.out.write("Search quota exceeded. Try again later.\n")
+
+
+class StatsHandler(webapp2.RequestHandler):
+  def get(self):
+    self.response.headers['Content-Type'] = 'text/plain'
+    
+    sections = {}
+    studies = {}
+    
+    for course in models.Course.all().run():
+      for section in course.sections:
+        sections[section] = sections.get(section, 0) + 1
+      for study in course.study_plans:
+        studies[study] = studies.get(study, 0) + 1
+        
+    pprint.pprint(sections, self.response.out)
+    pprint.pprint(studies, self.response.out)
+

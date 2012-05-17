@@ -82,7 +82,7 @@
     <tr>
       <td class="td_index">{{ loop.index }}</td>
       <td class="td_title"><a href="/c/{{ course.key() }}">{{ course.title }}</a></td>
-      <td class="td_credits">{% if course.credit_count %}{{ course.credit_count }}{% endif %}</td>
+      <td class="td_credits">{{ course.credit_count|default("N/A", True) }}</td>
       <td class="td_instr">{{ course.instructors|join(", ") }}</td>
       <td class="td_section">{{ course.sections|join(", ") }}</td>
     </tr>

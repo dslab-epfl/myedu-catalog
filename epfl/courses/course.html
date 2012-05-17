@@ -6,6 +6,10 @@
   <link rel="stylesheet" type="text/css" href="/static/css/course.css"/>
 {% endblock head %}
 
+{% macro searchable(content, query_field, query_value=None) %}
+  <a href='/catalog?q={{query_field}}:"{% if query_value %}{{query_value}}{% else %}{{content}}{% endif %}"'>{{ content }}</a>
+{% endmacro %}
+
 {% block content %}
 <div class="course-border">
   <h1>{{ course.title }}</h1>
@@ -16,14 +20,30 @@
       <tr>
         <td class="label">Sections:</td>
         <td class="value">
-          {% for section, url in course._sections %}
-            <a href="{{ url }}">{{ section }}</a>{{ "," if not loop.last }}
-          {% endfor %}
+        {% for section, _ in course.sections_ %}
+          {{ searchable(section, "section") }}{{ "," if not loop.last }}
+        {% endfor %}
         </td>
       </tr>
       <tr>
         <td class="label">Study plans:</td>
-        <td class="value">{{ course.study_plans|join(", ") }}</td>
+        <td class="value">
+          {% for plan in course.study_plans %}
+            {{ searchable(plan, "plan") }}{{ "," if not loop.last }}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="label">Course books (external links):</td>
+        <td class="value">
+          {% for section, url in course.sections_ %}
+            <a href="{{ url }}">[{{ section }}]</a>{{ "," if not loop.last }}
+          {% endfor %}
+        </td>
       </tr>
     </table>
   </div>
@@ -31,23 +51,34 @@
     <table>
       <tr>
         <td class="label">Instructor{{ 's' if course.instructors|length > 1 }}:</td>
-        <td class="value">{{ course.instructors|join(", ") }}</td>
+        <td class="value">
+          {% for instructor in course.instructors %}
+            {{ searchable(instructor, "instructor") }}{{ "," if not loop.last }}
+          {% endfor %}
+        </td>
       </tr>
       <tr>
         <td class="label">Language:</td>
-        <td class="value">{{ course._language }}</td>
+        <td class="value">{{ searchable(course.language_, "language") }}</td>
       </tr>
       <tr>
-        <td class="label">Credits:</td>
-        <td class="value">{{ course.credit_count }}</td>
+        <td class="label">ECTS Credits:</td>
+        <td class="value">
+          {% if course.credit_count %}
+            {{ searchable(course.credit_count, "credits") }}
+          {% else %}
+            Not available
+          {% endif %}
+          ({{ course.lecture_time|default(0, True) }}-{{ course.recitation_time|default(0, True) }}-{{ course.project_time|default(0, True) + course.practical_time|default(0, True) }})
+        </td>
       </tr>
       <tr>
         <td class="label">Semester:</td>
-        <td class="value">{{ course.semester }}</td>
+        <td class="value">{{ searchable(course.semester, "semester") }}</td>
       </tr>
       <tr>
         <td class="label">Exam form:</td>
-        <td class="value">{{ course.exam_form }}</td>
+        <td class="value">{{ searchable(course.exam_form, "exam") }}</td>
       </tr>
       <tr>
         <td class="label">Planning:</td>

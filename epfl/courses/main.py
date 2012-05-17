@@ -41,6 +41,7 @@ app = webapp2.WSGIApplication([
      webapp2.Route('/logout', handler=cdesc.LogoutHandler),
      webapp2.Route('/reinit', handler=admin.ReinitDataHandler),
      webapp2.Route('/index', handler=admin.BuildSearchIndexHandler),
-     webapp2.Route('/dump', handler=admin.DumpHandler)
+     webapp2.Route('/dump', handler=admin.DumpHandler),
+     webapp2.Route('/stats', handler=admin.StatsHandler)
    ])],
    debug=True, config=config)

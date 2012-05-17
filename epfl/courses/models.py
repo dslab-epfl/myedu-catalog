@@ -10,7 +10,9 @@ from google.appengine.ext import db
 
 LANGUAGE_MAPPING = {
   "en": "English",
-  "fr": "French"
+  "fr": "French",
+  "de": "German",
+  "fr_en": "French and English"
 }
 
 SPECIALIZATION_MAPPING = {

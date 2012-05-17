@@ -72,8 +72,8 @@ class CatalogPage(webapp2.RequestHandler):
 class CoursePage(webapp2.RequestHandler):
   def get(self, course_key):
     course = db.get(course_key)
-    course._language = models.LANGUAGE_MAPPING[course.language]
-    course._sections = zip(course.sections, course.urls)
+    course.language_ = models.LANGUAGE_MAPPING[course.language]
+    course.sections_ = zip(course.sections, course.urls)
     
     template = jinja_environment.get_template('course.html')
     self.response.out.write(template.render(course=course))
