@@ -17,6 +17,7 @@ jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class CourseDescription(db.Model):
+  # TODO(bucur): Add default values
   title_en = db.StringProperty()
   title_fr = db.StringProperty()
   

@@ -30,3 +30,22 @@ class Course(db.Model):
   sections = db.StringListProperty()
   study_plans = db.StringListProperty()
   urls = db.StringListProperty()
+  
+  credit_count = db.IntegerProperty()
+  semester = db.StringProperty(choices=set(["Fall", "Spring"]))
+  exam_form = db.StringProperty()
+  
+  lecture_time = db.IntegerProperty()
+  recitation_time = db.IntegerProperty()
+  project_time = db.IntegerProperty()
+  practical_time = db.IntegerProperty()
+  
+  learning_outcomes = db.TextProperty()
+  content = db.TextProperty()
+  prior_knowledge = db.TextProperty()
+  type_of_teaching = db.TextProperty()
+  bibliography = db.TextProperty()
+  keywords = db.TextProperty()
+  exam_form_detail = db.TextProperty()
+
+  needs_indexing_ = db.BooleanProperty(default=True)

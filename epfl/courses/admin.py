@@ -14,29 +14,121 @@ import webapp2
 
 from google.appengine.api import search
 from google.appengine.ext import db
+from google.appengine.runtime import apiproxy_errors
 
 from epfl.courses import models
 
 
 COURSES_DATA_FILE = "data/all_epfl_import.csv"
+CRAWL_DATA_FILE = "data/crawler_import.json"
+
+INVALID_SCIPER = 126096
 
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
-class BuildSearchIndex(webapp2.RequestHandler):
-  def get(self):
-    template = jinja_environment.get_template('build_index.html')
-    self.response.out.write(template.render())
-  
-  def post(self):
-    self.response.headers['Content-Type'] = 'text/plain'
-    self.DeleteAllDocuments()
-    self.CreateAllDocuments()
-    
-    
-class StatsHandler(webapp2.RequestHandler):
-  pass
 
+def _BuildCourse(row):
+  instructors = row["instructors"]
+  if row["scipers"] and row["scipers"][0] == INVALID_SCIPER:
+    instructors = ["multi"]
+     
+  return models.Course(
+      title=row["title"],
+      language=row["language"],
+      instructors=instructors,
+      sections=row["sections"],
+      study_plans=row["study_plans"],
+      urls=row["urls"])
+
+
+def _SanitizeRow(row):
+  def clean_up(field):
+    return field.decode("utf-8").strip().replace("\n", "")
+  def split_multiple(field):
+    return map(lambda x: clean_up(x), field.split("#"))
+  
+  row["title"] = clean_up(row["title"])
+  row["language"] = clean_up(row["language"])
+  row["study_plans"] = split_multiple(row["study_plans"])
+  
+  if row["scipers"]:
+    row["scipers"] = map(int, split_multiple(row["scipers"]))
+    row["instructors"] = split_multiple(row["instructors"])
+  else:
+    row["scipers"] = []
+    row["instructors"] = []
+  
+  row["sections"] = split_multiple(row["sections"])
+  row["urls"] = split_multiple(row["urls"])
+
+
+def ImportFromCSV(fs):
+  reader = csv.DictReader(fs,
+      ["_empty", "title", "language", "study_plans", "scipers", "instructors",
+       "sections", "urls"])
+  
+  skip_flag = True
+  
+  empty_line_count = 0
+  no_instructor_count = 0
+  invalid_course_titles = []
+  
+  all_courses = []
+  
+  for row in reader:
+    if not row["language"]:
+      empty_line_count += 1
+      continue
+    if skip_flag:
+      skip_flag = False
+      continue
+    
+    try:
+      _SanitizeRow(row)
+      if not row["scipers"]:
+        no_instructor_count += 1
+      all_courses.append(_BuildCourse(row))
+    except:
+      raise
+      invalid_course_titles.append(row["title"])
+      
+  logging.info("Created %d courses.\n" % len(all_courses))
+  
+  logging.info("Parsing stats: Empty lines: %d\n" 
+               % empty_line_count)
+  logging.info("Parsing stats: Unspecified instructor courses: %d\n" 
+               % no_instructor_count)
+  logging.info("Parsing stats: Invalid courses: %s\n" 
+               % invalid_course_titles)
+      
+  return all_courses
+
+
+def UpdateCourseInformation(course_list, course_data):
+  course_dict = {}
+  for course in course_list:
+    course_dict[course.title] = course
+    
+  updated_count = 0
+    
+  for entry in course_data:
+    course = course_dict.get(entry["title"])
+    updated = False
+    
+    if not course:
+      logging.warning("Could not find course '%s' when updating info" % entry["title"])
+      
+    for key, value in entry["info"].iteritems():
+      if getattr(course, key) != value:
+        setattr(course, key, value)
+        course.needs_indexing_ = True
+        updated = True
+    if updated:
+      updated_count += 1
+      
+  logging.info("Updated %d courses." % updated_count)
+    
 
 class DumpHandler(webapp2.RequestHandler):
   """Shamelessly dumps the entire course information."""
@@ -51,88 +143,139 @@ class DumpHandler(webapp2.RequestHandler):
 
 
 class ReinitDataHandler(webapp2.RequestHandler):
-  INVALID_SCIPER = 126096
-  
-  def NormalizeRow(self, row):
-    def clean_up(field):
-      return field.decode("utf-8").strip().replace("\n", "")
-    def split_multiple(field):
-      return map(lambda x: clean_up(x), field.split("#"))
-    
-    row["title"] = clean_up(row["title"])
-    row["language"] = clean_up(row["language"])
-    row["study_plans"] = split_multiple(row["study_plans"])
-    
-    if row["scipers"]:
-      row["scipers"] = map(int, split_multiple(row["scipers"]))
-      row["instructors"] = split_multiple(row["instructors"])
-    else:
-      row["scipers"] = []
-      row["instructors"] = []
-    
-    row["sections"] = split_multiple(row["sections"])
-    row["urls"] = split_multiple(row["urls"])
-    
-  def BuildAllCourses(self):
-    logging.info('Loading course catalog information')
-    
-    reader = csv.DictReader(
-        open(COURSES_DATA_FILE, "rU"),
-        ["_empty", "title", "language", "study_plans", "scipers", "instructors",
-         "sections", "urls"])
-    
-    skip_flag = True
-    
-    empty_line_count = 0
-    no_instructor_count = 0
-    invalid_course_titles = []
-    
-    all_courses = []
-    
-    for row in reader:
-      if not row["language"]:
-        empty_line_count += 1
-        continue
-      if skip_flag:
-        skip_flag = False
-        continue
-      
-      try:
-        self.NormalizeRow(row)
-        if not row["scipers"]:
-          no_instructor_count += 1
-        all_courses.append(self.BuildCourse(row))
-      except:
-        raise
-        invalid_course_titles.append(row["title"])
-        
-    db.put(all_courses)
-    
-    self.response.out.write("Created %d courses.\n" % len(all_courses))
-    
-    self.response.out.write("Empty lines: %d\n" % empty_line_count)
-    self.response.out.write("Unspecified instructor courses: %d\n" % no_instructor_count)
-    self.response.out.write("Invalid courses: %s\n" % invalid_course_titles)
-    
-  def BuildCourse(self, row):
-    instructors = row["instructors"]
-    if row["scipers"] and row["scipers"][0] == self.INVALID_SCIPER:
-      instructors = ["multi"]
-       
-    return models.Course(
-        title=row["title"],
-        language=row["language"],
-        instructors=instructors,
-        sections=row["sections"],
-        study_plans=row["study_plans"],
-        urls=row["urls"])
     
   def DeleteAllCourses(self):
+    logging.info("Deleting all course information")
     course_keys = models.Course.all(keys_only=True).fetch(None)
     db.delete(course_keys)
+    logging.info("Deleted %d courses.\n" % len(course_keys))
     
-    self.response.out.write("Deleted %d courses.\n" % len(course_keys))
+  def get(self):
+    if self.request.get("rebuild"):
+      self.DeleteAllCourses()
+      with open(COURSES_DATA_FILE, "rU") as f:
+        all_courses = ImportFromCSV(f)  
+      db.put(all_courses)
+      logging.info("Added %d courses.\n" % len(all_courses))
+    else:
+      all_courses = models.Course.all().fetch(None)
     
+    with open(CRAWL_DATA_FILE, "r") as f:
+      course_data = json.load(f, encoding="utf-8")
+    
+    UpdateCourseInformation(all_courses, course_data)
+    
+    db.put(all_courses)
+    
+    self.response.headers['Content-Type'] = 'text/plain'
+    self.response.out.write('OK.\n')
+    
+    
+class BuildSearchIndexHandler(webapp2.RequestHandler):
+      
+  def CreateDocument(self, course):
+    doc_fields = []
+    if course.title is not None:
+      doc_fields.append(search.TextField(name='title', 
+                                         value=course.title))
+      
+    if course.instructors is not None:
+      doc_fields.append(search.TextField(name='instructor',
+                                         value=", ".join(course.instructors)))
+      
+    if course.sections is not None:
+      doc_fields.append(search.TextField(name='section',
+                                         value=", ".join(course.sections)))
+      
+    if course.credit_count is not None:
+      doc_fields.append(search.NumberField(name='credits',
+                                           value=course.credit_count))
+      
+    if course.semester is not None:
+      doc_fields.append(search.AtomField(name='semester',
+                                         value=course.semester))
+      
+    if course.exam_form is not None:
+      doc_fields.append(search.AtomField(name='exam',
+                                         value=course.exam_form))
+      
+    if course.lecture_time is not None:
+      doc_fields.append(search.NumberField(name='lecthours',
+                                           value=course.lecture_time))
+      
+    if course.recitation_time is not None:
+      doc_fields.append(search.NumberField(name='recithours',
+                                           value=course.recitation_time))
+      
+    if course.project_time is not None:
+      doc_fields.append(search.NumberField(name='projhours',
+                                           value=course.project_time))
+      
+    if course.practical_time is not None:
+      doc_fields.append(search.NumberField(name='practhours',
+                                           value=course.practical_time))
+      
+    if course.learning_outcomes is not None:
+      doc_fields.append(search.HtmlField(name='outcomes',
+                                         value=course.learning_outcomes))
+      
+    if course.content is not None:
+      doc_fields.append(search.HtmlField(name='content',
+                                         value=course.content))
+      
+    if course.prior_knowledge is not None:
+      doc_fields.append(search.HtmlField(name='prereq',
+                                         value=course.prior_knowledge))
+      
+    if course.type_of_teaching is not None:
+      doc_fields.append(search.HtmlField(name='teaching',
+                                         value=course.type_of_teaching))
+      
+    if course.bibliography is not None:
+      doc_fields.append(search.HtmlField(name='biblio',
+                                         value=course.bibliography))
+      
+    if course.keywords is not None:
+      doc_fields.append(search.HtmlField(name='keywords',
+                                         value=course.keywords))
+    
+    return search.Document(doc_id=str(course.key()),
+                           fields=doc_fields)
+    
+  def AddDocuments(self, index, doc_bag):
+    docs, courses = zip(*doc_bag)
+    
+    try:
+      index.add(docs)
+    except apiproxy_errors.OverQuotaError:
+      logging.error("Over quota error.")
+      return False
+    else:
+      db.put(courses)
+      logging.info('Added %d documents to the index.' % len(doc_bag))
+      return True
+
+  def UpdateDocuments(self, courses):
+    BATCH_SIZE = 50
+    
+    docindex = search.Index(name=models.INDEX_NAME)
+    doc_bag = []
+    
+    for course in courses:
+      doc = self.CreateDocument(course)
+      course.needs_indexing_ = False
+      if len(doc_bag) == BATCH_SIZE:
+        if not self.AddDocuments(docindex, doc_bag):
+          return False
+        doc_bag = [(doc, course)]
+      else:
+        doc_bag.append((doc, course))
+    if doc_bag:
+      if not self.AddDocuments(docindex, doc_bag):
+        return False
+      
+    return True
+      
   def DeleteAllDocuments(self):
     docindex = search.Index(name=models.INDEX_NAME)
     
@@ -144,46 +287,23 @@ class ReinitDataHandler(webapp2.RequestHandler):
       docindex.remove(document_ids)
       logging.info('Removed %d documents.' % len(document_ids))
       
-  def CreateAllDocuments(self):
-    BATCH_SIZE = 50
-    
-    docindex = search.Index(name=models.INDEX_NAME)
-    
-    doc_bag = []
-    
-    for course in models.Course.all().run():
-      doc = self.CreateDocument(course)
-      if len(doc_bag) == BATCH_SIZE:
-        docindex.add(doc_bag)
-        logging.info('Added %d documents to the index.' % len(doc_bag))
-        doc_bag = [doc]
-      else:
-        doc_bag.append(doc)
-    if doc_bag:
-      docindex.add(doc_bag)
-      logging.info('Added %d documents to the index.' % len(doc_bag))
-    
-  def CreateDocument(self, course):
-    return search.Document(doc_id=str(course.key()),
-                           fields=[search.TextField(name='title', 
-                                                    value=course.title),
-                                   search.TextField(name='instructor',
-                                                    value=", ".join(course.instructors)),
-                                   search.TextField(name='section',
-                                                    value=", ".join(course.sections))])
-    
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
     
-    if self.request.get("all"):
-      logging.info("Deleting all course information")
-      self.DeleteAllCourses()
-      
-    self.DeleteAllDocuments()
+    if self.request.get("erase"):
+      self.DeleteAllDocuments()
+      self.response.out.write('OK.\n')
+      return
     
-    if self.request.get("all"):
-      self.BuildAllCourses()
-      
-    self.CreateAllDocuments()
+    if self.request.get("rebuild"):
+      courses = models.Course.all().fetch(None)
+      for course in courses:
+        course.needs_indexing_ = True
+      db.put(courses)
     
-    self.response.out.write('OK.\n')
+    courses = models.Course.all().filter("needs_indexing_ =", True).run()
+    
+    if self.UpdateDocuments(courses):
+      self.response.out.write('OK.\n')
+    else:
+      self.response.out.write("Search quota exceeded. Try again later.\n")

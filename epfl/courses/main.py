@@ -37,11 +37,10 @@ app = webapp2.WSGIApplication([
    webapp2.Route('/c/<course_key>', handler=ccat.CoursePage),
    webapp2.Route('/update', handler=cdesc.CourseDescriptionPage),
    routes.PathPrefixRoute('/admin', [
-     webapp2.Route('/search', handler=admin.BuildSearchIndex),
      webapp2.Route('/submit', handler=cdesc.SubmitCourseDescription),
      webapp2.Route('/logout', handler=cdesc.LogoutHandler),
-     webapp2.Route('/rebuild', handler=admin.ReinitDataHandler),
-     webapp2.Route('/stats', handler=admin.StatsHandler),
+     webapp2.Route('/reinit', handler=admin.ReinitDataHandler),
+     webapp2.Route('/index', handler=admin.BuildSearchIndexHandler),
      webapp2.Route('/dump', handler=admin.DumpHandler)
    ])],
    debug=True, config=config)

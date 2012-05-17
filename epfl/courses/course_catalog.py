@@ -47,16 +47,17 @@ class CatalogPage(webapp2.RequestHandler):
     courses = None
     total_found = None
     
-    try:
-      logging.info("Invoking search query '%s'" % query_string)
-      query = search.Query(query_string,
-                           search.QueryOptions(limit=RESULT_LIST_LIMIT))
-      search_results = search.Index(name=models.INDEX_NAME).search(query)
-      
-      courses = db.get([document.doc_id for document in search_results.results])
-      total_found = search_results.number_found
-    except:
-      logging.exception("Could not perform query")
+    if query_string:
+      try:
+        logging.info("Invoking search query '%s'" % query_string)
+        query = search.Query(query_string,
+                             search.QueryOptions(limit=RESULT_LIST_LIMIT))
+        search_results = search.Index(name=models.INDEX_NAME).search(query)
+        
+        courses = db.get([document.doc_id for document in search_results.results])
+        total_found = search_results.number_found
+      except:
+        logging.exception("Could not perform query")
     
     template_args = {
       'courses': courses,

@@ -74,6 +74,7 @@
     <tr class="header">
       <th></th>
       <th>Title</th>
+      <th>Credits</th>
       <th>Instructor(s)</th>
       <th>Section(s)</th>
     </tr>
@@ -81,6 +82,7 @@
     <tr>
       <td class="td_index">{{ loop.index }}</td>
       <td class="td_title"><a href="/c/{{ course.key() }}">{{ course.title }}</a></td>
+      <td class="td_credits">{% if course.credit_count %}{{ course.credit_count }}{% endif %}</td>
       <td class="td_instr">{{ course.instructors|join(", ") }}</td>
       <td class="td_section">{{ course.sections|join(", ") }}</td>
     </tr>

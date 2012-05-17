@@ -1,37 +1,78 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
-  <head>
-    <title>{{ course.title }}</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/course.css"/>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <script type="text/javascript">
-    
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-373800-15']);
-      _gaq.push(['_trackPageview']);
-    
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    
-    </script>
-  </head>
-  <body>
-    <div class="course-border">
-      <h1>{{ course.title }}</h1>
-      <div>
-        <p>Instructor{{ 's' if course.instructors|length > 1 }}: {{ course.instructors|join(", ") }}</p>
-        <p>Language: {{ course._language }}</p>
-        <p>
-          Sections:
+{% extends "base.html" %}
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" type="text/css" href="/static/css/course.css"/>
+{% endblock head %}
+
+{% block content %}
+<div class="course-border">
+  <h1>{{ course.title }}</h1>
+  <div id="instructors">
+  </div>
+  <div id="aux_info" style="float:right;">
+    <table>
+      <tr>
+        <td class="label">Sections:</td>
+        <td class="value">
           {% for section, url in course._sections %}
             <a href="{{ url }}">{{ section }}</a>{{ "," if not loop.last }}
           {% endfor %}
-        </p>
-        <p>Study plans: {{ course.study_plans|join(", ") }}</p>
-      </div>
-    </div>
-  </body>
-</html>
+        </td>
+      </tr>
+      <tr>
+        <td class="label">Study plans:</td>
+        <td class="value">{{ course.study_plans|join(", ") }}</td>
+      </tr>
+    </table>
+  </div>
+  <div id="main_info">
+    <table>
+      <tr>
+        <td class="label">Instructor{{ 's' if course.instructors|length > 1 }}:</td>
+        <td class="value">{{ course.instructors|join(", ") }}</td>
+      </tr>
+      <tr>
+        <td class="label">Language:</td>
+        <td class="value">{{ course._language }}</td>
+      </tr>
+      <tr>
+        <td class="label">Credits:</td>
+        <td class="value">{{ course.credit_count }}</td>
+      </tr>
+      <tr>
+        <td class="label">Semester:</td>
+        <td class="value">{{ course.semester }}</td>
+      </tr>
+      <tr>
+        <td class="label">Exam form:</td>
+        <td class="value">{{ course.exam_form }}</td>
+      </tr>
+      <tr>
+        <td class="label">Planning:</td>
+        <td class="value">
+          {% if course.lecture_time %}{{course.lecture_time}}h/week lecture<br/>{% endif %}
+          {% if course.recitation_time %}{{course.recitation_time}}h/week recitation<br/>{% endif %}
+          {% if course.project_time %}{{course.project_time}}h/week project<br/>{% endif %}
+          {% if course.practical_time %}{{course.practical_time}}h/week practical work<br/>{% endif %}
+        </td>
+      </tr>
+    </table>
+  </div>
+  {% for title, content in [("Learning Outcomes", course.learning_outcomes),
+                            ("Content", course.content),
+                            ("Prior Knowledge", course.prior_knowledge),
+                            ("Type of Teaching", course.type_of_teaching),
+                            ("Bibliography", course.bibliography),
+                            ("Keywords", course.keywords),
+                            ("Form of Examination", course.exam_form_detail)] %}
+  {% if content %}
+  <div>
+    <div class="sec_title">{{ title }}</div>
+    <div class="sec_content">{{ content|safe }}</div>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endblock content %}

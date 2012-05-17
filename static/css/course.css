@@ -7,12 +7,45 @@ body {
 
 .course-border {
 	padding: 10px;
-	background-color: #fafafa;
-	border: solid #ddd 1px;
 }
 
 h1 {
-	text-align: center;
-	border-bottom: solid #000 3px;
-	margin: 0px 0px 30px 0px;
+	text-align: left;
+	border-bottom: solid #000 2px;
+	margin: 0px 0px 15px 0px;
+}
+
+#aux_info table {
+	width: 300px;
+}
+
+#main_info table {
+	width: 400px;
+}
+
+.label {
+	text-align: right;
+	padding-right: 20px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	min-width: 100px;
+	font-weight: bold;
+}
+
+.value {
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+.sec_title {
+	font-size: 1em;
+	font-weight: bold;
+}
+
+.sec_content {
+	background-color: #fafafa;
+	border: solid #eee 1px;
+	border-radius: 5px;
+	padding: 5px;
+	margin-bottom: 10px;
 }
