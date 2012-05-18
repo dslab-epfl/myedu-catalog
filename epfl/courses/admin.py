@@ -339,3 +339,18 @@ class StatsHandler(webapp2.RequestHandler):
     pprint.pprint(sections, self.response.out)
     pprint.pprint(studies, self.response.out)
 
+class SitemapHandler(webapp2.RequestHandler):
+  # TODO(bucur): Cache in the blob store the sitemap
+  def get(self):
+    course_keys = models.Course.all().fetch(None, keys_only=True)
+    
+    # TODO(bucur): Eliminate the /c hard-coding
+    template_args = {
+      "course_keys": course_keys,
+      "url_prefix": "%s/c" % self.request.host_url
+    }
+    
+    template = jinja_environment.get_template('sitemap.xml')
+    
+    self.response.headers['Content-Type'] = 'application/xml'
+    self.response.out.write(template.render(template_args))

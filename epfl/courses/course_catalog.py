@@ -20,6 +20,11 @@ jinja_environment = jinja2.Environment(
 
 class CatalogPage(webapp2.RequestHandler):
   def _ParseSearchQuery(self):
+    def append_field(query, id_name, field_name):
+      field = self.request.get(id_name)
+      if field:
+        query.append('%s:"%s"' % (field_name, field))
+
     qdict = {
       "q": self.request.get("q"),
       "title": self.request.get("aq_title"),
@@ -29,22 +34,32 @@ class CatalogPage(webapp2.RequestHandler):
       "doesnt_have_words": self.request.get("aq_doesnt_have_words")
     }
     
-    query = "%s %s %s %s %s %s" % (
-      qdict["q"],
-      ('title:"%s"' % qdict["title"]) if qdict["title"] else "",
-      ('instructor:"%s"' % qdict["instructor"]) if qdict["instructor"] else "",
-      ('section:"%s"' % qdict["section"]) if qdict["section"] else "",
-      ('"%s"' % qdict["has_words"]) if qdict["has_words"] else "",
-      ('(NOT %s)' % qdict["doesnt_have_words"]) if qdict["doesnt_have_words"] else "" 
-    )
+    query = [self.request.get("q", "")]
+    append_field(query, "aq_title", "title")
+    append_field(query, "aq_instructor", "instructor")
+    append_field(query, "aq_section", "section")
     
-    return query.strip(), qdict
+    if self.request.get("aq_credits"):
+      if self.request.get("use_credits") == "coeff":
+        append_field(query, "aq_credits", "coefficient")
+      else:
+        append_field(query, "aq_credits", "credits")
+    
+    has_words = self.request.get("aq_has_words")
+    if has_words:
+      query.append('"%s"' % has_words)
+      
+    doesnt_have_words = self.request.get("aq_doesnt_have_words")
+    if doesnt_have_words:
+      query.append('(NOT %s' % doesnt_have_words)
+    
+    return " ".join(query).strip()
     
   def get(self):
     PAGE_SIZE = 50
     ACCURACY = 2000
     
-    query_string, _ = self._ParseSearchQuery()
+    query_string = self._ParseSearchQuery()
     courses = None
     total_found = models.Course.TotalCount()
     
@@ -113,6 +128,12 @@ class CoursePage(webapp2.RequestHandler):
     course = db.get(course_key)
     course.language_ = models.LANGUAGE_MAPPING[course.language]
     course.sections_ = zip(course.sections, course.urls)
+    
+    show_vector = [getattr(course, '%s_time' % s, None)
+                   and not getattr(course, '%s_weeks' % s, None)
+                   for s in ["lecture", "recitation", "project", "practical"]]
+    
+    course.show_trio_ = not reduce(lambda x, y: x or y, show_vector)
     
     template = jinja_environment.get_template('course.html')
     self.response.out.write(template.render(course=course))

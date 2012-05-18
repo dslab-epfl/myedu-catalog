@@ -80,12 +80,14 @@
           {% else %}
             N/A
           {% endif %}
+          {% if course.show_trio_ -%}
           (<span title="Lecture hours">{{ searchable(course.lecture_time, "lecthours") }}</span>-<span title="Recitation hours">{{ searchable(course.recitation_time, "recithours") }}</span>-<span title="Project/practice hours">
           {%- if course.practical_time and not course.project_time -%}
             {{ searchable(course.practical_time, "practhours") }}
           {%- else -%}
             {{ searchable(course.project_time, "projhours") }}
           {%- endif -%}</span>)
+          {%- endif %}
         </td>
       </tr>
       <tr>

@@ -42,22 +42,27 @@ div#wrapper {
 	padding-bottom: 10px;
 }
 
-#adv_search input {
+#query, #course, #instructor, #section, #has_words, #doesnt_have_words {
+	width: 100%;
+}
+
+#credits {
 	width: 100%;
 }
 
 #adv_search td {
 	padding: 3px;
 	vertical-align: middle;
+	width: auto;
+}
+
+#adv_search td.adv_label {
+	width: 75px;
 }
 
 input#query {
 	width: 100%;
 	font-size: 1em;
-}
-
-.adv_label {
-	width: 75px;
 }
 
 

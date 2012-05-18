@@ -21,6 +21,9 @@ builtins:
 libraries:
 - name: jinja2
   version: latest
+  
+inbound_services:
+- warmup
 
 skip_files:
 - ^(.*/)?app\.yaml

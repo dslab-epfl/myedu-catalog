@@ -30,6 +30,7 @@ class MainPage(webapp2.RequestHandler):
     self.response.out.write(template.render())
 
 
+# TODO(bucur): Hide the administration URLs
 app = webapp2.WSGIApplication([
    webapp2.Route('/', handler=MainPage),
    webapp2.Route('/showcase', handler=ccat.ShowcasePage),
@@ -42,6 +43,7 @@ app = webapp2.WSGIApplication([
      webapp2.Route('/reinit', handler=admin.ReinitDataHandler),
      webapp2.Route('/index', handler=admin.BuildSearchIndexHandler),
      webapp2.Route('/dump', handler=admin.DumpHandler),
-     webapp2.Route('/stats', handler=admin.StatsHandler)
+     webapp2.Route('/stats', handler=admin.StatsHandler),
+     webapp2.Route('/sitemap.xml', handler=admin.SitemapHandler)
    ])],
    debug=True, config=config)
