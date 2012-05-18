@@ -52,24 +52,40 @@
       <tr>
         <td class="label">Instructor{{ 's' if course.instructors|length > 1 }}:</td>
         <td class="value">
+        {% if course.instructors and course.instructors[0] == "multi" %}
+          <span style="font-style: italic;">Various instructors</span>
+        {% else %}
           {% for instructor in course.instructors %}
             {{ searchable(instructor, "instructor") }}{{ "," if not loop.last }}
           {% endfor %}
+        {% endif %}
         </td>
       </tr>
       <tr>
         <td class="label">Language:</td>
         <td class="value">{{ searchable(course.language_, "language") }}</td>
       </tr>
-      <tr>
-        <td class="label">ECTS Credits:</td>
+        <td class="label">
+        {% if course.coefficient and not course.credit_count %}
+          Coefficient:
+        {% else %}
+          ECTS Credits:
+        {% endif %}
+        </td>
         <td class="value">
-          {% if course.credit_count %}
+          {% if course.coefficient and not course.credit_count %}
+            {{ searchable(course.coefficient, "coefficient") }}
+          {% elif course.credit_count %}
             {{ searchable(course.credit_count, "credits") }}
           {% else %}
             N/A
           {% endif %}
-          ({{ course.lecture_time|default(0, True) }}-{{ course.recitation_time|default(0, True) }}-{{ course.project_time|default(0, True) + course.practical_time|default(0, True) }})
+          (<span title="Lecture hours">{{ searchable(course.lecture_time, "lecthours") }}</span>-<span title="Recitation hours">{{ searchable(course.recitation_time, "recithours") }}</span>-<span title="Project/practice hours">
+          {%- if course.practical_time and not course.project_time -%}
+            {{ searchable(course.practical_time, "practhours") }}
+          {%- else -%}
+            {{ searchable(course.project_time, "projhours") }}
+          {%- endif -%}</span>)
         </td>
       </tr>
       <tr>
@@ -82,11 +98,20 @@
       </tr>
       <tr>
         <td class="label">Planning:</td>
+        {% macro planning(name, hours, weeks) -%}
+          {%- if hours -%}
+            {%- if weeks -%}
+              {{hours}}h/week x {{weeks}} weeks {{name}}<br/>
+            {%- else -%}
+              {{hours}}h/term {{name}}<br/>
+            {%- endif -%}
+          {%- endif -%} 
+        {%- endmacro %}
         <td class="value">
-          {% if course.lecture_time %}{{course.lecture_time}}h/week lecture<br/>{% endif %}
-          {% if course.recitation_time %}{{course.recitation_time}}h/week recitation<br/>{% endif %}
-          {% if course.project_time %}{{course.project_time}}h/week project<br/>{% endif %}
-          {% if course.practical_time %}{{course.practical_time}}h/week practical work<br/>{% endif %}
+          {{ planning("lecture", course.lecture_time, course.lecture_weeks) }}
+          {{ planning("recitation", course.recitation_time, course.recitation_weeks) }}
+          {{ planning("project", course.project_time, course.project_weeks) }}
+          {{ planning("practical work", course.practical_time, course.practical_weeks) }}
         </td>
       </tr>
     </table>

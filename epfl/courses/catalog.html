@@ -58,8 +58,6 @@
             <td><input id="doesnt_have_words" type="text" name="aq_doesnt_have_words" /></td>
           </tr>
         </table>
-          
-          
       </div>
       <div style="text-align: center;">
         <input id="search" type="submit" value="Search" />
@@ -72,7 +70,7 @@
     Showing results  
       <span style="font-weight: bold;">
         {{ offset + 1 }}-{{ offset + courses|length }}</span>
-    out of {{ "about" if courses|length < total_found }}
+    out of
       <span style="font-weight: bold;">{{ total_found }}</span>:
   </div>
   <table class="catalog" id="results">
@@ -88,14 +86,21 @@
       <td class="td_index">{{ offset + loop.index }}</td>
       <td class="td_title"><a href="/c/{{ course.key() }}">{{ course.title }}</a></td>
       <td class="td_credits">{{ course.credit_count|default("N/A", True) }}</td>
-      <td class="td_instr">{{ course.instructors|default("N/A", True)|join(", ") }}</td>
+      <td class="td_instr">
+      {% set instructors = course.instructors|default("N/A", True)|join(", ") %}
+      {% if instructors == "multi" %}
+        <span style="font-style: italic;">Various instructors</span>
+      {% else %}
+        {{ instructors }}
+      {% endif %}
+      </td>
       <td class="td_section">{{ course.sections|join(", ") }}</td>
     </tr>
     {%- endfor %}
   </table>
-  {% if total_found %}
+  {% if pages|length > 1 %}
   <div id="page_nav">
-  {% if prev_offset %}
+  {% if not prev_offset is none %}
     {{ jumpoffset(prev_offset, "Previous") }}
   {% else %}
     <span style="font-weight: bold;">Previous</span>
@@ -107,7 +112,7 @@
       {{ jumpoffset(crt_offset, crt_page + 1) }}
     {% endif %}
   {% endfor %}
-  {% if next_offset %}
+  {% if not next_offset is none %}
     {{ jumpoffset(next_offset, "Next") }}
   {% else %}
     <span style="font-weight: bold;">Next</span>

@@ -119,6 +119,7 @@ def UpdateCourseInformation(course_list, course_data):
     
     if not course:
       logging.warning("Could not find course '%s' when updating info" % entry["title"])
+      continue
       
     for key, value in entry["info"].iteritems():
       if getattr(course, key) != value:
@@ -199,6 +200,10 @@ class BuildSearchIndexHandler(webapp2.RequestHandler):
     if course.credit_count is not None:
       doc_fields.append(search.NumberField(name='credits',
                                            value=course.credit_count))
+      
+    if course.coefficient is not None:
+      doc_fields.append(search.NumberField(name='coefficient',
+                                           value=course.coefficient))
       
     if course.semester is not None:
       doc_fields.append(search.AtomField(name='semester',

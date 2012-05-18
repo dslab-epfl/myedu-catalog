@@ -42,7 +42,7 @@ class CatalogPage(webapp2.RequestHandler):
     
   def get(self):
     PAGE_SIZE = 50
-    ACCURACY = 200
+    ACCURACY = 2000
     
     query_string, _ = self._ParseSearchQuery()
     courses = None

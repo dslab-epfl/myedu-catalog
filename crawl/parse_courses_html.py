@@ -69,12 +69,12 @@ class ISAParser(object):
       if not hours:
         return
       
-      match = re.search(r"(\d+).*?(\d+)", hours)
+      match = re.search(r"(\d+)(.+?(\d+))?", hours)
       
       if not match:
         return
       
-      result = int(match.group(1))
+      result = int(match.group(1)), (int(match.group(3)) if match.group(3) else None)
       
       self._UpdateStat(name, result)
       
@@ -120,6 +120,21 @@ class ISAParser(object):
     except IndexError:
       logging.error("Could not parse credit info")
       
+  def _ParseCoeffInfo(self, html_data):
+    try:
+      coeff = html_data.split('<strong>Coefficient</strong>', 1)[1].split('</span></li>', 1)[0]
+      coeff = coeff.rsplit('<span class="nbCredits">', 1)[1]
+      coeff = self._SanitizeContent(coeff)
+      
+      self._UpdateStat("Coefficient", coeff)
+      
+      if not coeff:
+        return
+      
+      return float(coeff)
+    except IndexError:
+      logging.error("Could not parse coefficient info")
+      
   def _ParseExamForm(self, html_data):
     try:
       exam_form = html_data.split('<strong>Exam form</strong>', 1)[1].split('</li>', 1)[0]
@@ -137,6 +152,7 @@ class ISAParser(object):
       "title": self._ParseCourseTitle(html_data),
       "semester": self._ParseSemester(html_data),
       "credit_count": self._ParseCreditInfo(html_data),
+      "coefficient": self._ParseCoeffInfo(html_data),
       "learning_outcomes": self._ParseDescriptionParagraph(html_data,
                                                            "Learning outcomes"),
       "content": self._ParseDescriptionParagraph(html_data, "Content"),
@@ -150,11 +166,17 @@ class ISAParser(object):
       "bibliography": self._ParseDescriptionParagraph(html_data, "Bibliography and material"),
       
       "exam_form": self._ParseExamForm(html_data),
-      "lecture_time": self._ParseCourseHours(html_data, "Lecture"),
-      "recitation_time": self._ParseCourseHours(html_data, "Recitation"),
-      "project_time": self._ParseCourseHours(html_data, "Project"),
-      "practical_time": self._ParseCourseHours(html_data, "Practical work")
     }
+    
+    for key, name in [("lecture", "Lecture"), ("recitation", "Recitation"),
+                      ("project", "Project"), ("practical", "Practical work")]:
+      data = self._ParseCourseHours(html_data, name)
+      info["%s_time" % key] = None
+      info["%s_weeks" % key] = None
+      
+      if data:
+        info["%s_time" % key] = data[0]
+        info["%s_weeks" % key] = data[1]
     
     self._UpdateStat("Courses", info)
     
