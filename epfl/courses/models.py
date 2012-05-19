@@ -22,8 +22,6 @@ SPECIALIZATION_MAPPING = {
   "SV": "Life Sciences"
 }
 
-INDEX_NAME = 'courses-index'
-
 
 class Course(db.Model):
   title = db.StringProperty()

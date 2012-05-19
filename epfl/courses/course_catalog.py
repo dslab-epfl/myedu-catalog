@@ -8,10 +8,10 @@ import logging
 import os
 import webapp2
 
-from google.appengine.api import search
 from google.appengine.ext import db
 
 from epfl.courses import models
+from epfl.courses import search
 
 jinja_environment = jinja2.Environment(
     autoescape=True,
@@ -19,48 +19,14 @@ jinja_environment = jinja2.Environment(
   
 
 class CatalogPage(webapp2.RequestHandler):
-  def _ParseSearchQuery(self):
-    def append_field(query, id_name, field_name):
-      field = self.request.get(id_name)
-      if field:
-        query.append('%s:"%s"' % (field_name, field))
-
-    qdict = {
-      "q": self.request.get("q"),
-      "title": self.request.get("aq_title"),
-      "instructor": self.request.get("aq_instructor"),
-      "section": self.request.get("aq_section"),
-      "has_words": self.request.get("aq_has_words"),
-      "doesnt_have_words": self.request.get("aq_doesnt_have_words")
-    }
-    
-    query = [self.request.get("q", "")]
-    append_field(query, "aq_title", "title")
-    append_field(query, "aq_instructor", "instructor")
-    append_field(query, "aq_section", "section")
-    
-    if self.request.get("aq_credits"):
-      if self.request.get("use_credits") == "coeff":
-        append_field(query, "aq_credits", "coefficient")
-      else:
-        append_field(query, "aq_credits", "credits")
-    
-    has_words = self.request.get("aq_has_words")
-    if has_words:
-      query.append('"%s"' % has_words)
-      
-    doesnt_have_words = self.request.get("aq_doesnt_have_words")
-    if doesnt_have_words:
-      query.append('(NOT %s' % doesnt_have_words)
-    
-    return " ".join(query).strip()
     
   def get(self):
     PAGE_SIZE = 50
     ACCURACY = 2000
     
-    query_string = self._ParseSearchQuery()
-    courses = None
+    query_string = search.AppEngineSearch.BuildQuery(self.request)
+    
+    found_courses = None
     total_found = models.Course.TotalCount()
     
     offset = 0
@@ -81,14 +47,14 @@ class CatalogPage(webapp2.RequestHandler):
     if query_string:
       try:
         logging.info("Invoking search query '%s'" % query_string)
-        query = search.Query(query_string,
-                             search.QueryOptions(limit=PAGE_SIZE,
-                                                 number_found_accuracy=ACCURACY,
-                                                 offset=offset,
-                                                 ids_only=True))
-        search_results = search.Index(name=models.INDEX_NAME).search(query)
+        search_results = search.AppEngineSearch.Search(query_string,
+                                                       limit=PAGE_SIZE,
+                                                       number_found_accuracy=ACCURACY,
+                                                       offset=offset,
+                                                       ids_only=True)
         
-        courses = db.get([document.doc_id for document in search_results.results])
+        found_courses = db.get([document.doc_id
+                                for document in search_results.results])
         
         if search_results.number_found < total_found:
           total_found = search_results.number_found
@@ -109,7 +75,7 @@ class CatalogPage(webapp2.RequestHandler):
         logging.exception("Could not perform query")
     
     template_args = {
-      'courses': courses,
+      'found_courses': found_courses,
       'total_found': total_found,
       'query': query_string,
       'offset': offset,

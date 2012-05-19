@@ -12,12 +12,10 @@ import os
 import pprint
 import webapp2
 
-
-from google.appengine.api import search
 from google.appengine.ext import db
-from google.appengine.runtime import apiproxy_errors
 
 from epfl.courses import models
+from epfl.courses import search
 
 
 COURSES_DATA_FILE = "data/all_epfl_import.csv"
@@ -27,7 +25,6 @@ INVALID_SCIPER = 126096
 
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
-
 
 def _BuildCourse(row):
   instructors = row["instructors"]
@@ -174,150 +171,20 @@ class ReinitDataHandler(webapp2.RequestHandler):
     
     
 class BuildSearchIndexHandler(webapp2.RequestHandler):
-      
-  def CreateDocument(self, course):
-    doc_fields = []
-    if course.title is not None:
-      doc_fields.append(search.TextField(name='title', 
-                                         value=course.title))
-      
-    if course.language is not None:
-      doc_fields.append(search.TextField(name='language',
-                                         value=models.LANGUAGE_MAPPING[course.language]))
-      
-    if course.instructors is not None:
-      doc_fields.append(search.TextField(name='instructor',
-                                         value=", ".join(course.instructors)))
-      
-    if course.sections is not None:
-      doc_fields.append(search.TextField(name='section',
-                                         value=", ".join(course.sections)))
-      
-    if course.study_plans is not None:
-      doc_fields.append(search.TextField(name='plan',
-                                         value=", ".join(course.study_plans)))
-      
-    if course.credit_count is not None:
-      doc_fields.append(search.NumberField(name='credits',
-                                           value=course.credit_count))
-      
-    if course.coefficient is not None:
-      doc_fields.append(search.NumberField(name='coefficient',
-                                           value=course.coefficient))
-      
-    if course.semester is not None:
-      doc_fields.append(search.AtomField(name='semester',
-                                         value=course.semester))
-      
-    if course.exam_form is not None:
-      doc_fields.append(search.AtomField(name='exam',
-                                         value=course.exam_form))
-      
-    if course.lecture_time is not None:
-      doc_fields.append(search.NumberField(name='lecthours',
-                                           value=course.lecture_time))
-      
-    if course.recitation_time is not None:
-      doc_fields.append(search.NumberField(name='recithours',
-                                           value=course.recitation_time))
-      
-    if course.project_time is not None:
-      doc_fields.append(search.NumberField(name='projhours',
-                                           value=course.project_time))
-      
-    if course.practical_time is not None:
-      doc_fields.append(search.NumberField(name='practhours',
-                                           value=course.practical_time))
-      
-    if course.learning_outcomes is not None:
-      doc_fields.append(search.HtmlField(name='outcomes',
-                                         value=course.learning_outcomes))
-      
-    if course.content is not None:
-      doc_fields.append(search.HtmlField(name='content',
-                                         value=course.content))
-      
-    if course.prior_knowledge is not None:
-      doc_fields.append(search.HtmlField(name='prereq',
-                                         value=course.prior_knowledge))
-      
-    if course.type_of_teaching is not None:
-      doc_fields.append(search.HtmlField(name='teaching',
-                                         value=course.type_of_teaching))
-      
-    if course.bibliography is not None:
-      doc_fields.append(search.HtmlField(name='biblio',
-                                         value=course.bibliography))
-      
-    if course.keywords is not None:
-      doc_fields.append(search.HtmlField(name='keywords',
-                                         value=course.keywords))
-    
-    return search.Document(doc_id=str(course.key()),
-                           fields=doc_fields)
-    
-  def AddDocuments(self, index, doc_bag):
-    docs, courses = zip(*doc_bag)
-    
-    try:
-      index.add(docs)
-    except apiproxy_errors.OverQuotaError:
-      logging.error("Over quota error.")
-      return False
-    else:
-      db.put(courses)
-      logging.info('Added %d documents to the index.' % len(doc_bag))
-      return True
 
-  def UpdateDocuments(self, courses):
-    BATCH_SIZE = 50
-    
-    docindex = search.Index(name=models.INDEX_NAME)
-    doc_bag = []
-    
-    for course in courses:
-      doc = self.CreateDocument(course)
-      course.needs_indexing_ = False
-      if len(doc_bag) == BATCH_SIZE:
-        if not self.AddDocuments(docindex, doc_bag):
-          return False
-        doc_bag = [(doc, course)]
-      else:
-        doc_bag.append((doc, course))
-    if doc_bag:
-      if not self.AddDocuments(docindex, doc_bag):
-        return False
-      
-    return True
-      
-  def DeleteAllDocuments(self):
-    docindex = search.Index(name=models.INDEX_NAME)
-    
-    while True:
-      document_ids = [document.doc_id
-                      for document in docindex.list_documents(ids_only=True)]
-      if not document_ids:
-        break
-      docindex.remove(document_ids)
-      logging.info('Removed %d documents.' % len(document_ids))
-      
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
     
     if self.request.get("erase"):
-      self.DeleteAllDocuments()
+      search.AppEngineSearch.ClearCourseIndex()
       self.response.out.write('OK.\n')
       return
     
     if self.request.get("rebuild"):
       courses = models.Course.all().fetch(None)
-      for course in courses:
-        course.needs_indexing_ = True
-      db.put(courses)
+      search.AppEngineSearch.ClearIndexingStatus(courses)
     
-    courses = models.Course.all().filter("needs_indexing_ =", True).run()
-    
-    if self.UpdateDocuments(courses):
+    if search.AppEngineSearch.UpdateCourseIndex():
       self.response.out.write('OK.\n')
     else:
       self.response.out.write("Search quota exceeded. Try again later.\n")
