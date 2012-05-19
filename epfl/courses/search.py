@@ -174,9 +174,13 @@ class AppEngineSearch(object):
   
   @classmethod
   def Search(cls, q, **kwargs):
-    query = search.Query(unidecode.unidecode(q),
-                         search.QueryOptions(**kwargs))
-    search_results = cls.GetIndex().search(query)
+    try:
+      query = search.Query(unidecode.unidecode(q),
+                           search.QueryOptions(**kwargs))
+      search_results = cls.GetIndex().search(query)
     
-    return search_results
+      return search_results
+    except apiproxy_errors.OverQuotaError:
+      logging.error("Over quota error")
+      return None
   

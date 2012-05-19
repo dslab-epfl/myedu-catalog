@@ -45,14 +45,14 @@ class CatalogPage(webapp2.RequestHandler):
         pass
     
     if query_string:
-      try:
-        logging.info("Invoking search query '%s'" % query_string)
-        search_results = search.AppEngineSearch.Search(query_string,
-                                                       limit=PAGE_SIZE,
-                                                       number_found_accuracy=ACCURACY,
-                                                       offset=offset,
-                                                       ids_only=True)
-        
+      logging.info("Invoking search query '%s'" % query_string)
+      search_results = search.AppEngineSearch.Search(query_string,
+                                                     limit=PAGE_SIZE,
+                                                     number_found_accuracy=ACCURACY,
+                                                     offset=offset,
+                                                     ids_only=True)
+      
+      if search_results:
         found_courses = db.get([document.doc_id
                                 for document in search_results.results])
         
@@ -70,12 +70,9 @@ class CatalogPage(webapp2.RequestHandler):
             prev_offset = (min(page, total_pages) - 1)*PAGE_SIZE
           if page < total_pages - 1:
             next_offset = (page + 1)*PAGE_SIZE
-        
-      except:
-        logging.exception("Could not perform query")
     
     template_args = {
-      'found_courses': found_courses,
+      'courses': found_courses,
       'total_found': total_found,
       'query': query_string,
       'offset': offset,
