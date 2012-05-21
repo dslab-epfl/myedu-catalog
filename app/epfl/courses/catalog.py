@@ -1,24 +1,19 @@
+#!/usr/bin/env python
 
 """Handlers for displaying course information."""
 
 __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
-import jinja2
 import logging
-import os
-import webapp2
 
 from google.appengine.ext import db
 
+from epfl.courses import base_handler
 from epfl.courses import models
 from epfl.courses import search
 
-jinja_environment = jinja2.Environment(
-    autoescape=True,
-    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
-  
 
-class CatalogPage(webapp2.RequestHandler):
+class CatalogPage(base_handler.BaseHandler):
     
   def get(self):
     PAGE_SIZE = 50
@@ -82,11 +77,10 @@ class CatalogPage(webapp2.RequestHandler):
       'total_pages': total_pages,
       'pages': pages
     }
-    template = jinja_environment.get_template('catalog.html')
-    self.response.out.write(template.render(template_args))
+    self.RenderTemplate('catalog.html', template_args)
     
 
-class CoursePage(webapp2.RequestHandler):
+class CoursePage(base_handler.BaseHandler):
   def get(self, course_key):
     course = db.get(course_key)
     course.language_ = models.LANGUAGE_MAPPING[course.language]
@@ -98,16 +92,18 @@ class CoursePage(webapp2.RequestHandler):
     
     course.show_trio_ = not reduce(lambda x, y: x or y, show_vector)
     
-    template = jinja_environment.get_template('course.html')
-    self.response.out.write(template.render(course=course))
+    self.RenderTemplate('course.html', { "course": course})
     
+class GoogleSearchHandler(base_handler.BaseHandler):
+  def get(self):
+    self.RenderTemplate('google_search.html', {})
+
     
 ################################################################################
     
     
-class ShowcasePage(webapp2.RequestHandler):
+class ShowcasePage(base_handler.BaseHandler):
   def get(self):
     courses = models.Course.all().order('name').run()
-                                     
-    template = jinja_environment.get_template('showcase.html')
-    self.response.out.write(template.render(courses=courses))
+    self.RenderTemplate('showcase.html', { "courses": courses})
+

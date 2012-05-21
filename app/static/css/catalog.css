@@ -27,11 +27,6 @@ div#wrapper {
 	width: 100%;
 }
 
-#search_title {
-	font-weight: bold;
-	font-size: 1.5em;
-}
-
 #adv_search_title {
 	padding-top: 5px;
 	padding-bottom: 5px;
@@ -68,53 +63,61 @@ input#query {
 
 /* Search results */
 
-.table_header {
-	margin-bottom: 10px;
-}
-
 #results {
 	width: 100%;
 }
 
-.catalog {
+.hdrno {
+	font-weight: bold;
+}
+
+.top_right {
+	float: right;
+}
+
+.clear {
+	clear: both;
+}
+
+#results_paginate {
+	text-align: center;
+	float: none;
+	margin-top: 10px;
+}
+
+#results {
 	border-collapse: collapse;
 }
 
-table.catalog th {
+#results th {
 	font-weight: bold;
-	text-align: left;
 	vertical-align: middle;
-	height: 3em;
-	padding: 3px;
 }
 
-table.catalog td {
+#results td {
 	vertical-align: middle;
-	height: 2em;
-	padding: 3px;
+	height: 1.5em;
 }
 
-.td_title {
-	font-size: 1em;
-}
-
-table.catalog tr:nth-of-type(even) {
-	background-color: #eee;
-}
-
-table.catalog tr:nth-of-type(odd) {
+#results tr.even {
 	background-color: #fff;
 }
 
-table.catalog .td_index {
-	width: 30px;
-	text-align: right;
-	color: #777;
+#results tr.odd {
+	background-color: #f6f6f6;
 }
 
-table.catalog .td_title {
-	width: 400px;
-	white-space: normal;
+#results tr.even .sorting_1 {
+	background-color: #fafaff;
+}
+
+#results tr.odd .sorting_1 {
+	background-color: #eef;
+}
+
+#results .td_index {
+	text-align: right;
+	color: #777;
 }
 
 #page_nav {

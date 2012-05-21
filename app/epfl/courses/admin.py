@@ -5,15 +5,13 @@
 __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 import csv
-import jinja2
 import json
 import logging
-import os
 import pprint
-import webapp2
 
 from google.appengine.ext import db
 
+from epfl.courses import base_handler
 from epfl.courses import models
 from epfl.courses import search
 
@@ -23,8 +21,6 @@ CRAWL_DATA_FILE = "data/crawler_import.json"
 
 INVALID_SCIPER = 126096
 
-jinja_environment = jinja2.Environment(
-    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 def _BuildCourse(row):
   instructors = row["instructors"]
@@ -129,7 +125,7 @@ def UpdateCourseInformation(course_list, course_data):
   logging.info("Updated %d courses." % updated_count)
     
 
-class DumpHandler(webapp2.RequestHandler):
+class DumpHandler(base_handler.BaseHandler):
   """Shamelessly dumps the entire course information."""
   def get(self):
     results = models.Course.all().run(projection=('title', 'urls'))
@@ -141,7 +137,7 @@ class DumpHandler(webapp2.RequestHandler):
     self.response.out.write(json.dumps(data, indent=True, encoding="utf-8"))
 
 
-class ReinitDataHandler(webapp2.RequestHandler):
+class ReinitDataHandler(base_handler.BaseHandler):
     
   def DeleteAllCourses(self):
     logging.info("Deleting all course information")
@@ -170,7 +166,7 @@ class ReinitDataHandler(webapp2.RequestHandler):
     self.response.out.write('OK.\n')
     
     
-class BuildSearchIndexHandler(webapp2.RequestHandler):
+class BuildSearchIndexHandler(base_handler.BaseHandler):
 
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
@@ -190,7 +186,7 @@ class BuildSearchIndexHandler(webapp2.RequestHandler):
       self.response.out.write("Search quota exceeded. Try again later.\n")
 
 
-class StatsHandler(webapp2.RequestHandler):
+class StatsHandler(base_handler.BaseHandler):
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
     
@@ -206,8 +202,8 @@ class StatsHandler(webapp2.RequestHandler):
     pprint.pprint(sections, self.response.out)
     pprint.pprint(studies, self.response.out)
 
-class SitemapHandler(webapp2.RequestHandler):
-  # TODO(bucur): Cache in the blob store the sitemap
+class SitemapHandler(base_handler.BaseHandler):
+  # TODO(bucur): Cache the site map in the blob store
   def get(self):
     course_keys = models.Course.all().fetch(None, keys_only=True)
     
@@ -217,7 +213,6 @@ class SitemapHandler(webapp2.RequestHandler):
       "url_prefix": "%s/c" % self.request.host_url
     }
     
-    template = jinja_environment.get_template('sitemap.xml')
-    
     self.response.headers['Content-Type'] = 'application/xml'
-    self.response.out.write(template.render(template_args))
+    self.RenderTemplate('sitemap.xml', template_args)
+

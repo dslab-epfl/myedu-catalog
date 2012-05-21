@@ -1,4 +1,4 @@
 eclipse.preferences.version=1
-encoding//epfl/courses/coursedesc.html=UTF-8
-encoding//epfl/courses/static_courses.py=utf-8
-encoding//unidecode/__init__.py=utf-8
+encoding//app/epfl/courses/static_data.py=utf-8
+encoding//app/templates/coursedesc.html=UTF-8
+encoding//app/unidecode/__init__.py=utf-8

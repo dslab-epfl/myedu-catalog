@@ -2,19 +2,13 @@
 
 """Course description updates."""
 
-import jinja2
-import os
-
 from google.appengine.ext import db
 
-import base_handler
-import static_courses
+from epfl.courses import base_handler
+from epfl.courses import static_data
 
 authenticated = base_handler.BaseCourseDescriptionHandler.authenticated
 
-jinja_environment = jinja2.Environment(
-    autoescape=True,
-    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class CourseDescription(db.Model):
   # TODO(bucur): Add default values
@@ -190,13 +184,13 @@ class CourseDescriptionPage(base_handler.BaseCourseDescriptionHandler):
       
     instr_list = ["None"]
     instr_list.extend([", ".join([inst[1], inst[0]]).decode("utf-8")
-                      for inst in sorted(static_courses.INSTRUCTORS_NEW,
+                      for inst in sorted(static_data.INSTRUCTORS_NEW,
                                         key=lambda inst: inst[1].lower())])
     
     prereq_list = [("none", "None")]
     prereq_list.extend([(prereq[0].lower(),
                          " ".join([prereq[0], prereq[1]]).decode("utf-8"))
-                        for prereq in static_courses.PREREQUISITES])
+                        for prereq in static_data.PREREQUISITES])
       
     template_args = {
       'course': course,
@@ -222,11 +216,9 @@ class CourseDescriptionPage(base_handler.BaseCourseDescriptionHandler):
       for i in range(len(course.prerequisites)):
         template_args['prereq_values'][i] = course.prerequisites[i]
     
-    template = jinja_environment.get_template('coursedesc.html')
-    self.response.out.write(template.render(template_args))
+    self.RenderTemplate('coursedesc.html', template_args)
     
   def HandleCourseNotFound(self, course_id=None):
     self.error(400)
-    template = jinja_environment.get_template('course_not_found.html')
-    self.response.out.write(template.render(course_id=course_id))
+    self.RenderTemplate('course_not_found.html', { "course_id": course_id })
 

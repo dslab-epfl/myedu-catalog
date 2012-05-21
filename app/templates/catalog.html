@@ -5,13 +5,20 @@
   {{ super() }}
   <link rel="stylesheet" type="text/css" href="/static/css/catalog.css"/>
   
+  <script type="text/javascript" charset="utf8" 
+    src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.1/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" type="text/css"
+    href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.1/css/jquery.dataTables.css" />
+  
   <script type="text/javascript">
+  	function srctoggle() {
+  		$("#adv_search").slideToggle(200);
+		$("#adv_search_title").slideToggle(200);
+  	}
   	$(document).ready(function() {
   		$("#adv_search").hide();
-  		$("#adv_search_title").click(function() {
-  			$("#adv_search").slideToggle(200);
-  			$("#adv_search_title").slideToggle(200);
-  		});
+  		$("#adv_search_title").click(srctoggle);
+  		$("#simple_search").click(srctoggle);
   	});
   </script>
 {% endblock head %}
@@ -25,7 +32,6 @@
   
   <div id="search_box">
     <form action="/catalog" method="get">
-    <div id="search_title">Search</div>
       <div id="query_box">
         <input id="query" type="text" name="q" value="{{ query }}"/>
       </div>
@@ -66,6 +72,11 @@
             <td><input id="doesnt_have_words" type="text" name="aq_doesnt_have_words" /></td>
           </tr>
         </table>
+        <div id="simple_search">
+          <a href="#">
+            Simple Search
+          </a>
+        </div>
       </div>
       <div style="text-align: center;">
         <input id="search" type="submit" value="Search" />
@@ -74,6 +85,20 @@
   </div>
   
   {% if courses %}
+  <script type="text/javascript">
+  	$(document).ready(function() {
+  		$('#results').dataTable( {
+  			"bFilter": false,
+  			"bPaginate": false,
+  			"sDom": 'rt<"bottom"p>',
+  			"fnInfoCallback": function(oSettings, iStart, iEnd, iMax, iTotal, sPre) {
+  				return 'Showing results <span class="hdrno">' + iStart +
+  					'</span>-<span class="hdrno">' + iEnd + "</span> out of " +
+  					'<span class="hdrno">' + iTotal + '</span>';
+  			}
+  		});
+  	})
+  </script>
   <div class="table_header">
     Showing results  
       <span style="font-weight: bold;">
@@ -82,29 +107,33 @@
       <span style="font-weight: bold;">{{ total_found }}</span>:
   </div>
   <table class="catalog" id="results">
-    <tr class="header">
-      <th class="td_index"></th>
-      <th class="td_title">Title</th>
-      <th class="td_credits">Credits</th>
-      <th class="td_instr">Instructor(s)</th>
-      <th class="td_section">Section(s)</th>
-    </tr>
-    {%- for course in courses %}
-    <tr>
-      <td class="td_index">{{ offset + loop.index }}</td>
-      <td class="td_title"><a href="/c/{{ course.key() }}">{{ course.title }}</a></td>
-      <td class="td_credits">{{ course.credit_count|default("N/A", True) }}</td>
-      <td class="td_instr">
-      {% set instructors = course.instructors|default("N/A", True)|join(", ") %}
-      {% if instructors == "multi" %}
-        <span style="font-style: italic;">Various instructors</span>
-      {% else %}
-        {{ instructors }}
-      {% endif %}
-      </td>
-      <td class="td_section">{{ course.sections|join(", ") }}</td>
-    </tr>
-    {%- endfor %}
+    <thead>
+      <tr class="header">
+        <th class="td_index">Rank</th>
+        <th class="td_title">Title</th>
+        <th class="td_credits">Credits</th>
+        <th class="td_instr">Instructor(s)</th>
+        <th class="td_section">Section(s)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {%- for course in courses %}
+      <tr>
+        <td class="td_index">{{ offset + loop.index }}</td>
+        <td class="td_title"><a href="/c/{{ course.key() }}">{{ course.title }}</a></td>
+        <td class="td_credits">{{ course.credit_count|default("N/A", True) }}</td>
+        <td class="td_instr">
+        {% set instructors = course.instructors|default("N/A", True)|join(", ") %}
+        {% if instructors == "multi" %}
+          <span style="font-style: italic;">Various instructors</span>
+        {% else %}
+          {{ instructors }}
+        {% endif %}
+        </td>
+        <td class="td_section">{{ course.sections|join(", ") }}</td>
+      </tr>
+      {%- endfor %}
+    </tbody>
   </table>
   {% if pages|length > 1 %}
   <div id="page_nav">
