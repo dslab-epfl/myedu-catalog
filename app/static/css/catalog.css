@@ -37,7 +37,12 @@ div#wrapper {
 	padding-bottom: 10px;
 }
 
-#query, #course, #instructor, #section, #has_words, #doesnt_have_words {
+#adv_search .adv_label {
+	width: 75px;
+	min-width: 75px;
+}
+
+#adv_search .adv_value {
 	width: 100%;
 }
 
@@ -48,20 +53,26 @@ div#wrapper {
 #adv_search td {
 	padding: 3px;
 	vertical-align: middle;
-	width: auto;
+	width: 100%;
 }
 
 #adv_search td.adv_label {
 	width: 75px;
 }
 
-input#query {
+input#query, #adv_search input {
 	width: 100%;
 	font-size: 1em;
 }
 
 
 /* Search results */
+
+.suggestion {
+	font-weight: bold;
+	font-style: italic;
+	text-decoration: underline;
+}
 
 #results {
 	width: 100%;

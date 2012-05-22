@@ -14,7 +14,7 @@ from epfl.courses import models
 
 import unidecode
 
-class AppEngineSearch(object):
+class AppEngineIndex(object):
   INDEX_NAME = 'courses-index'
   
   class FieldMapper(object):
@@ -143,44 +143,5 @@ class AppEngineSearch(object):
         return False
       
     return True
-  
-  @classmethod
-  def BuildQuery(cls, request):
-    def append_field(query, id_name, field_name):
-      field = request.get(id_name)
-      if field:
-        query.append('%s:"%s"' % (field_name, field))
-    
-    query = [request.get("q", "")]
-    append_field(query, "aq_title", "title")
-    append_field(query, "aq_instructor", "instructor")
-    append_field(query, "aq_section", "section")
-    
-    if request.get("aq_credits"):
-      if request.get("use_credits") == "coeff":
-        append_field(query, "aq_credits", "coefficient")
-      else:
-        append_field(query, "aq_credits", "credits")
-    
-    has_words = request.get("aq_has_words")
-    if has_words:
-      query.append('"%s"' % has_words)
-      
-    doesnt_have_words = request.get("aq_doesnt_have_words")
-    if doesnt_have_words:
-      query.append('(NOT %s' % doesnt_have_words)
-    
-    return " ".join(query).strip()
-  
-  @classmethod
-  def Search(cls, q, **kwargs):
-    try:
-      query = search.Query(unidecode.unidecode(q),
-                           search.QueryOptions(**kwargs))
-      search_results = cls.GetIndex().search(query)
-    
-      return search_results
-    except apiproxy_errors.OverQuotaError:
-      logging.error("Over quota error")
-      return None
+
   

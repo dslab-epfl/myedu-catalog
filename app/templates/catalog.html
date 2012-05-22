@@ -42,34 +42,40 @@
         </a>
       </div>
       <div id="adv_search">
-        <table style="border-collapse: collapse;">
+        {% macro advfield(label, id, name) -%}
+        <td class="adv_label">{{label}}:</td>
+        <td class="adv_value"><input id="{{id}}" type="text" name="{{name}}" /></td>
+        {%- endmacro %}
+        
+        {% macro nofield() %}
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        {% endmacro %}
+      
+        <table style="border-collapse: collapse; table-layout: fixed;">
           <tr>
-            <td class="adv_label">Title:</td>
-            <td><input id="course" type="text" name="aq_title" /></td>
-            <td class="adv_label">Instructor:</td>
-            <td><input id="instructor" type="text" name="aq_instructor" /></td>
+            {{ advfield("Title", "course", "aq_t") }}
+            {{ advfield("Language", "language", "aq_lang") }}
           </tr>
           <tr>
-            <td colspan="2" style="white-space: nowrap;">
-              <div style="float: left; padding-right: 3px;">
-                <input id="use_credits" type="radio" name="use_credits" value="credits" checked="checked"/>Credits
-                <input id="use_coeff" type="radio" name="use_credits" value="coeff"/>Coefficient
-              </div>
-              <span style="display: block; overflow: hidden;">
-                <input id="credits" type="text" name="aq_credits" />
-              </span>
-            </td>
-            <td class="adv_label">Section:</td>
-            <td><input id="section" type="text" name="aq_section" /></td>
+            {{ advfield("Instructor", "instructor", "aq_in") }}
+            {{ advfield("Section", "section", "aq_sec") }}
           </tr>
           <tr>
-            <td colspan="4"><div style="height:10px;"></div></td>
+            {{ advfield("Semester", "semester", "aq_sem") }}
+            {{ advfield("Exam", "exam", "aq_exam") }}
           </tr>
           <tr>
-            <td class="adv_label">Has exact words:</td>
-            <td><input id="has_words" type="text" name="aq_has_words" /></td>
-            <td class="adv_label">Doesn't have words:</td>
-            <td><input id="doesnt_have_words" type="text" name="aq_doesnt_have_words" /></td>
+            {{ advfield("Credits", "credits", "aq_cred") }}
+            {{ advfield("Coefficient", "coefficient", "aq_coeff") }}
+          </tr>
+        </table>
+        <div style="margin-top:10px;">Planning hours:</div>
+        <table style="border-collapse: collapse; table-layout: fixed;">
+          <tr>
+            {{ advfield("Lecture", "lecture", "aq_hours_l") }}
+            {{ advfield("Recitation", "recitation", "aq_hours_r") }}
+            {{ advfield("Project", "project", "aq_hours_p") }}
           </tr>
         </table>
         <div id="simple_search">
@@ -100,11 +106,18 @@
   	})
   </script>
   <div class="table_header">
-    Showing results  
-      <span style="font-weight: bold;">
-        {{ offset + 1 }}-{{ offset + courses|length }}</span>
-    out of
-      <span style="font-weight: bold;">{{ total_found }}</span>:
+    {% if suggested_query %}
+    <div class="suggestion_box">
+      Showing results for <span class="suggestion">{{ suggested_query }}</span>
+    </div>
+    {% endif %}
+    <div class="info_box">
+      Showing results  
+        <span style="font-weight: bold;">
+          {{ offset + 1 }}-{{ offset + courses|length }}</span>
+      out of
+        <span style="font-weight: bold;">{{ total_found }}</span>:
+    </div>
   </div>
   <table class="catalog" id="results">
     <thead>

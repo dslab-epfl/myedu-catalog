@@ -16,10 +16,12 @@ from epfl.courses import search
 class CatalogPage(base_handler.BaseHandler):
     
   def get(self):
-    PAGE_SIZE = 50
+    PAGE_SIZE = 20
     ACCURACY = 2000
     
-    query_string = search.AppEngineSearch.BuildQuery(self.request)
+    query = search.SearchQuery.BuildFromRequest(self.request)
+    query_string = search.SiteSearchProvider.GetQueryString(query)
+    suggested_string = None
     
     found_courses = None
     total_found = models.Course.TotalCount()
@@ -39,37 +41,38 @@ class CatalogPage(base_handler.BaseHandler):
       except ValueError:
         pass
     
-    if query_string:
-      logging.info("Invoking search query '%s'" % query_string)
-      search_results = search.AppEngineSearch.Search(query_string,
-                                                     limit=PAGE_SIZE,
-                                                     number_found_accuracy=ACCURACY,
-                                                     offset=offset,
-                                                     ids_only=True)
+    logging.info("Invoking search query '%s'" % query_string)
+    search_results = search.SiteSearchProvider.Search(query,
+                                                      limit=PAGE_SIZE,
+                                                      offset=offset,
+                                                      accuracy=ACCURACY)
+    
+    if search_results:
+      if search_results.original:
+        suggested_string = search_results.query
       
-      if search_results:
-        found_courses = db.get([document.doc_id
-                                for document in search_results.results])
+      found_courses = db.get(search_results.results)
+      
+      if search_results.number_found < total_found:
+        total_found = search_results.number_found
+      
+      if total_found:
+        total_pages = (total_found-1)/PAGE_SIZE + 1
+        for i in range(total_pages):
+          pages.append((i, i*PAGE_SIZE))
         
-        if search_results.number_found < total_found:
-          total_found = search_results.number_found
+        page = offset/PAGE_SIZE
         
-        if total_found:
-          total_pages = (total_found-1)/PAGE_SIZE + 1
-          for i in range(total_pages):
-            pages.append((i, i*PAGE_SIZE))
-          
-          page = offset/PAGE_SIZE
-          
-          if page > 0:
-            prev_offset = (min(page, total_pages) - 1)*PAGE_SIZE
-          if page < total_pages - 1:
-            next_offset = (page + 1)*PAGE_SIZE
+        if page > 0:
+          prev_offset = (min(page, total_pages) - 1)*PAGE_SIZE
+        if page < total_pages - 1:
+          next_offset = (page + 1)*PAGE_SIZE
     
     template_args = {
       'courses': found_courses,
       'total_found': total_found,
       'query': query_string,
+      'suggested_query': suggested_string,
       'offset': offset,
       'next_offset': next_offset,
       'prev_offset': prev_offset,
