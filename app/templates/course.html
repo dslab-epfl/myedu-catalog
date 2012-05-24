@@ -1,3 +1,9 @@
+{#
+  Course page rendering.
+  Author: Stefan Bucur (stefan.bucur@epfl.ch)
+  Copyright 2012 EPFL. All rights reserved.
+#}
+
 {% extends "base.html" %}
 {% block title %}{{ course.title }}{% endblock %}
 
@@ -127,7 +133,11 @@
                             ("Type of Teaching", course.type_of_teaching),
                             ("Bibliography", course.bibliography),
                             ("Keywords", course.keywords),
-                            ("Form of Examination", course.exam_form_detail)] %}
+                            ("Form of Examination", course.exam_form_detail),
+                            ("Note", course.note),
+                            ("Prerequisite For", course.prerequisite_for),
+                            ("Library Recommends", course.library_recomm),
+                            ("Links", course.links)] %}
   {% if content %}
   <div>
     <div class="sec_title">{{ title }}</div>

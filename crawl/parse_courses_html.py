@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 """Parses already crawled HTML files, and extracts course information."""
 
@@ -19,6 +20,12 @@ PARSED_DATA_FILE = os.path.join(os.path.dirname(__file__),
 class ISAParser(object):
   def __init__(self):
     self.stat_dict = {}
+    self.all_sections = {}
+    
+  def _FindAllSections(self, html_data):
+    for match in re.finditer(r"<h4>(.*?)</h4>", html_data):
+      title = match.group(1)
+      self.all_sections[title] = self.all_sections.get(title, 0) + 1
     
   def _UpdateStat(self, stat_name, content):
     if content:
@@ -32,7 +39,7 @@ class ISAParser(object):
       "[br/]": "<br/>", 
       "[br]": "<br/>", 
       "[i]": "<i>", 
-      "[li]": "<li>"
+      "[li]": u"•  "
     }
     content = content.replace("&amp;", "&")
     content = content.replace("&nbsp;", " ")
@@ -60,6 +67,26 @@ class ISAParser(object):
       return para
     except IndexError:
       logging.error("Could not parse description para '%s'" % para_name)
+      
+  def _ParseLibraryRecommends(self, html_data, para_name):
+    try:
+      para = html_data.split("<h4>%s</h4>" % para_name, 1)[1].split('</ul>', 1)[0] + "</ul>"
+      para = self._SanitizeContent(para)
+      
+      self._UpdateStat(para_name, para)
+      return para
+    except IndexError:
+      logging.error("Could not parse library recommendation")
+      
+  def _ParseLinks(self, html_data, para_name):
+    try:
+      para = html_data.split("<h4>%s</h4>" % para_name, 1)[1].split('</div>', 1)[0]
+      para = self._SanitizeContent(para)
+      
+      self._UpdateStat(para_name, para)
+      return para
+    except IndexError:
+      logging.error("Could not parse links")
       
   def _ParseCourseHours(self, html_data, name):
     try:
@@ -164,6 +191,10 @@ class ISAParser(object):
       "exam_form_detail": self._ParseDescriptionParagraph(html_data,
                                                              "Form of examination"),
       "bibliography": self._ParseDescriptionParagraph(html_data, "Bibliography and material"),
+      "note": self._ParseDescriptionParagraph(html_data, "Note"),
+      "prerequisite_for": self._ParseDescriptionParagraph(html_data, "Prerequisite for"),
+      "library_recomm": self._ParseLibraryRecommends(html_data, "The library recommends"),
+      "links": self._ParseLinks(html_data, "Links"),
       
       "exam_form": self._ParseExamForm(html_data),
     }
@@ -179,11 +210,13 @@ class ISAParser(object):
         info["%s_weeks" % key] = data[1]
     
     self._UpdateStat("Courses", info)
+    self._FindAllSections(html_data)
     
     return info
   
   def ShowStatistics(self):
     pprint.pprint(self.stat_dict)
+    pprint.pprint(self.all_sections)
 
 
 def main():

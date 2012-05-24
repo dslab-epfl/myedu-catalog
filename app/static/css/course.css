@@ -39,6 +39,7 @@ h1 {
 
 #footer_info .label {
 	min-width: 200px;
+	text-align: left;
 }
 
 .value {

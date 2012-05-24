@@ -12,5 +12,15 @@ indexes:
 
 - kind: Course
   properties:
+  - name: section
+  - name: title
+
+- kind: Course
+  properties:
+  - name: sections
+  - name: title
+
+- kind: Course
+  properties:
   - name: title
   - name: urls

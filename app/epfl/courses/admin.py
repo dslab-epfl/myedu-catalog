@@ -13,7 +13,7 @@ from google.appengine.ext import db
 
 from epfl.courses import base_handler
 from epfl.courses import models
-from epfl.courses import search
+from epfl.courses.search import appsearch
 
 
 COURSES_DATA_FILE = "data/all_epfl_import.csv"
@@ -172,15 +172,15 @@ class BuildSearchIndexHandler(base_handler.BaseHandler):
     self.response.headers['Content-Type'] = 'text/plain'
     
     if self.request.get("erase"):
-      search.AppEngineSearch.ClearCourseIndex()
+      appsearch.AppEngineIndex.ClearCourseIndex()
       self.response.out.write('OK.\n')
       return
     
     if self.request.get("rebuild"):
       courses = models.Course.all().fetch(None)
-      search.AppEngineSearch.ClearIndexingStatus(courses)
+      appsearch.AppEngineIndex.ClearIndexingStatus(courses)
     
-    if search.AppEngineSearch.UpdateCourseIndex():
+    if appsearch.AppEngineIndex.UpdateCourseIndex():
       self.response.out.write('OK.\n')
     else:
       self.response.out.write("Search quota exceeded. Try again later.\n")

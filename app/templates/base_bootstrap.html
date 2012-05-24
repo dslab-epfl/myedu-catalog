@@ -1,5 +1,5 @@
 {#
-  Basic page structure. Contains the Analytics scripts, JQuery, and common CSS.
+  Basic page structure for Bootstrap.
   Author: Stefan Bucur (stefan.bucur@epfl.ch)
   Copyright 2012 EPFL. All rights reserved.
 #}
@@ -9,7 +9,7 @@
     {% block head %}
     <title>{% block title %} {% endblock %}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="stylesheet" type="text/css" href="/static/css/common.css"/>
+    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script type="text/javascript">
     
@@ -23,24 +23,17 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
+    
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
     {% endblock head %}
   </head>
   <body>
-    <div id="wrapper">
-      <div id="content">
-        {% block content %}
-        {% endblock %}
-      </div>
-      <div id="footer" style="color: #777; text-align: center; margin-top: 10px; padding-bottom: 10px;">
-        {% block footer %}
-        {% if login is defined %}
-        <form action="/admin/logout" />
-          <span style="vertical-align: middle;">Logged in as: <span style="font-weight: bold;">{{ login }}</span></span>
-          <input type="submit" value="Logout" />
-        </form>
-        {% endif %}
-        {% endblock %}
-      </div>
-    </div>
+    {% block content %}
+    {% endblock %}
   </body>
 </html>

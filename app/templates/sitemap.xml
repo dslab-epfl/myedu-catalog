@@ -1,3 +1,9 @@
+{#
+  The sitemap.
+  Author: Stefan Bucur (stefan.bucur@epfl.ch)
+  Copyright 2012 EPFL. All rights reserved.
+#}
+
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   {% for course_key in course_keys -%}

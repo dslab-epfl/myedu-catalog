@@ -25,6 +25,7 @@ SPECIALIZATION_MAPPING = {
 
 class Course(db.Model):
   title = db.StringProperty()
+  
   language = db.StringProperty(choices=set(["en", "fr", "de", "fr_en"]))
   
   instructors = db.StringListProperty()
@@ -57,6 +58,10 @@ class Course(db.Model):
   bibliography = db.TextProperty()
   keywords = db.TextProperty()
   exam_form_detail = db.TextProperty()
+  note = db.TextProperty()
+  prerequisite_for = db.TextProperty()
+  library_recomm = db.TextProperty()
+  links = db.TextProperty()
 
   needs_indexing_ = db.BooleanProperty(default=True)
   

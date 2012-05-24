@@ -1,40 +1,108 @@
-{% extends "base.html" %}
-{% block title %}EPFL Course Catalog{% endblock %}
+{#
+  Showcase page.
+  Author: Stefan Bucur (stefan.bucur@epfl.ch)
+  Copyright 2012 EPFL. All rights reserved.
+#}
 
-{% block head %}
-  {{ super() }}
-  <link rel="stylesheet" type="text/css" href="/static/css/showcase.css"/>
-  <style type="text/css">
-    div#wrapper {
-      width: 1024px;
-    }
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+    <title>EPFL Course Showcase</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <script type="text/javascript">
     
-    div#galleria {
-      height: 320px;
-    }
-  </style>
-  <script src="/static/galleria/galleria-1.2.7.min.js"></script>
-  
-{% endblock head %}
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-373800-15']);
+      _gaq.push(['_trackPageview']);
+    
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/css/showcase.css" rel="stylesheet">
 
-{% block content %}
-  <h1>EPFL Course Catalog</h1>
-  
-  <div id="galleria">
-  {% for course in courses %}
-  <a href="/static/img/course-large.jpg">
-    <img data-title="{{ course.name }}"
-         data-description="{{ course.teachers|join(', ') }}"
-         src="/static/img/course-small.jpg" />
-  </a>
-  {% endfor %}
-  </div>
-  
-  <script type="text/javascript">
-  	Galleria.loadTheme('/static/galleria/themes/classic/galleria.classic.min.js');
-  	Galleria.run("#galleria", {
-  		carousel: true,
-  		
-  	});
-  </script>
-{% endblock content %}
+    
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    {% endblock head %}
+  </head>
+  <body data-spy="scroll" data-target=".subnav" data-offset="50">
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="/">MyEdu</a>
+          <ul class="nav">
+            <li class="">
+              <a href="/catalog">Catalog</a>
+            </li>
+            <li class="">
+              <a href="/update">Description Form</a>
+            </li>
+          </ul>
+          <form class="navbar-search pull-left" action="">
+            <input type="text" class="search-query" placeholder="Search EPFL course">
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <header class="jumbotron subhead" id="overview">
+        <h1>EPFL Courses</h1>
+        <p class="lead">Tap into a vast source of knowledge.</p>
+        <div class="subnav">
+          <ul class="nav nav-pills">
+            {% for section in sections %}
+            <li><a href="#{{ section['id'] }}">{{ section["name"] }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </header>
+      
+      {% for section in sections %}
+      <section id="{{ section['id'] }}">
+      <div class="page-header">
+        <h1>{{ section ["name"] }}</h1>
+      </div>
+      <ul class="thumbnails">
+        {% macro coursetile(class="span4", url="#", width=290, height=200,
+                            bcolor="fafafa", fcolor="eee", title="Course title",
+                            description="Course description") -%}
+        <li class="{{class}}">
+          <div class="thumbnail" style="position: relative;">
+            <a href="{{url}}" style="position: absolute; width: {{width}}px; height: {{height}}px;"></a>
+            <div style="background-image: url('http://placehold.it/{{width}}x{{height}}/{{bcolor}}/{{fcolor}}&text=EPFL'); width: {{width}}px; height: {{height}}px;">
+              <div>
+                <div class="well pull-down" style="position: absolute; bottom: 0px; margin: 0px 5px; padding: 5px 10px; background-color: rgba(255, 255, 255, 0.30);">
+                  <h3>{{title}}</h3>
+                  <p>{{description}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+        {%- endmacro %}
+        {% for course in section["courses"] %}
+        {{ coursetile(url="/c/%s" % course.key(), bcolor=course.color_,
+                      title=course.title, description=course.instructors|join(", ")) }}
+        {% endfor %}
+      </ul>
+      </section>
+      {% endfor %}
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+    <script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/application.js"></script>
+  </body>
+</html>

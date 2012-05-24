@@ -91,7 +91,12 @@ class AppEngineIndex(object):
       cls.FieldMapper(course.prior_knowledge, search.HtmlField, 'prereq'),
       cls.FieldMapper(course.type_of_teaching, search.HtmlField, 'teaching'),
       cls.FieldMapper(course.bibliography, search.HtmlField, 'biblio'),
-      cls.FieldMapper(course.keywords, search.HtmlField, 'keywords')
+      cls.FieldMapper(course.keywords, search.HtmlField, 'keywords'),
+      cls.FieldMapper(course.exam_form_detail, search.HtmlField, 'examdetail'),
+      cls.FieldMapper(course.note, search.HtmlField, 'note'),
+      cls.FieldMapper(course.prerequisite_for, search.HtmlField, 'prereqfor'),
+      cls.FieldMapper(course.library_recomm, search.HtmlField, 'libraryrec'),
+      cls.FieldMapper(course.links, search.HtmlField, 'links')
     ]
     doc_fields = []
     
