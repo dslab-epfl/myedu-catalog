@@ -1,5 +1,5 @@
 The order of operations:
 
-1. Crawl the data: crawl_isa_epfl.py [most time consuming]
-2. Parse the data: parse_course_contents.py [average time]
+1. Crawl the data: crawl_isa_epfl.py [most expensive]
+2. Parse the data: parse_course_contents.py [takes about 30 seconds]
 3. Analyze/upload the data.

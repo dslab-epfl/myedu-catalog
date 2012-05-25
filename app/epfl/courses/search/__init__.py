@@ -6,6 +6,7 @@ __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 import logging
 import os
+import re
 import StringIO
 from xml.etree import ElementTree
 import urllib
@@ -20,36 +21,6 @@ from epfl.courses import models
 import unidecode
 
 
-class SearchQuery(object):
-  def __init__(self, query=None, filters=None, options=None):
-    self.query = query or []
-    self.filters = filters or []
-    self.options = None
-    
-  @classmethod
-  def BuildFromRequest(cls, request):
-    def append_filter(query, id_name, field_name):
-      field_value = request.get(id_name)
-      if field_value:
-        query.filters.append((field_name, field_value))
-        
-    query = cls(query=request.get("q", "").split())
-    
-    append_filter(query, "aq_t", "title")
-    append_filter(query, "aq_lang", "language")
-    append_filter(query, "aq_in", "instructor")
-    append_filter(query, "aq_sec", "section")
-    append_filter(query, "aq_sem", "semester")
-    append_filter(query, "aq_exam", "exam")
-    append_filter(query, "aq_cred", "credits")
-    append_filter(query, "aq_coeff", "coefficient")
-    
-    append_filter(query, "aq_hours_l", "lecthours")
-    append_filter(query, "aq_hours_r", "recithours")
-    append_filter(query, "aq_hours_p", "projhours")
-    
-    return query
-  
 class SearchQueryOptions(object):
   CORPUS_GSS = 0
   CORPUS_DB = 1

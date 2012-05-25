@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
+# Copyright 2012 EPFL. All rights reserved.
 
 """Parses already crawled HTML files, and extracts course information."""
 

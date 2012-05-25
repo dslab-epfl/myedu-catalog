@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+#
+# Copyright 2012 EPFL. All rights reserved.
 
 """Analyzes the parsed data."""
 
