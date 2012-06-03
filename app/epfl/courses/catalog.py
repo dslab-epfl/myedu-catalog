@@ -20,8 +20,14 @@ class CatalogPage(base_handler.BaseHandler):
     PAGE_SIZE = 20
     ACCURACY = 2000
     
-    query = search.SearchQuery.BuildFromRequest(self.request)
-    query_string = search.SiteSearchProvider.GetQueryString(query)
+    query = search.parser.SearchQuery.BuildFromRequest(self.request)
+    
+    if query.directives.get("loc") == "index":
+      provider = search.AppSearchProvider
+    else:
+      provider = search.AppSearchProvider
+    
+    query_string = query.GetString()
     suggested_string = None
     
     found_courses = None
@@ -43,10 +49,10 @@ class CatalogPage(base_handler.BaseHandler):
         pass
     
     logging.info("Invoking search query '%s'" % query_string)
-    search_results = search.SiteSearchProvider.Search(query,
-                                                      limit=PAGE_SIZE,
-                                                      offset=offset,
-                                                      accuracy=ACCURACY)
+    search_results = provider.Search(query,
+                                     limit=PAGE_SIZE,
+                                     offset=offset,
+                                     accuracy=ACCURACY)
     
     if search_results:
       if search_results.original:

@@ -147,10 +147,10 @@
     }
     
     {% if not (course and course.submitted_) %}
-    $(function () { $('#objectives_en').maxlength({max: 256, feedbackText: "{r} characters remaining"}); });
-    $(function () { $('#objectives_fr').maxlength({max: 256, feedbackText: "{r} characters remaining"}); });
-    $(function () { $('#contents_en').maxlength({max: 512, feedbackText: "{r} characters remaining"}); });
-    $(function () { $('#contents_fr').maxlength({max: 512, feedbackText: "{r} characters remaining"}); });
+    $(function () { $('#objectives_en').maxlength({max: 512, feedbackText: "{r} characters remaining"}); });
+    $(function () { $('#objectives_fr').maxlength({max: 512, feedbackText: "{r} characters remaining"}); });
+    $(function () { $('#contents_en').maxlength({max: 1024, feedbackText: "{r} characters remaining"}); });
+    $(function () { $('#contents_fr').maxlength({max: 1024, feedbackText: "{r} characters remaining"}); });
     {% endif %}
   </script>
 {% endblock head %}
@@ -349,13 +349,13 @@
     <tr>
       <td>
         <span class="label">7a. Objectives</span> <br/>
-        <textarea name="objectives_en" rows="4" maxlength="256" id="objectives_en"
-          placeholder="in English (max 256 characters)" {{ readonly() }}>{{ course.objectives_en if course }}</textarea>
+        <textarea name="objectives_en" rows="4" maxlength="512" id="objectives_en"
+          placeholder="in English (max 512 characters)" {{ readonly() }}>{{ course.objectives_en if course }}</textarea>
       </td>
       <td>
         <span class="label">7b. Objectifs</span> <br/>
-        <textarea name="objectives_fr" rows="4" maxlength="256" id="objectives_fr"
-          placeholder="en français (max 256 caractères)" {{ readonly() }}>{{ course.objectives_fr if course }}</textarea>
+        <textarea name="objectives_fr" rows="4" maxlength="512" id="objectives_fr"
+          placeholder="en français (max 512 caractères)" {{ readonly() }}>{{ course.objectives_fr if course }}</textarea>
       </td>
     </tr>
     </table>
@@ -366,13 +366,13 @@
     <tr>
       <td>
         <span class="label">8a. Contents</span><br/>
-        <textarea name="contents_en" rows="8" maxlength="512" id="contents_en"
-          placeholder="in English (max 512 characters)" {{ readonly() }}>{{ course.contents_en if course }}</textarea>
+        <textarea name="contents_en" rows="8" maxlength="1024" id="contents_en"
+          placeholder="in English (max 1024 characters)" {{ readonly() }}>{{ course.contents_en if course }}</textarea>
       </td>
       <td>
         <span class="label">8b. Contenu</span><br/>
-        <textarea name="contents_fr" rows="8" maxlength="512" id="contents_fr"
-          placeholder="en français (max 512 caractères)" {{ readonly() }}>{{ course.contents_fr if course }}</textarea>
+        <textarea name="contents_fr" rows="8" maxlength="1024" id="contents_fr"
+          placeholder="en français (max 1024 caractères)" {{ readonly() }}>{{ course.contents_fr if course }}</textarea>
       </td>
     </tr>
     </table>

@@ -43,6 +43,20 @@ class SearchQuery(object):
     self.filters = filters or []
     self.directives = directives or {}
     
+  def GetString(self, include_directives=True):
+    query_string = []
+    if self.directives and include_directives:
+      query_string.append(" ".join(["@%s:%s" % (key, value)
+                                    for key, value in self.directives.items()]))
+    if self.filters:
+      query_string.append(" ".join(["%s:%s" % (key, value)
+                                    for key, value in self.filters]))
+      
+    if self.terms:
+      query_string.append(" ".join(self.terms))
+      
+    return " ".join(query_string)
+    
   @classmethod
   def ParseFromString(cls, query_string):
     query = cls()
@@ -76,15 +90,14 @@ class SearchQuery(object):
           
     return query
       
-    
   @classmethod
   def BuildFromRequest(cls, request):
     def append_filter(query, id_name, field_name):
       field_value = request.get(id_name)
       if field_value:
         query.filters.append((field_name, field_value))
-        
-    query = cls(terms=request.get("q", "").split())
+      
+    query = cls.ParseFromString(request.get("q", ""))
     
     append_filter(query, "aq_t", "title")
     append_filter(query, "aq_lang", "language")
@@ -111,6 +124,10 @@ class TestTokenizeQuery(unittest.TestCase):
     tokens = self.GetTokens("help me out")
     self.assertEqual(tokens, [("term", "help"), ("term", "me"),
                               ("term", "out")])
+    
+  def test_empty(self):
+    tokens = self.GetTokens("")
+    self.assertEqual(tokens, [])
     
   def test_whitespace(self):
     tokens = self.GetTokens("search  that", discard_ws=False)
@@ -146,11 +163,17 @@ class TestTokenizeQuery(unittest.TestCase):
                               ("term", "André"),
                               ("term", "Garçon")])
     
+
 class TestParseQuery(unittest.TestCase):
   def test_simple_query(self):
     query = SearchQuery.ParseFromString("help me out")
     self.assertEqual(query.terms, ["help", "me", "out"])
     
+  def test_empty(self):
+    query = SearchQuery.ParseFromString("")
+    self.assertEqual(query.terms, [])
+    self.assertEqual(query.filters, [])
+    self.assertEqual(query.directives, {})
     
   def test_filters_simple(self):
     query = SearchQuery.ParseFromString("help a:b c: d")
@@ -166,6 +189,16 @@ class TestParseQuery(unittest.TestCase):
     query = SearchQuery.ParseFromString("@loc:db query")
     self.assertEqual(query.terms, ["query"])
     self.assertEqual(query.directives, { "loc": "db" })
+    
+    
+class TestQueryGetString(unittest.TestCase):
+  def test_simple_query(self):
+    query = SearchQuery.ParseFromString(" help    me   out ")
+    self.assertEqual(query.GetString(), "help me out")
+    
+  def test_filters_simple(self):
+    query = SearchQuery.ParseFromString("looking for credits:10")
+    self.assertEqual(query.GetString(), "credits:10 looking for")
 
 if __name__ == "__main__":
   unittest.main()

@@ -6,6 +6,7 @@ __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 import json
 import logging
+import urllib
 import webapp2
 
 from google.appengine.api import urlfetch
@@ -25,7 +26,7 @@ class BaseHandler(webapp2.RequestHandler):
 
 class BaseCourseDescriptionHandler(BaseHandler):
   # TODO(bucur): Move into separate configuration file
-  tequilla_key_url = r"http://pocketcampus.epfl.ch/tequila_auth/tequila_proxy.php?app_name=MyEdu&app_url=http://myedu.pocketcampus.org/update"
+  tequilla_key_url = r"http://pocketcampus.epfl.ch/tequila_auth/tequila_proxy.php?app_name=MyEdu&app_url=%s"
   tequilla_data_url = r"http://pocketcampus.epfl.ch/tequila_auth/tequila_proxy.php?key=%s"
   
   def dispatch(self):
@@ -41,8 +42,8 @@ class BaseCourseDescriptionHandler(BaseHandler):
     return self.session_store.get_session()
   
   @classmethod
-  def _GetTequillaKey(cls):
-    result = urlfetch.fetch(cls.tequilla_key_url)
+  def _GetTequillaKey(cls, url):
+    result = urlfetch.fetch(cls.tequilla_key_url % urllib.quote(url))
     data = json.loads(result.content)
     return data
   
@@ -98,7 +99,7 @@ class BaseCourseDescriptionHandler(BaseHandler):
       return True
     
     # Produce the authentication redirect
-    auth_coord = self._GetTequillaKey()
+    auth_coord = self._GetTequillaKey(self.request.url)
     self.session['tequilla_key'] = str(auth_coord["key"])
     self.session['tequilla_redirect'] = str(auth_coord["redirect"])
     return False

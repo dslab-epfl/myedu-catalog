@@ -5,6 +5,19 @@
 
 __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
+LANGUAGE_CODE = {
+  "en": "English",
+  "fr": "French",
+}
+
+GRADING_CODE = {
+  "sem": u"Throughout semester (contrôle continu)",
+  "writ": u"Written (exam period)",
+  "oral": u"Oral (exam period)",
+  "sem_writ": u"Throughout semester + written (exam period)",
+  "sem_oral": u"Throughout semester + oral (exam period)",
+}
+
 INSTRUCTORS = [
   ("Anastasia", "Ailamaki", "anastasia.ailamaki@epfl.ch"),
   ("George", "Candea", "george.candea@epfl.ch"),

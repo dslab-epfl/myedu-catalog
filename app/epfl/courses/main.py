@@ -32,6 +32,7 @@ app = webapp2.WSGIApplication([
    webapp2.Route('/catalog', handler=catalog.CatalogPage),
    webapp2.Route('/c/<course_key>', handler=catalog.CoursePage),
    webapp2.Route('/update', handler=descriptions.CourseDescriptionPage),
+   webapp2.Route('/update/data.xls', handler=descriptions.DumpCSVHandler),
    webapp2.Route('/gcs', handler=catalog.GoogleSearchHandler),
    routes.PathPrefixRoute('/admin', [
      webapp2.Route('/submit', handler=descriptions.SubmitCourseDescription),

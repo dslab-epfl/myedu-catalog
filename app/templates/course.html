@@ -37,7 +37,7 @@
 {% endblock head %}
 
 {% macro searchable(content, query_field, query_value=None) -%}
-  <a href='/catalog?q={{query_field}}:"{% if query_value %}{{query_value}}{% else %}{{content}}{% endif %}"'>{{ content }}</a>
+  <a rel="nofollow" href='/catalog?q=@loc:index {{query_field}}:"{% if query_value %}{{query_value}}{% else %}{{content}}{% endif %}"'>{{ content }}</a>
 {%- endmacro %}
 
 {% block content %}

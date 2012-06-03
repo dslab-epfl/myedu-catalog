@@ -2,6 +2,10 @@
 
 """Course description updates."""
 
+import logging
+import StringIO
+import xlwt
+
 from google.appengine.ext import db
 
 from epfl.courses import base_handler
@@ -37,11 +41,13 @@ class CourseDescription(db.Model):
   
   prerequisites = db.StringListProperty()
   
-  grading_method = db.StringProperty(choices=set(["sem", "writ", "oral", "sem_writ", "sem_oral"]))
+  grading_method = db.StringProperty(choices=set(["sem", "writ", "oral",
+                                                  "sem_writ", "sem_oral"]))
   grading_formula = db.StringProperty()
   
   notes = db.TextProperty()
   
+  # Metadata
   submitted_ = db.BooleanProperty()
   in_progress_ = db.BooleanProperty()
   
@@ -221,4 +227,99 @@ class CourseDescriptionPage(base_handler.BaseCourseDescriptionHandler):
   def HandleCourseNotFound(self, course_id=None):
     self.error(400)
     self.RenderTemplate('course_not_found.html', { "course_id": course_id })
+    
+class DumpCSVHandler(base_handler.BaseCourseDescriptionHandler):
+  class ColumnMapping(object):
+    def __init__(self, column_name, field_name, is_list, mapping, width=None):
+      self.column_name = column_name
+      self.field_name = field_name
+      self.is_list = is_list
+      self.mapping = mapping
+      self.width = width
+      
+    def _GetMappedValue(self, value):
+      if self.mapping:
+        value = self.mapping.get(value, value)
+        
+      if isinstance(value, basestring):
+        value = value.replace("\r", "")
+
+      return value
+      
+    def GetText(self, course_desc):
+      if self.is_list:
+        return ", ".join([self._GetMappedValue(x)
+                          for x in getattr(course_desc, self.field_name, [])])
+      else:
+        return self._GetMappedValue(getattr(course_desc, self.field_name, ""))
+      
+  @authenticated
+  def get(self):
+    logging.info("Course data accessed by %s" % self.user_name)
+    
+    self.response.headers['Content-Type'] = 'application/vnd.ms-excel'
+    self.response.headers['Content-Disposition'] = 'attachment;filename=data.xls'
+    
+    columns = [
+      self.ColumnMapping('Title (en)', 'title_en', False, None, 40),
+      self.ColumnMapping('Title (fr)', 'title_fr', False, None, 40),
+      self.ColumnMapping('Instructor(s)', 'instructors', True, None, 20),
+      self.ColumnMapping('Language', 'language', False,
+                         static_data.LANGUAGE_CODE),
+      self.ColumnMapping('Section(s)', 'sections', True, None),
+      self.ColumnMapping('ECTS Credits', 'ects_credits', False, None),
+      self.ColumnMapping('Course hours', 'course_points', False, None),
+      self.ColumnMapping('Exercise hours', 'exercise_points', False, None),
+      self.ColumnMapping('Project hours', 'project_points', False, None),
+      self.ColumnMapping('Objectives (en)', 'objectives_en', False, None, 70),
+      self.ColumnMapping('Objectives (fr)', 'objectives_fr', False, None, 70),
+      self.ColumnMapping('Contents (en)', 'contents_en', False, None, 100),
+      self.ColumnMapping('Contents (fr)', 'contents_fr', False, None, 100),
+      self.ColumnMapping('Prerequisites', 'prerequisites', True,
+                         dict([(x.lower(), "(%s) %s" % (x, y.decode("utf-8")))
+                               for (x, y) in static_data.PREREQUISITES]), 40),
+      self.ColumnMapping('Form of teaching', 'form_of_teaching', False, None, 30),
+      self.ColumnMapping('Grading method', 'grading_method', False,
+                         static_data.GRADING_CODE, 30),
+      self.ColumnMapping('Grading formula', 'grading_formula', False, None, 20),
+      self.ColumnMapping('URL', 'homepage', False, None, 40),
+      self.ColumnMapping('Bibliography', 'bibliography', False, None, 50),
+      self.ColumnMapping('Notes', 'notes', False, None, 50),
+    ]
+    
+    workbook = xlwt.Workbook()
+    sheet = workbook.add_sheet('Desc 2012-2013')
+    sheet.set_panes_frozen(True) # frozen headings instead of split panes
+    sheet.set_horz_split_pos(1) # in general, freeze after last heading row
+    sheet.set_remove_splits(True) # if user does unfreeze, don't leave a split there
+    
+    style = xlwt.easyxf("font: bold on;")
+    
+    for i, column in enumerate(columns):
+      sheet.write(0, i, column.column_name, style)
+      if column.width:
+        sheet.col(i).width = column.width * 256
+        
+    style = xlwt.easyxf("alignment: wrap on;")
+    
+    row_index = 1
+    for course_desc in CourseDescription.all().filter("submitted_", True).run():
+      form_of_teaching = []
+      if course_desc.course_points > 0:
+        form_of_teaching.append("Ex cathedra")
+      if course_desc.exercise_points > 0:
+        form_of_teaching.append("Exercices")
+      if course_desc.project_points > 0:
+        form_of_teaching.append("Project")
+      course_desc.form_of_teaching = " + ".join(form_of_teaching) 
+      
+      for i, column in enumerate(columns):
+        sheet.write(row_index, i, column.GetText(course_desc), style)
+      row_index += 1
+        
+    buffer = StringIO.StringIO()
+    workbook.save(buffer)
+    
+    self.response.out.write(buffer.getvalue())
+    
 

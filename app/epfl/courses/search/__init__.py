@@ -17,6 +17,7 @@ from google.appengine.ext import db
 from google.appengine.runtime import apiproxy_errors
 
 from epfl.courses import models
+from epfl.courses.search import parser
 
 import unidecode
 
@@ -49,19 +50,19 @@ class AppSearchProvider(object):
   
   @classmethod
   def GetQueryString(cls, query):
-    main_query = " ".join(query.query)
-    filters = " ".join('%s:"%s"' % (x[0], x[1]) for x in query.filters)
-    return " ".join([main_query, filters]).strip()
+    return query.GetString(include_directives=False)
   
   @classmethod
-  def Search(cls, query_string, limit=None, offset=None, accuracy=None):
+  def Search(cls, query, limit=None, offset=None, accuracy=None):
+    query_string = cls.GetQueryString(query)
+    
     try:
-      query = search.Query(unidecode.unidecode(query_string),
-                           search.QueryOptions(limit=limit,
-                                               offset=offset,
-                                               number_found_accuracy=accuracy,
-                                               ids_only=True))
-      search_results = cls.GetIndex().search(query)
+      search_query = search.Query(unidecode.unidecode(query_string),
+                                  search.QueryOptions(limit=limit,
+                                                      offset=offset,
+                                                      number_found_accuracy=accuracy,
+                                                      ids_only=True))
+      search_results = cls.GetIndex().search(search_query)
     
       return SearchResults([document.doc_id for document in search_results.results],
                            search_results.number_found)
@@ -76,9 +77,7 @@ class SiteSearchProvider(object):
   
   @classmethod
   def GetQueryString(cls, query):
-    main_query = " ".join(query.query)
-    filters = " ".join('"%s"' % x[1] for x in query.filters)
-    return " ".join([main_query, filters]).strip()
+    return query.GetString(include_directives=False)
 
   @classmethod
   def Search(cls, query, limit=None, offset=None, accuracy=None, original=None):
@@ -102,17 +101,21 @@ class SiteSearchProvider(object):
     
     suggestion_node = xml_data.find("Spelling/Suggestion")
     
-    if suggestion_node is not None:
-      return cls.Search(SearchQuery([suggestion_node.get("q")]),
+    if suggestion_node is not None and original is None:
+      logging.info("Searching instead for autosuggested %s" % suggestion_node.get("q"))
+      return cls.Search(parser.SearchQuery.ParseFromString(suggestion_node.get("q")),
                         limit, offset, accuracy,
                         xml_data.find("Q").text)
     
     number_found_node = xml_data.find("RES/M")
     
     if number_found_node is None:
+      logging.info("No search results found using query '%s'" % escaped_query)
       return
       
     number_found = int(number_found_node.text)
+    
+    logging.info("%d search results found" % number_found)
     
     for result in xml_data.findall("RES/R"):
       if os.environ.get('SERVER_SOFTWARE', '').startswith('Development'):
