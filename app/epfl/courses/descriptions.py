@@ -230,12 +230,14 @@ class CourseDescriptionPage(base_handler.BaseCourseDescriptionHandler):
     
 class DumpCSVHandler(base_handler.BaseCourseDescriptionHandler):
   class ColumnMapping(object):
-    def __init__(self, column_name, field_name, is_list, mapping, width=None):
+    def __init__(self, column_name, field_name, is_list, mapping, width=None,
+                 list_separator=", "):
       self.column_name = column_name
       self.field_name = field_name
       self.is_list = is_list
       self.mapping = mapping
       self.width = width
+      self.list_separator = list_separator
       
     def _GetMappedValue(self, value):
       if self.mapping:
@@ -248,8 +250,8 @@ class DumpCSVHandler(base_handler.BaseCourseDescriptionHandler):
       
     def GetText(self, course_desc):
       if self.is_list:
-        return ", ".join([self._GetMappedValue(x)
-                          for x in getattr(course_desc, self.field_name, [])])
+        return self.list_separator.join([self._GetMappedValue(x)
+                                         for x in getattr(course_desc, self.field_name, [])])
       else:
         return self._GetMappedValue(getattr(course_desc, self.field_name, ""))
       
@@ -263,7 +265,8 @@ class DumpCSVHandler(base_handler.BaseCourseDescriptionHandler):
     columns = [
       self.ColumnMapping('Title (en)', 'title_en', False, None, 40),
       self.ColumnMapping('Title (fr)', 'title_fr', False, None, 40),
-      self.ColumnMapping('Instructor(s)', 'instructors', True, None, 20),
+      self.ColumnMapping('Instructor(s)', 'instructors', True, None, 20,
+                         list_separator="\n"),
       self.ColumnMapping('Language', 'language', False,
                          static_data.LANGUAGE_CODE),
       self.ColumnMapping('Section(s)', 'sections', True, None),
