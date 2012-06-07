@@ -123,6 +123,7 @@ class CoursePage(base_handler.BaseHandler):
     course_page = self.GetRenderedTemplate('course_body.html', template_args)
     
     data = {
+      "id": course_key,
       "title": course.title,
       "html": course_page
     }

@@ -2,61 +2,8 @@ div#wrapper {
 	width: 800px;
 }
 
-.course-border {
-	padding: 10px;
-}
-
 h1 {
 	text-align: left;
 	border-bottom: solid #000 2px;
 	margin: 0px 0px 15px 0px;
-}
-
-#aux_info table {
-	width: 300px;
-}
-
-#main_info table {
-	width: 400px;
-}
-
-#footer_info {
-	margin-top: 20px;
-}
-
-#footer_info table {
-	width: 100%;
-}
-
-.label {
-	text-align: right;
-	padding-right: 20px;
-	padding-top: 3px;
-	padding-bottom: 3px;
-	min-width: 100px;
-	font-weight: bold;
-}
-
-#footer_info .label {
-	min-width: 200px;
-	text-align: left;
-}
-
-.value {
-	padding-top: 3px;
-	padding-bottom: 3px;
-	width: 100%;
-}
-
-.sec_title {
-	font-size: 1em;
-	font-weight: bold;
-}
-
-.sec_content {
-	background-color: #fafafa;
-	border: solid #eee 1px;
-	border-radius: 5px;
-	padding: 5px;
-	margin-bottom: 10px;
 }
