@@ -22,6 +22,13 @@ class BaseHandler(webapp2.RequestHandler):
   
   def RenderTemplate(self, filename, template_args):
     self.response.write(self.jinja2.render_template(filename, **template_args))
+    
+  def GetRenderedTemplate(self, filename, template_args):
+    return self.jinja2.render_template(filename, **template_args)
+  
+  def RenderJSON(self, data):
+    self.response.headers['Content-Type'] = 'application/json'
+    json.dump(data, self.response.out, indent=True, encoding="utf-8")
 
 
 class BaseCourseDescriptionHandler(BaseHandler):

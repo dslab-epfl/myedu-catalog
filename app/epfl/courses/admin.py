@@ -133,8 +133,7 @@ class DumpHandler(base_handler.BaseHandler):
     data = [{ "id": str(course.key()), "title": course.title, "urls": course.urls[0]}
             for course in results]
     
-    self.response.headers['Content-Type'] = 'application/json'
-    self.response.out.write(json.dumps(data, indent=True, encoding="utf-8"))
+    self.RenderJSON(data)
 
 
 class ReinitDataHandler(base_handler.BaseHandler):
@@ -216,3 +215,9 @@ class SitemapHandler(base_handler.BaseHandler):
     self.response.headers['Content-Type'] = 'application/xml'
     self.RenderTemplate('sitemap.xml', template_args)
 
+class JSONSitemapHandler(base_handler.BaseHandler):
+  # TODO(bucur): Cache the site map in the blob store
+  def get(self):
+    course_keys = models.Course.all().fetch(None, keys_only=True)
+    data = ["%s/admin/c/%s.json" % (self.request.host_url, key) for key in course_keys]
+    self.RenderJSON(data)

@@ -91,8 +91,7 @@ class CatalogPage(base_handler.BaseHandler):
     
 
 class CoursePage(base_handler.BaseHandler):
-  def get(self, course_key):
-    course = db.get(course_key)
+  def AnnotateCourseEntry(self, course):
     course.language_ = models.LANGUAGE_MAPPING[course.language]
     course.sections_ = zip(course.sections, course.urls)
     
@@ -102,7 +101,33 @@ class CoursePage(base_handler.BaseHandler):
     
     course.show_trio_ = not reduce(lambda x, y: x or y, show_vector)
     
-    self.RenderTemplate('course.html', { "course": course})
+  def get_frontend(self, course_key):
+    course = db.get(course_key)
+    self.AnnotateCourseEntry(course)
+    
+    template_args = {
+      "course": course
+    }
+    
+    self.RenderTemplate('course.html', template_args)
+    
+  def get_backend(self, course_key):
+    course = db.get(course_key)
+    self.AnnotateCourseEntry(course)
+    
+    template_args = {
+      "course": course,
+      "no_title": True
+    }
+    
+    course_page = self.GetRenderedTemplate('course_body.html', template_args)
+    
+    data = {
+      "title": course.title,
+      "html": course_page
+    }
+    
+    self.RenderJSON(data)
 
 
 class GoogleSearchHandler(base_handler.BaseHandler):

@@ -30,7 +30,8 @@ app = webapp2.WSGIApplication([
    webapp2.Route('/', handler=MainPage),
    webapp2.Route('/showcase', handler=catalog.ShowcasePage),
    webapp2.Route('/catalog', handler=catalog.CatalogPage),
-   webapp2.Route('/c/<course_key>', handler=catalog.CoursePage),
+   webapp2.Route('/c/<course_key>', handler=catalog.CoursePage,
+                 handler_method="get_frontend"),
    webapp2.Route('/update', handler=descriptions.CourseDescriptionPage),
    webapp2.Route('/update/data.xls', handler=descriptions.DumpCSVHandler),
    webapp2.Route('/gcs', handler=catalog.GoogleSearchHandler),
@@ -41,6 +42,9 @@ app = webapp2.WSGIApplication([
      webapp2.Route('/index', handler=admin.BuildSearchIndexHandler),
      webapp2.Route('/dump', handler=admin.DumpHandler),
      webapp2.Route('/stats', handler=admin.StatsHandler),
-     webapp2.Route('/sitemap.xml', handler=admin.SitemapHandler)
+     webapp2.Route('/sitemap.xml', handler=admin.SitemapHandler),
+     webapp2.Route('/sitemap.json', handler=admin.JSONSitemapHandler),
+     webapp2.Route('/c/<course_key>.json', handler=catalog.CoursePage,
+                   handler_method="get_backend"),
    ])],
    debug=True, config=config)
