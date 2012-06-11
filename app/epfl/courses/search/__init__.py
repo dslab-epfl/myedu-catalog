@@ -22,3 +22,49 @@ class SearchResults(object):
     self.number_found = None
     
     self.original_url_ = None
+
+
+class AutosuggestedSearchProvider(object):
+  def __init__(self, provider, exact_search=False):
+    self.provider = provider
+    self.original_query = None
+    self.suggested_query = None
+    self.exact_search = exact_search
+    
+  def Search(self, query, search_results, limit=None, offset=None,
+             accuracy=None):
+    query_string = query.GetString()
+    
+    self.provider.Search(query,
+                         search_results,
+                         limit=limit,
+                         offset=offset,
+                         accuracy=accuracy)
+    
+    self.suggested_query = search_results.suggested_query
+    
+    if (not search_results.number_found and search_results.suggested_query
+        and not self.exact_search):
+      self.original_query = query_string
+      self.provider.Search(search_results.suggested_query,
+                           search_results,
+                           limit=limit,
+                           offset=offset,
+                           accuracy=accuracy)
+
+
+class StagedSearchProvider(object):
+  def __init__(self, providers, use_all=False):
+    self.providers = providers
+    self.use_all = use_all
+    
+  def Search(self, query, search_results, limit=None, offset=None,
+             accuracy=None):
+    for provider in self.providers:
+      provider.Search(query,
+                      search_results,
+                      limit=limit,
+                      offset=offset,
+                      accuracy=accuracy)
+      if search_results.latest_results and not self.use_all:
+        break
