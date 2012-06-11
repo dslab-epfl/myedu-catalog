@@ -86,37 +86,30 @@ class CatalogPage(base_handler.BaseHandler):
     query = self.BuildQueryFromRequest()
     offset = self.GetOffsetFromRequest()
     
-    if query.directives.get("loc") == "index":
-      provider = search.AppSearchProvider
-    else:
-      provider = search.SiteSearchProvider
-    
     query_string = query.GetString()
-    original_query = None
-    suggested_query = None
     found_courses = None
     search_results = search.SearchResults(query_string)
     exact_search = self.request.get("exact")
     
+    # Create the composite search engine
+    staged_provider = search.StagedSearchProvider([search.AppSearchProvider,
+                                                   search.SiteSearchProvider])
+        
+    autocorr_provider = search.AutocorrectedSearchProvider(
+      staged_provider, exact_search=exact_search)
+    
+
+    
     if query_string:
       logging.info("Invoking original search query '%s'" % query_string)
       
-      provider.Search(query,
-                      search_results,
-                      limit=SearchPagination.PAGE_SIZE,
-                      offset=offset,
-                      accuracy=ACCURACY)
       
-      suggested_query = search_results.suggested_query
-      
-      if (not search_results.number_found and search_results.suggested_query
-          and not exact_search):
-        original_query = query_string
-        provider.Search(search_results.suggested_query,
-                        search_results,
-                        limit=SearchPagination.PAGE_SIZE,
-                        offset=offset,
-                        accuracy=ACCURACY)
+
+      autocorr_provider.Search(query,
+                               search_results,
+                               limit=SearchPagination.PAGE_SIZE,
+                               offset=offset,
+                               accuracy=ACCURACY)
       
       if search_results.results:
         if os.environ['SERVER_SOFTWARE'].startswith('Development'):
@@ -127,14 +120,14 @@ class CatalogPage(base_handler.BaseHandler):
     template_args = {
       'courses': found_courses,
       'query': query_string,
-      'original_query': original_query,
-      'suggested_query': suggested_query,
+      'original_query': autocorr_provider.original_query,
+      'suggested_query': autocorr_provider.suggested_query,
       'offset': offset,
       'exact': exact_search,
       'pagination': SearchPagination(search_results, offset),
       'debug': {
         'results': search_results.results,
-        'provider': str(provider),
+        'provider': None,
         'url': search_results.original_url_,
       },
     }

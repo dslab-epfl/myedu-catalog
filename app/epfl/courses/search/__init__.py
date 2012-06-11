@@ -6,6 +6,9 @@
 
 __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
+
+import logging
+
 from parser import SearchQuery
 from appsearch import AppSearchProvider
 from sitesearch import SiteSearchProvider
@@ -24,7 +27,7 @@ class SearchResults(object):
     self.original_url_ = None
 
 
-class AutosuggestedSearchProvider(object):
+class AutocorrectedSearchProvider(object):
   def __init__(self, provider, exact_search=False):
     self.provider = provider
     self.original_query = None
@@ -35,6 +38,7 @@ class AutosuggestedSearchProvider(object):
              accuracy=None):
     query_string = query.GetString()
     
+    logging.info("Searching for original query using '%s'" % self.provider)
     self.provider.Search(query,
                          search_results,
                          limit=limit,
@@ -45,6 +49,7 @@ class AutosuggestedSearchProvider(object):
     
     if (not search_results.number_found and search_results.suggested_query
         and not self.exact_search):
+      logging.info("Searching for autosuggested query using '%s' % self.provider")
       self.original_query = query_string
       self.provider.Search(search_results.suggested_query,
                            search_results,
@@ -61,6 +66,7 @@ class StagedSearchProvider(object):
   def Search(self, query, search_results, limit=None, offset=None,
              accuracy=None):
     for provider in self.providers:
+      logging.info("Searching using stage %s" % provider)
       provider.Search(query,
                       search_results,
                       limit=limit,
