@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # Copyright 2012 EPFL. All rights reserved.
 
@@ -8,8 +9,8 @@ __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 import unittest
 
-from parser import TokenizeQuery
-from parser import SearchQuery
+from epfl.courses.search.parser import TokenizeQuery
+from epfl.courses.search.parser import SearchQuery
 
 class TestTokenizeQuery(unittest.TestCase):
   @classmethod

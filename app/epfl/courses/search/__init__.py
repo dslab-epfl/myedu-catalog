@@ -36,11 +36,12 @@ class SearchQueryOptions(object):
 
 
 class SearchResults(object):
-  def __init__(self, results, number_found, query=None, original=None):
-    self.results = results
-    self.number_found = number_found
-    self.query = query
-    self.original = original
+  def __init__(self, original_query=None):
+    self.original_query = original_query
+    self.suggested_query = None
+    self.results = []
+    self.latest_results = []
+    self.number_found = None
 
 
 class AppSearchProvider(object):
