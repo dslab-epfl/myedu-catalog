@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+#
+# Copyright 2012 EPFL. All rights reserved.
 
 """Handlers for displaying course information."""
 
@@ -6,6 +8,7 @@ __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 import logging
 import random
+import os
 
 from google.appengine.ext import db
 
@@ -13,32 +16,59 @@ from epfl.courses import base_handler
 from epfl.courses import models
 from epfl.courses import search
 
+class SearchPagination(object):
+  PAGE_SIZE = 20
+  
+  def __init__(self, results, offset):
+    self.offset = offset
+    self.total_found = results.number_found
+    self.total_pages = 0
+    self.pages = []
+    self.page = None
+    self.prev_offset = None
+    self.next_offset = None
+    
+    if self.total_found:
+      self.total_pages = (self.total_found-1)/self.PAGE_SIZE + 1
+      
+      for i in range(self.total_pages):
+        self.pages.append((i, i*self.PAGE_SIZE))
+      
+      self.page = self.offset/self.PAGE_SIZE
+      
+      if self.page > 0:
+        self.prev_offset = (min(self.page, self.total_pages) - 1)*self.PAGE_SIZE
+      if self.page < self.total_pages - 1:
+        self.next_offset = (self.page + 1)*self.PAGE_SIZE
+    
 
 class CatalogPage(base_handler.BaseHandler):
+
+  def BuildQueryFromRequest(self):
+    def append_filter(query, id_name, field_name):
+      field_value = self.request.get(id_name)
+      if field_value:
+        query.filters.append((field_name, field_value))
+      
+    query = search.SearchQuery.ParseFromString(self.request.get("q", ""))
     
-  def get(self):
-    PAGE_SIZE = 20
-    ACCURACY = 2000
+    append_filter(query, "aq_t", "title")
+    append_filter(query, "aq_lang", "language")
+    append_filter(query, "aq_in", "instructor")
+    append_filter(query, "aq_sec", "section")
+    append_filter(query, "aq_sem", "semester")
+    append_filter(query, "aq_exam", "exam")
+    append_filter(query, "aq_cred", "credits")
+    append_filter(query, "aq_coeff", "coefficient")
     
-    query = search.parser.SearchQuery.BuildFromRequest(self.request)
+    append_filter(query, "aq_hours_l", "lecthours")
+    append_filter(query, "aq_hours_r", "recithours")
+    append_filter(query, "aq_hours_p", "projhours")
     
-    if query.directives.get("loc") == "index":
-      provider = search.AppSearchProvider
-    else:
-      provider = search.AppSearchProvider
-    
-    query_string = query.GetString()
-    suggested_string = None
-    
-    found_courses = None
-    total_found = models.Course.TotalCount()
-    
+    return query
+  
+  def GetOffsetFromRequest(self):
     offset = 0
-    next_offset = None
-    prev_offset = None
-    page = None
-    total_pages = None
-    pages = []
     
     if self.request.get("offset"):
       try:
@@ -47,46 +77,68 @@ class CatalogPage(base_handler.BaseHandler):
           offset = 0
       except ValueError:
         pass
+      
+    return offset
     
-    logging.info("Invoking search query '%s'" % query_string)
-    search_results = provider.Search(query,
-                                     limit=PAGE_SIZE,
-                                     offset=offset,
-                                     accuracy=ACCURACY)
+  def get(self):
+    ACCURACY = 2000
     
-    if search_results:
-      if search_results.original:
-        suggested_string = search_results.query
+    query = self.BuildQueryFromRequest()
+    offset = self.GetOffsetFromRequest()
+    
+    if query.directives.get("loc") == "index":
+      provider = search.AppSearchProvider
+    else:
+      provider = search.SiteSearchProvider
+    
+    query_string = query.GetString()
+    original_query = None
+    suggested_query = None
+    found_courses = None
+    search_results = search.SearchResults(query_string)
+    exact_search = self.request.get("exact")
+    
+    if query_string:
+      logging.info("Invoking original search query '%s'" % query_string)
       
-      found_courses = db.get(search_results.results)
+      provider.Search(query,
+                      search_results,
+                      limit=SearchPagination.PAGE_SIZE,
+                      offset=offset,
+                      accuracy=ACCURACY)
       
-      if search_results.number_found < total_found:
-        total_found = search_results.number_found
+      suggested_query = search_results.suggested_query
       
-      if total_found:
-        total_pages = (total_found-1)/PAGE_SIZE + 1
-        for i in range(total_pages):
-          pages.append((i, i*PAGE_SIZE))
-        
-        page = offset/PAGE_SIZE
-        
-        if page > 0:
-          prev_offset = (min(page, total_pages) - 1)*PAGE_SIZE
-        if page < total_pages - 1:
-          next_offset = (page + 1)*PAGE_SIZE
+      if (not search_results.number_found and search_results.suggested_query
+          and not exact_search):
+        original_query = query_string
+        provider.Search(search_results.suggested_query,
+                        search_results,
+                        limit=SearchPagination.PAGE_SIZE,
+                        offset=offset,
+                        accuracy=ACCURACY)
+      
+      if search_results.results:
+        if os.environ['SERVER_SOFTWARE'].startswith('Development'):
+          found_courses = []
+        else:
+          found_courses = db.get(search_results.results)
     
     template_args = {
       'courses': found_courses,
-      'total_found': total_found,
       'query': query_string,
-      'suggested_query': suggested_string,
+      'original_query': original_query,
+      'suggested_query': suggested_query,
       'offset': offset,
-      'next_offset': next_offset,
-      'prev_offset': prev_offset,
-      'page': page,
-      'total_pages': total_pages,
-      'pages': pages
+      'exact': exact_search,
+      'pagination': SearchPagination(search_results, offset),
+      'debug': {
+        'results': search_results.results,
+        'provider': str(provider),
+        'url': search_results.original_url_,
+      },
     }
+    
     self.RenderTemplate('catalog.html', template_args)
     
 

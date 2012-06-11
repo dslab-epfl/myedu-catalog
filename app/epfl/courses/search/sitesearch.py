@@ -10,12 +10,13 @@ import contextlib
 import logging
 import unittest
 import urllib
-from xml import etree
+import urllib2
+from xml.etree import ElementTree
 
 
 class SiteSearchProvider(object):
   SEARCH_ENGINE_ID = "000528554756935640955:t5p6oxkfane"
-  SEARCH_URL = "http://www.google.com/search?q=%s&ie=utf8&oe=utf8&client=google-csbe&output=xml_no_dtd&cx=%s"
+  SEARCH_URL = "http://www.google.com/search?hl=en&q=%s&ie=utf8&oe=utf8&client=google-csbe&output=xml_no_dtd&cx=%s"
   
   @classmethod
   def GetQueryStringFuzzy(cls, query):
@@ -30,7 +31,7 @@ class SiteSearchProvider(object):
   
   @classmethod
   def EscapeQueryString(cls, query_string):
-    return urllib.quote_plus(query_string)
+    return urllib.quote_plus(query_string.encode("utf-8"))
   
   @classmethod
   def GetSearchURL(cls, query, limit=None, offset=None):
@@ -79,16 +80,18 @@ class SiteSearchProvider(object):
     # Compose the search URL    
     url = cls.GetSearchURL(query, limit, offset)
     logging.info("Performing GSS query at '%s'" % url)
+    results.original_url_ = url
     
     # Perform the query
-    with contextlib.closing(urllib.urlopen(url)) as f:
+    with contextlib.closing(urllib2.urlopen(url)) as f:
       data = f.read()
       
       if f.getcode() != 200:
         logging.warning("Could not obtain search results from GSS")
         return
 
-      xml_data = etree.ElementTree.fromstring(data)
+      xml_data = ElementTree.fromstring(data)
+      logging.debug("XML data: %s" % ElementTree.tostring(xml_data))
       
     cls._ExtractCourseList(xml_data, results)
     cls._ExtractSuggestion(xml_data, results)

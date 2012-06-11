@@ -21,7 +21,6 @@ from epfl.courses.search.parser import SearchQuery
 from epfl.courses.search.sitesearch import SiteSearchProvider
 
 
-
 def Main():
   logging.basicConfig(level=logging.INFO)
   query = SearchQuery.ParseFromString(sys.argv[1])

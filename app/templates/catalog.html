@@ -24,7 +24,7 @@
 {% endblock head %}
 
 {% macro jumpoffset(target_offset, label) -%}
-<a href="/catalog?q={{query}}&offset={{target_offset}}">{{ label }}</a>
+<a href="/catalog?q={{query}}&offset={{target_offset}}{{ '&exact=1' if exact }}">{{ label }}</a>
 {%- endmacro %}
 
 {% block content %}
@@ -106,17 +106,22 @@
   	})
   </script>
   <div class="table_header">
-    {% if suggested_query %}
+    {% if original_query %}
     <div class="suggestion_box">
-      Showing results for <span class="suggestion">{{ suggested_query }}</span>
+      Showing results for <span class="suggestion"><a href="/catalog?q={{ suggested_query }}">{{ suggested_query }}</a></span>.
+      Search for <span class="suggestion"><a href="/catalog?q={{ original_query }}&exact=1">{{ original_query }}</a></span>  instead.
+    </div>
+    {% elif suggested_query %}
+    <div class="suggestion_box">
+      Did you mean <span class="suggestion"><a href="/catalog?q={{ suggested_query }}">{{ suggested_query }}</a></span>?
     </div>
     {% endif %}
     <div class="info_box">
       Showing results  
         <span style="font-weight: bold;">
-          {{ offset + 1 }}-{{ offset + courses|length }}</span>
+          {{ pagination.offset + 1 }}-{{ pagination.offset + courses|length }}</span>
       out of
-        <span style="font-weight: bold;">{{ total_found }}</span>:
+        <span style="font-weight: bold;">{{ pagination.total_found }}</span>:
     </div>
   </div>
   <table class="catalog" id="results">
@@ -148,22 +153,22 @@
       {%- endfor %}
     </tbody>
   </table>
-  {% if pages|length > 1 %}
+  {% if pagination.pages|length > 1 %}
   <div id="page_nav">
-  {% if not prev_offset is none %}
-    {{ jumpoffset(prev_offset, "Previous") }}
+  {% if not pagination.prev_offset is none %}
+    {{ jumpoffset(pagination.prev_offset, "Previous") }}
   {% else %}
     <span style="font-weight: bold;">Previous</span>
   {% endif %}
-  {% for crt_page, crt_offset in pages %}
+  {% for crt_page, crt_offset in pagination.pages %}
     {% if crt_page == page %}
       <span style="font-weight: bold;">{{ crt_page + 1}}</span> 
     {% else %}
       {{ jumpoffset(crt_offset, crt_page + 1) }}
     {% endif %}
   {% endfor %}
-  {% if not next_offset is none %}
-    {{ jumpoffset(next_offset, "Next") }}
+  {% if not pagination.next_offset is none %}
+    {{ jumpoffset(pagination.next_offset, "Next") }}
   {% else %}
     <span style="font-weight: bold;">Next</span>
   {% endif %}
@@ -174,5 +179,22 @@
   No search results.
   </div>
   {% endif %}
+  <div id="debug_box" style="color: #999; border: 1px solid #999; padding: 3px; margin-top: 5px;">
+    <span style="font-weight: bold;">Debug Information:</span> <br/>
+    # of courses: {{ courses|length if courses else 0 }} <br/>
+    Query: {{ query }} <br/>
+    Original query: {{ original_query }} <br/>
+    Suggested query: {{ suggested_query }} <br/>
+    Search provider: {{ debug["provider"] }} <br/>
+    {% if debug["url"] %}
+    Underlying search URL: <a href="{{ debug['url'] }}">{{ debug["url"] }}</a><br/>
+    {% if debug["results"] %}
+    Search results: <br/>
+    {% for result in debug["results"] %}
+    <a href="/c/{{ result }}">{{ result }}</a> <br/>
+    {% endfor %}
+    {% endif %}
+    {% endif %}
+  </div>
 {% endblock content %}
  

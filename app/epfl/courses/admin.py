@@ -13,7 +13,7 @@ from google.appengine.ext import db
 
 from epfl.courses import base_handler
 from epfl.courses import models
-from epfl.courses.search import appsearch
+from epfl.courses.search import appsearch_admin as appsearch
 
 
 COURSES_DATA_FILE = "data/all_epfl_import.csv"
