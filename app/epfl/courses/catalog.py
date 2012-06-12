@@ -93,12 +93,10 @@ class CatalogPage(base_handler.BaseHandler):
     
     # Create the composite search engine
     staged_provider = search.StagedSearchProvider([search.AppSearchProvider,
-                                                   search.SiteSearchProvider])
+                                                   search.SiteSearchProvider()])
         
     autocorr_provider = search.AutocorrectedSearchProvider(
       staged_provider, exact_search=exact_search)
-    
-
     
     if query_string:
       logging.info("Invoking original search query '%s'" % query_string)
@@ -109,7 +107,7 @@ class CatalogPage(base_handler.BaseHandler):
                                offset=offset,
                                accuracy=ACCURACY)
       
-      if search_results.results and search_results.offset == offset:
+      if search_results.results:
         if os.environ['SERVER_SOFTWARE'].startswith('Development'):
           found_courses = []
         else:
@@ -123,6 +121,8 @@ class CatalogPage(base_handler.BaseHandler):
       'offset': search_results.offset,
       'exact': exact_search,
       'pagination': SearchPagination(search_results),
+      'debug_mode': (os.environ['SERVER_NAME'].endswith('appspot.com')
+                     or os.environ['SERVER_NAME'].endswith('localhost')),
       'debug': {
         'results': search_results.results,
         'provider': None,

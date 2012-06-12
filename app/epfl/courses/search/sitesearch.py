@@ -18,11 +18,45 @@ class SiteSearchProvider(object):
   SEARCH_ENGINE_ID = "000528554756935640955:t5p6oxkfane"
   SEARCH_URL = "http://www.google.com/search?hl=en&q=%s&ie=utf8&oe=utf8&client=google-csbe&output=xml_no_dtd&cx=%s"
   
+  FILTER_MAPPING = {
+    'title': "title",
+    'language': "language",
+    'instructor': "instructor",
+    'section': "sections",
+    'plan': '"study plans"',
+    'credits': '"ects credits"',
+    'coefficient': "coefficient",
+    'semester': "semester",
+    'exam': "exam",
+    'lecthours': '"ects credits"',
+    'recithours': '"ects credits"',
+    'projhours': '"ects credits"',
+    'practhours': '"ects credits"',
+    'outcomes': '"learning outcomes"',
+    'content': "content",
+    'prereq': '"prior knowledge"',
+    'teaching': '"type of teaching"',
+    'biblio': "bibliography",
+    'keywords': "keywords",
+    'examdetail': '"form of examination"',
+    'note': "note",
+    'prereqfor': '"prerequisite for"',
+    'libraryrec': '"library recommends"',
+    'links': "links",
+  }
+  
+  def __init__(self, avoid_fields=None):
+    self.avoid_fields = avoid_fields or ["language", "section", "plan",
+                                         "credits", "coefficient", "semester",
+                                         "exam", "lecthours", "recithours",
+                                         "projhours", "practhours"]
+    
+  
   @classmethod
   def GetQueryStringFuzzy(cls, query):
     query_string = []
     if query.filters:
-      query_string.append(" ".join(["%s %s" % (key, value)
+      query_string.append(" ".join(["%s: %s" % (cls.FILTER_MAPPING.get(key, key), value)
                                     for key, value in query.filters]))
     if query.terms:
       query_string.append(" ".join(query.terms))
@@ -83,10 +117,15 @@ class SiteSearchProvider(object):
     if suggestion_node is not None:
       results.suggested_query = suggestion_node.get("q")
 
-  @classmethod
-  def Search(cls, query, results, limit=None, offset=None, accuracy=None):
+  def Search(self, query, results, limit=None, offset=None, accuracy=None):
+    if not isinstance(query, basestring) and query.filters:
+      for key, _ in query.filters:
+        if key in self.avoid_fields:
+          logging.info("Rejecting query as containing avoided fields")
+          return
+
     # Compose the search URL    
-    url = cls.GetSearchURL(query, limit, offset)
+    url = self.GetSearchURL(query, limit, offset)
     logging.info("Performing GSS query at '%s'" % url)
     results.original_url_ = url
     
@@ -101,8 +140,8 @@ class SiteSearchProvider(object):
       xml_data = ElementTree.fromstring(data)
       logging.debug("XML data: %s" % ElementTree.tostring(xml_data))
       
-    cls._ExtractCourseList(xml_data, results)
-    cls._ExtractSuggestion(xml_data, results)
+    self._ExtractCourseList(xml_data, results)
+    self._ExtractSuggestion(xml_data, results)
 
 
 if __name__ == "__main__":

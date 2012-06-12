@@ -18,7 +18,7 @@ div#wrapper {
 	width: 640px;
 	border: solid #eee 2px;
 	
-	padding: 10px 20px;
+	padding: 10px;
 	border-radius: 10px;
 }
 
@@ -32,8 +32,12 @@ div#wrapper {
 	padding-bottom: 5px;
 }
 
+#separator {
+	margin: 15px 0px;
+	border-top: solid 2px #eee;
+}
+
 #adv_search {
-	padding-top: 10px;
 	padding-bottom: 10px;
 }
 
@@ -63,6 +67,10 @@ div#wrapper {
 input#query, #adv_search input {
 	width: 100%;
 	font-size: 1em;
+}
+
+#adv_search input.radio {
+	width: auto;
 }
 
 
