@@ -62,10 +62,18 @@ class SiteSearchProvider(object):
     
     logging.info("%d search results found" % results.number_found)
     
+    new_offset = None
+    
     for result in xml_data.findall("RES/R"):
+      if new_offset is None:
+        new_offset = int(result.get("N")) - 1
+      
       course_url = result.find("U").text.strip()
       course_key = course_url.rsplit("/", 1)[1]
       results.latest_results.append(course_key)
+      
+    if new_offset is not None:
+      results.offset = new_offset
       
     results.results.extend(results.latest_results)
   

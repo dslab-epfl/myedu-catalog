@@ -15,7 +15,7 @@ from sitesearch import SiteSearchProvider
 
 
 class SearchResults(object):
-  def __init__(self, original_query=None):
+  def __init__(self, original_query=None, offset=None):
     self.original_query = original_query
     self.suggested_query = None
     
@@ -23,6 +23,7 @@ class SearchResults(object):
     self.latest_results = []
     
     self.number_found = None
+    self.offset = offset
     
     self.original_url_ = None
 
@@ -72,5 +73,5 @@ class StagedSearchProvider(object):
                       limit=limit,
                       offset=offset,
                       accuracy=accuracy)
-      if search_results.latest_results and not self.use_all:
+      if search_results.number_found and not self.use_all:
         break

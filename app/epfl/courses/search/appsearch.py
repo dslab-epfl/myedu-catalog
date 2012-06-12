@@ -46,3 +46,7 @@ class AppSearchProvider(object):
       results.results.extend(results.latest_results)
     except apiproxy_errors.OverQuotaError:
       logging.error("Over quota error")
+    except ValueError:
+      logging.error("Invalid values")
+    except Exception:
+      logging.exception("Unknown search error")

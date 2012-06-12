@@ -19,8 +19,8 @@ from epfl.courses import search
 class SearchPagination(object):
   PAGE_SIZE = 20
   
-  def __init__(self, results, offset):
-    self.offset = offset
+  def __init__(self, results):
+    self.offset = results.offset
     self.total_found = results.number_found
     self.total_pages = 0
     self.pages = []
@@ -88,7 +88,7 @@ class CatalogPage(base_handler.BaseHandler):
     
     query_string = query.GetString()
     found_courses = None
-    search_results = search.SearchResults(query_string)
+    search_results = search.SearchResults(query_string, offset)
     exact_search = self.request.get("exact")
     
     # Create the composite search engine
@@ -103,15 +103,13 @@ class CatalogPage(base_handler.BaseHandler):
     if query_string:
       logging.info("Invoking original search query '%s'" % query_string)
       
-      
-
       autocorr_provider.Search(query,
                                search_results,
                                limit=SearchPagination.PAGE_SIZE,
                                offset=offset,
                                accuracy=ACCURACY)
       
-      if search_results.results:
+      if search_results.results and search_results.offset == offset:
         if os.environ['SERVER_SOFTWARE'].startswith('Development'):
           found_courses = []
         else:
@@ -122,9 +120,9 @@ class CatalogPage(base_handler.BaseHandler):
       'query': query_string,
       'original_query': autocorr_provider.original_query,
       'suggested_query': autocorr_provider.suggested_query,
-      'offset': offset,
+      'offset': search_results.offset,
       'exact': exact_search,
-      'pagination': SearchPagination(search_results, offset),
+      'pagination': SearchPagination(search_results),
       'debug': {
         'results': search_results.results,
         'provider': None,

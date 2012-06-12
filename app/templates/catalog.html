@@ -20,6 +20,15 @@
   		$("#adv_search_title").click(srctoggle);
   		$("#simple_search").click(srctoggle);
   	});
+  	
+  	// Disable unused fields
+  	$(function (){
+  		$("#searchform").submit(function(e) {
+  	  		$(this).find(':input[value=""]').attr("disabled", "disabled");
+  	  		return true;
+  	  	});
+  	});
+  	
   </script>
 {% endblock head %}
 
@@ -31,9 +40,9 @@
   <h1>EPFL Course Catalog</h1>
   
   <div id="search_box">
-    <form action="/catalog" method="get">
+    <form action="/catalog" method="get" id="searchform" name="searchform">
       <div id="query_box">
-        <input id="query" type="text" name="q" value="{{ query }}"/>
+        <input id="query" type="text" name="q" value="{{ query }}" maxlength="100" />
       </div>
       
       <div id="adv_search_title">
@@ -42,9 +51,11 @@
         </a>
       </div>
       <div id="adv_search">
-        {% macro advfield(label, id, name) -%}
+        {% macro advfield(label, id, name, type="text", min=None) -%}
         <td class="adv_label">{{label}}:</td>
-        <td class="adv_value"><input id="{{id}}" type="text" name="{{name}}" /></td>
+        <td class="adv_value"><input id="{{id}}" type="{{type}}" name="{{name}}"
+          {% if not min is none %}min="{{ min }}"{% endif %}
+          {% if type == "text" %}maxlength="100"{% endif %}/></td>
         {%- endmacro %}
         
         {% macro nofield() %}
@@ -66,16 +77,16 @@
             {{ advfield("Exam", "exam", "aq_exam") }}
           </tr>
           <tr>
-            {{ advfield("Credits", "credits", "aq_cred") }}
-            {{ advfield("Coefficient", "coefficient", "aq_coeff") }}
+            {{ advfield("Credits", "credits", "aq_cred", type="number", min=0) }}
+            {{ advfield("Coefficient", "coefficient", "aq_coeff", type="number", min=0) }}
           </tr>
         </table>
         <div style="margin-top:10px;">Planning hours:</div>
         <table style="border-collapse: collapse; table-layout: fixed;">
           <tr>
-            {{ advfield("Lecture", "lecture", "aq_hours_l") }}
-            {{ advfield("Recitation", "recitation", "aq_hours_r") }}
-            {{ advfield("Project", "project", "aq_hours_p") }}
+            {{ advfield("Lecture", "lecture", "aq_hours_l", type="number", min=0) }}
+            {{ advfield("Recitation", "recitation", "aq_hours_r", type="number", min=0) }}
+            {{ advfield("Project", "project", "aq_hours_p", type="number", min=0) }}
           </tr>
         </table>
         <div id="simple_search">
