@@ -9,7 +9,13 @@ div#wrapper {
 
 /* Search box */
 
+#search_box_wrapper {
+	text-align: center;
+}
+
 #search_box {
+	text-align: left;
+	
 	margin-left: auto;
 	margin-right: auto;
 	margin-bottom: 15px;

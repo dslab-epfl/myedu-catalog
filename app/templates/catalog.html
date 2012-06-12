@@ -39,6 +39,7 @@
 {% block content %}
   <h1>EPFL Course Catalog</h1>
   
+  <div id="search_box_wrapper">
   <div id="search_box">
     <form action="/catalog" method="get" id="searchform" name="searchform">
       <div id="query_box">
@@ -64,39 +65,76 @@
         <td>&nbsp;</td>
         <td>&nbsp;</td>
         {% endmacro %}
-      
+        
         <table style="border-collapse: collapse; table-layout: fixed;">
           <tr>
-            {{ advfield("Title", "course", "aq_t") }}
-            {{ advfield("Instructor", "instructor", "aq_in") }}
-          </tr>
-          <tr>
-            <td class="adv_label">Language:</td>
-            <td class="adv_value">
-              <input type="radio" name="aq_lang" value="english" class="radio" /> English
-              <input type="radio" name="aq_lang" value="french" class="radio" /> French
+            <td style="width: 50%">
+              <table style="border-collapse: collapse; table-layout: fixed;">
+                <tr>
+                  {{ advfield("Title", "course", "aq_t") }}
+                </tr>
+                <tr>
+                  <td class="adv_label">Language:</td>
+                  <td class="adv_value">
+                    <input type="radio" name="aq_lang" value="english" class="radio" /> English
+                    <input type="radio" name="aq_lang" value="french" class="radio" /> French
+                  </td>
+                </tr>
+                <tr>
+                  <td class="adv_label">Semester:</td>
+                  <td class="adv_value">
+                    <input type="radio" name="aq_sem" value="fall" class="radio" /> Fall
+                    <input type="radio" name="aq_sem" value="spring" class="radio" /> Spring
+                  </td>
+                </tr>
+                <tr>
+                  {{ advfield("Credits", "credits", "aq_cred", type="number", min=0) }}
+                </tr>
+              </table>
             </td>
-            {{ advfield("Section", "section", "aq_sec") }}
-          </tr>
-          <tr>
-            <td class="adv_label">Semester:</td>
-            <td class="adv_value">
-              <input type="radio" name="aq_sem" value="fall" class="radio" /> Fall
-              <input type="radio" name="aq_sem" value="spring" class="radio" /> Spring
+            <td style="width: 50%">
+              <table style="border-collapse: collapse; table-layout: fixed;">
+                <tr>
+                  {{ advfield("Instructor", "instructor", "aq_in") }}
+                </tr>
+                <tr>
+                  {{ advfield("Section", "section", "aq_sec") }}
+                </tr>
+                <tr>
+                  {{ advfield("Exam", "exam", "aq_exam") }}
+                </tr>
+                <tr>
+                  {{ advfield("Coefficient", "coefficient", "aq_coeff", type="number", min=0) }}
+                </tr>
+              </table>
             </td>
-            {{ advfield("Exam", "exam", "aq_exam") }}
-          </tr>
-          <tr>
-            {{ advfield("Credits", "credits", "aq_cred", type="number", min=0) }}
-            {{ advfield("Coefficient", "coefficient", "aq_coeff", type="number", min=0) }}
           </tr>
         </table>
+
         <div style="margin-top:10px;">Planning hours:</div>
         <table style="border-collapse: collapse; table-layout: fixed;">
           <tr>
-            {{ advfield("Lecture", "lecture", "aq_hours_l", type="number", min=0) }}
-            {{ advfield("Recitation", "recitation", "aq_hours_r", type="number", min=0) }}
-            {{ advfield("Project", "project", "aq_hours_p", type="number", min=0) }}
+            <td style="width: 33%;">
+              <table>
+                <tr>
+                  {{ advfield("Lecture", "lecture", "aq_hours_l", type="number", min=0) }}
+                </tr>
+              </table>
+            </td>
+            <td style="width: 33%;">
+              <table>
+                <tr>
+                  {{ advfield("Recitation", "recitation", "aq_hours_r", type="number", min=0) }}
+                </tr>
+              </table>
+            </td>
+            <td style="width: 33%;">
+              <table>
+                <tr>
+                  {{ advfield("Project", "project", "aq_hours_p", type="number", min=0) }}
+                </tr>
+              </table>
+            </td> 
           </tr>
         </table>
         <div id="simple_search">
@@ -109,6 +147,7 @@
         <input id="search" type="submit" value="Search" />
       </div>
     </form>
+  </div>
   </div>
   
   {% if courses %}
