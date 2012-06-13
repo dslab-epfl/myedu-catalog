@@ -43,8 +43,13 @@ div#wrapper {
 	float: right;
 	padding-right: 12px;
 	
-	color: #aaa;
+	color: #777;
 	font-size: 0.8em;
+}
+
+#samples-box {
+	padding-left: 12px;
+	color: #777;
 }
 
 #adv_search_title {
@@ -52,8 +57,15 @@ div#wrapper {
 	padding-bottom: 5px;
 }
 
-#separator {
-	margin: 15px 0px;
+#separator-top {
+	margin-top: 10px;
+	margin-bottom: 5px;
+	border-top: solid 2px #eee;
+}
+
+#separator-bottom {
+	margin-top: 5px;
+	margin-bottom: 5px;
 	border-top: solid 2px #eee;
 }
 

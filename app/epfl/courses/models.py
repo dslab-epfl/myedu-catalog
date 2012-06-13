@@ -70,3 +70,26 @@ class Course(db.Model):
     stat = stats.KindStat.all().filter("kind_name =", cls.__name__).get()
     return stat.count
     
+
+class SearchQueryRecord(db.Model):
+  q = db.TextProperty()
+  aq_t = db.TextProperty()
+  aq_lang = db.TextProperty()
+  aq_in = db.TextProperty()
+  aq_sec = db.TextProperty()
+  aq_sem = db.TextProperty()
+  aq_exam = db.TextProperty()
+  aq_cred = db.TextProperty()
+  aq_coeff = db.TextProperty()
+  
+  aq_hours_l = db.TextProperty()
+  aq_hours_r = db.TextProperty()
+  aq_hours_p = db.TextProperty()
+  
+  translated_query = db.TextProperty()
+  suggested_query = db.TextProperty()
+  
+  results_count = db.IntegerProperty()
+  offset = db.IntegerProperty()
+  
+  time_stamp = db.DateTimeProperty(auto_now_add=True)

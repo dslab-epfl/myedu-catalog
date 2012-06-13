@@ -80,6 +80,28 @@ class CatalogPage(base_handler.BaseHandler):
         pass
       
     return offset
+  
+  def RecordQuery(self, query_string, offset):
+    q_record = models.SearchQueryRecord()
+    q_record.q = self.request.get("q")
+    q_record.aq_t = self.request.get("aq_t")
+    q_record.aq_lang = self.request.get("aq_lang")
+    q_record.aq_in = self.request.get("aq_in")
+    q_record.aq_sec = self.request.get("aq_sec")
+    q_record.aq_sem = self.request.get("aq_sem")
+    q_record.aq_exam = self.request.get("aq_exam")
+    q_record.aq_cred = self.request.get("aq_cred")
+    q_record.aq_coeff = self.request.get("aq_coeff")
+    q_record.aq_hours_l = self.request.get("aq_hours_l")
+    q_record.aq_hours_r = self.request.get("aq_hours_r")
+    q_record.aq_hours_p = self.request.get("aq_hours_p")
+    
+    q_record.translated_query = query_string
+    q_record.offset = offset
+    
+    q_record.put()
+    
+    return q_record
     
   def get(self):
     ACCURACY = 2000
@@ -102,6 +124,8 @@ class CatalogPage(base_handler.BaseHandler):
     if query_string:
       logging.info("Invoking original search query '%s'" % query_string)
       
+      q_record = self.RecordQuery(query_string, offset)
+      
       autocorr_provider.Search(query,
                                search_results,
                                limit=SearchPagination.PAGE_SIZE,
@@ -109,6 +133,10 @@ class CatalogPage(base_handler.BaseHandler):
                                accuracy=ACCURACY)
       
       if search_results.results:
+        q_record.results_count = search_results.number_found
+        q_record.suggested_query = autocorr_provider.suggested_query
+        q_record.put()
+        
         if os.environ['SERVER_SOFTWARE'].startswith('Development'):
           found_courses = []
         else:

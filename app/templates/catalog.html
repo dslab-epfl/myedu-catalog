@@ -55,7 +55,7 @@
         </a>
       </div>
       <div id="adv_search">
-        <div id="separator"></div>
+        <div id="separator-top"></div>
         
         {% macro advfield(label, id, name, type="text", min=None) -%}
         <td class="adv_label"><label for="{{id}}">{{label}}:</label></td>
@@ -177,6 +177,7 @@
             </td> 
           </tr>
         </table>
+        <div id="separator-bottom"></div>
         <div id="simple_search">
           <a href="#">
             Simple Search
@@ -188,7 +189,19 @@
       </div>
     </form>
     </div>
-    <div id="feedback-box"><a href="#">Got feedback?</a></div>
+    <div id="feedback-box">
+      <a href="https://docs.google.com/spreadsheet/viewform?formkey=dDJ1UVpEM1VFRkszclBrdTRjc3JfYkE6MQ#gid=0" target="_blank">Got feedback?</a>
+    </div>
+    {% if not query %}
+    <div id="samples-box">
+      Sample searches:
+        <a href="/catalog?q=circuit+design">circuit design</a>,
+        <a href="/catalog?q=credits:30">credits:30</a>,
+        <a href="/catalog?q=section:mx+organic+materials">section:mx organic materials</a>,
+        <a href="/catalog?q=quantum+computing">quantum computing</a>,
+        <a href="/catalog?q=wood+design">wood design</a>
+    </div>
+    {% endif %}
     <div style="clear: both;"></div>
   </div>
   </div>
@@ -209,6 +222,7 @@
   		});
   	})
   </script>
+
   <div class="table_header">
     {% if original_query %}
     <div class="suggestion_box">
@@ -245,11 +259,12 @@
         <td class="td_title"><a href="/c/{{ course.key() }}">{{ course.title }}</a></td>
         <td class="td_credits">{{ course.credit_count|default("N/A", True) }}</td>
         <td class="td_instr">
-        {% set instructors = course.instructors|default("N/A", True)|join(", ") %}
-        {% if instructors == "multi" %}
+        {% if not course.instructors %}
+          N/A
+        {% elif course.instructors == ["multi"] %}
           <span style="font-style: italic;">Various instructors</span>
         {% else %}
-          {{ instructors }}
+          {{ course.instructors|join(", ") }}
         {% endif %}
         </td>
         <td class="td_section">{{ course.sections|join(", ") }}</td>
