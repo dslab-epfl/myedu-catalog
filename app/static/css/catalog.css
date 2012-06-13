@@ -1,6 +1,11 @@
 
 h1 {
 	text-align: center;
+	margin: 0px;
+}
+
+#subtitle {
+	text-align: center;
 }
 
 div#wrapper {
@@ -16,21 +21,30 @@ div#wrapper {
 #search_box {
 	text-align: left;
 	
-	margin-left: auto;
-	margin-right: auto;
-	margin-bottom: 15px;
-	background-color: #fafafa;
+	margin: 15px auto;
 	
 	width: 640px;
-	border: solid #eee 2px;
-	
-	padding: 10px;
-	border-radius: 10px;
 }
 
-#search_box table {
+#form_box {
+	border: solid #eee 2px;
+	padding: 10px;
+	border-radius: 10px;
+	
+	background-color: #fafafa;
+}
+
+#form_box table {
 	margin: 0px;
 	width: 100%;
+}
+
+#feedback-box {
+	float: right;
+	padding-right: 12px;
+	
+	color: #aaa;
+	font-size: 0.8em;
 }
 
 #adv_search_title {
@@ -70,13 +84,31 @@ div#wrapper {
 	width: 75px;
 }
 
-input#query, #adv_search input {
+input#query, #adv_search input, #adv_search select {
 	width: 100%;
 	font-size: 1em;
 }
 
 #adv_search input.radio {
 	width: auto;
+}
+
+#sched-hours .field {
+	display: table;
+	width: 100%;
+}
+
+#sched-hours label {
+	display: table-cell;
+	width: 1px;
+	white-space: nowrap;
+	vertical-align: middle;
+	padding: 3px 3px 3px 6px;
+}
+
+#sched-hours span.input {
+	display: table-cell;
+	padding: 3px;
 }
 
 

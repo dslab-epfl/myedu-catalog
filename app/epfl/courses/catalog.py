@@ -15,6 +15,7 @@ from google.appengine.ext import db
 from epfl.courses import base_handler
 from epfl.courses import models
 from epfl.courses import search
+from epfl.courses import static_data
 
 class SearchPagination(object):
   PAGE_SIZE = 20
@@ -115,6 +116,15 @@ class CatalogPage(base_handler.BaseHandler):
     
     template_args = {
       'courses': found_courses,
+      'static': {
+        'sections': static_data.SECTIONS,
+        'exam': static_data.EXAM,
+        'credits': static_data.CREDITS,
+        'coeff': static_data.COEFFICIENT,
+        'lecture': static_data.LECTURE_TIME,
+        'recitation': static_data.RECITATION_TIME,
+        'project': static_data.PROJECT_TIME
+      },
       'query': query_string,
       'original_query': autocorr_provider.original_query,
       'suggested_query': autocorr_provider.suggested_query,

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}EPFL Course Catalog{% endblock %}
+{% block title %}Find EPFL Courses{% endblock %}
 
 {% block head %}
   {{ super() }}
@@ -27,6 +27,7 @@
   	  		$(this).find(':input[value=""]').attr("disabled", "disabled");
   	  		return true;
   	  	});
+  		$("#query").focus();
   	});
   	
   </script>
@@ -37,13 +38,15 @@
 {%- endmacro %}
 
 {% block content %}
-  <h1>EPFL Course Catalog</h1>
+  <h1>Find EPFL Courses</h1>
+  <div id="subtitle">(BS and MS, 2011-2012)</div>
   
   <div id="search_box_wrapper">
   <div id="search_box">
+    <div id="form_box">
     <form action="/catalog" method="get" id="searchform" name="searchform">
       <div id="query_box">
-        <input id="query" type="text" name="q" value="{{ query }}" maxlength="1024" />
+        <input id="query" type="search" name="q" value="{{ query }}" maxlength="1024" />
       </div>
       
       <div id="adv_search_title">
@@ -55,85 +58,122 @@
         <div id="separator"></div>
         
         {% macro advfield(label, id, name, type="text", min=None) -%}
-        <td class="adv_label">{{label}}:</td>
+        <td class="adv_label"><label for="{{id}}">{{label}}:</label></td>
         <td class="adv_value"><input id="{{id}}" type="{{type}}" name="{{name}}"
           {% if not min is none %}min="{{ min }}"{% endif %}
           {% if type == "text" %}maxlength="1024"{% endif %}/></td>
         {%- endmacro %}
         
-        {% macro nofield() %}
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        {% endmacro %}
+        {% macro multichoice(id, name, values) -%}
+          <select id="{{ id }}" name="{{ name }}">
+            <option value=""></option>
+            {% for entry in values %}
+            <option value="{{ entry }}">{{ entry }}</option>
+            {% endfor %}
+          </select>
+        {%- endmacro %}
         
         <table style="border-collapse: collapse; table-layout: fixed;">
           <tr>
-            <td style="width: 50%">
+            <td style="width: 50%; padding: 0px;">
               <table style="border-collapse: collapse; table-layout: fixed;">
                 <tr>
-                  {{ advfield("Title", "course", "aq_t") }}
+                  <td class="adv_label"><label for="course">Course title:</label></td>
+                  <td class="adv_value">
+                    <input id="course" type="text" name="aq_t" maxlength="1024" />
+                  </td>
                 </tr>
                 <tr>
                   <td class="adv_label">Language:</td>
                   <td class="adv_value">
-                    <input type="radio" name="aq_lang" value="english" class="radio" /> English
-                    <input type="radio" name="aq_lang" value="french" class="radio" /> French
+                    <input id="lang_en" type="radio" name="aq_lang" value="english" class="radio" />
+                    <label for="lang_en">English</label>
+                    <input id="lang_fr" type="radio" name="aq_lang" value="french" class="radio" />
+                    <label for="lang_fr">French</label>
                   </td>
                 </tr>
                 <tr>
                   <td class="adv_label">Semester:</td>
                   <td class="adv_value">
-                    <input type="radio" name="aq_sem" value="fall" class="radio" /> Fall
-                    <input type="radio" name="aq_sem" value="spring" class="radio" /> Spring
+                    <input id="sem_fall" type="radio" name="aq_sem" value="fall" class="radio" />
+                    <label for="sem_fall">Fall</label>
+                    <input id="sem_spring" type="radio" name="aq_sem" value="spring" class="radio" />
+                    <label for="sem_spring">Spring</label>
                   </td>
                 </tr>
                 <tr>
-                  {{ advfield("Credits", "credits", "aq_cred", type="number", min=0) }}
+                  <td class="adv_label"><label for="credits">Credits:</label></td>
+                  <td class="adv_value">
+                    {{ multichoice("credits", "aq_cred", static["credits"]) }}
+                  </td>
                 </tr>
               </table>
             </td>
-            <td style="width: 50%">
+            <td style="width: 50%; padding: 0px;">
               <table style="border-collapse: collapse; table-layout: fixed;">
                 <tr>
                   {{ advfield("Instructor", "instructor", "aq_in") }}
                 </tr>
                 <tr>
-                  {{ advfield("Section", "section", "aq_sec") }}
+                  <td class="adv_label"><label for="section">Section:</label>
+                  <td class="adv_value">
+                    <select id="section" name="aq_sec">
+                      <option value=""></option>
+                      {% for section in static["sections"] %}
+                        {% if section|length > 1 %}
+                        <optgroup label="{{ section[0] }}">
+                        {% for item in section[1:] %}
+                          <option value="{{ item }}">{{ item }}</option>
+                        {% endfor %}
+                        </optgroup>
+                        {% else %}
+                        <option value="{{ section[0] }}">{{ section[0] }}</option>
+                        {% endif %}
+                      {% endfor %}
+                    </select>
+                  </td>
                 </tr>
                 <tr>
-                  {{ advfield("Exam", "exam", "aq_exam") }}
+                  <td class="adv_label"><label for="exam">Exam:</label>
+                  <td class="adv_value">
+                    {{ multichoice("exam", "aq_exam", static["exam"]) }}
+                  </td>
                 </tr>
                 <tr>
-                  {{ advfield("Coefficient", "coefficient", "aq_coeff", type="number", min=0) }}
+                  <td class="adv_label"><label for="coefficient">Coefficient:</label></td>
+                  <td class="adv_value">
+                    {{ multichoice("coefficient", "aq_coeff", static["coeff"]) }}
+                  </td>
                 </tr>
               </table>
             </td>
           </tr>
         </table>
 
-        <div style="margin-top:10px;">Planning hours:</div>
-        <table style="border-collapse: collapse; table-layout: fixed;">
+        <div style="margin-top:10px;">
+          <div style="padding: 3px;">
+            Scheduled hours:
+          </div>
+        </div>
+        <table id="sched-hours" style="border-spacing: 10px; table-layout: fixed;">
           <tr>
-            <td style="width: 33%;">
-              <table>
-                <tr>
-                  {{ advfield("Lecture", "lecture", "aq_hours_l", type="number", min=0) }}
-                </tr>
-              </table>
+            <td style="width: 33%; padding: 0px;">
+              <div class="field">
+                <label for="lecture">Lecture:</label>
+                <span class="input">{{ multichoice("lecture", "aq_hours_l", static["lecture"]) }}</span>
+              </div>
             </td>
-            <td style="width: 33%;">
-              <table>
-                <tr>
-                  {{ advfield("Recitation", "recitation", "aq_hours_r", type="number", min=0) }}
-                </tr>
-              </table>
+            <td style="width: 33%; padding: 0px;">
+              <div class="field">
+                <label for="recitation">Recitation:</label>
+                <span class="input">{{ multichoice("recitation", "aq_hours_r", static["recitation"]) }}</span>
+              </div>
             </td>
-            <td style="width: 33%;">
-              <table>
-                <tr>
-                  {{ advfield("Project", "project", "aq_hours_p", type="number", min=0) }}
-                </tr>
-              </table>
+            <td style="width: 33%; padding: 0px;">
+              <div class="field">
+                <label for="project">Project:</label>
+                <span class="input">{{ multichoice("project", "aq_hours_p", static["project"]) }}</span>
+              </div>
             </td> 
           </tr>
         </table>
@@ -147,8 +187,12 @@
         <input id="search" type="submit" value="Search" />
       </div>
     </form>
+    </div>
+    <div id="feedback-box"><a href="#">Got feedback?</a></div>
+    <div style="clear: both;"></div>
   </div>
   </div>
+  
   
   {% if courses %}
   <script type="text/javascript">

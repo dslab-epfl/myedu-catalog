@@ -34,6 +34,20 @@ def AnalyzeSimpleFields(course_data):
     if len(value) > 50:
       continue
     pprint.pprint([key, sum(value.values()), value])
+    
+def AnalyzeScheduleHours(course_data):
+  fields = { }
+  for course in course_data:
+    for key in ["lecture", "recitation", "practical", "project"]:
+      time = course["info"].get("%s_time" % key)
+      weeks = course["info"].get("%s_weeks" % key)
+
+      if weeks:
+        fdict = fields.setdefault(key, {})
+        fdict[time] = fdict.get(time, 0) + 1
+        
+  for key, value in fields.iteritems():
+    pprint.pprint([key, sum(value.values()), value])
 
 def AnalyzeMissingData(course_data):
   missing_data = []
@@ -91,6 +105,7 @@ def main():
   AnalyzeMissingData(course_data)
   AnalyzeJahiaMarkup(course_data)
   AnalyzeSimpleFields(course_data)
+  AnalyzeScheduleHours(course_data)
 
 if __name__ == "__main__":
   main()

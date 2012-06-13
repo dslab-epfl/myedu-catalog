@@ -5,6 +5,101 @@
 
 __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
+
+################################################################################
+# Course catalog
+################################################################################
+
+# TODO(bucur): Extract this data automatically
+
+RAW_SECTIONS = [
+ 'AR',
+ 'AR_ECH',
+ 'CGC',
+ 'CGC_CHIM',
+ 'CGC_ING',
+ 'EDIC',
+ 'EDMT',
+ 'EDNE',
+ 'EL',
+ 'EME_MES',
+ 'ENAC',
+ 'GC',
+ 'GM',
+ 'HPLANS',
+ 'IF',
+ 'IN',
+ 'ING_MATH',
+ 'ING_PHYS',
+ 'MA',
+ 'MATH',
+ 'MA_CO',
+ 'MIN_AREA_CULTURAL',
+ 'MIN_BIOCOMP',
+ 'MIN_BIOMED',
+ 'MIN_BIOTECH',
+ 'MIN_DEV_TER',
+ 'MIN_ENER',
+ 'MIN_IN_SEC',
+ 'MIN_MTE',
+ 'MIN_TEC_SPACE',
+ 'MNIS',
+ 'MT',
+ 'MTE',
+ 'MX',
+ 'PH',
+ 'PHYS',
+ 'PH_NE',
+ 'SC',
+ 'SC_EPFL',
+ 'SHS',
+ 'SIE',
+ 'SV',
+ 'SV_B',
+ 'SV_STV',
+ 'UNIL_BIU',
+ 'UNIL_CSU',
+ 'UNIL_GEU',
+ 'UNIL_HEC',
+ 'UNIL_MEU',
+ 'UNIL_PHU',
+ 'UNIL_SFU',
+]
+
+
+def _OrganizeSections(sections):
+  result_dict = {}
+  for section in sections:
+    key = section.split("_")[0]
+    result_dict.setdefault(key, []).append(section)
+    
+  return [ [ key ] + result_dict[key] for key in sorted(result_dict.keys()) ]
+
+SECTIONS = _OrganizeSections(RAW_SECTIONS)
+
+
+EXAM = [
+  "During the semester",
+  "Oral",
+  "Term paper",
+  "Written"
+]
+
+CREDITS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 20, 30]
+
+COEFFICIENT = [ 0.5, 1.0, 1.5, 2.0, 3.0, 4.0 ]
+
+LECTURE_TIME = [ 1, 2, 3, 4, 5, 6 ]
+
+RECITATION_TIME = [ 1, 2, 3, 4 ]
+
+PROJECT_TIME = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 16 ]
+
+
+################################################################################
+# Course description form data
+################################################################################
+
 LANGUAGE_CODE = {
   "en": "English",
   "fr": "French",
