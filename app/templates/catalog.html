@@ -11,14 +11,20 @@
     href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.1/css/jquery.dataTables.css" />
   
   <script type="text/javascript">
-  	function srctoggle() {
-  		$("#adv_search").slideToggle(200);
-		$("#adv_search_title").slideToggle(200);
-  	}
   	$(document).ready(function() {
   		$("#adv_search").hide();
-  		$("#adv_search_title").click(srctoggle);
-  		$("#simple_search").click(srctoggle);
+  		$("#advanced-search-btn").text("Advanced search");
+  		
+  		$("#advanced-search-btn").click(function() {
+  			$("#adv_search").slideToggle(200);
+  			text = $("#advanced-search-btn").text()
+  			if (text == "Advanced search")
+  				text = "Back to simple search";
+  			else
+  				text = "Advanced search";
+  			
+  			$("#advanced-search-btn").text(text);
+  		});
   	});
   	
   	// Disable unused fields
@@ -38,8 +44,8 @@
 {%- endmacro %}
 
 {% block content %}
-  <h1>Find EPFL Courses</h1>
-  <div id="subtitle">(BS and MS, 2011-2012)</div>
+  <h1>Find EPFL Courses <span class="beta-mark">beta</span></h1>
+  <div id="subtitle">BS and MS, 2011-2012</div>
   
   <div id="search_box_wrapper">
   <div id="search_box">
@@ -47,12 +53,6 @@
     <form action="/catalog" method="get" id="searchform" name="searchform">
       <div id="query_box">
         <input id="query" type="search" name="q" value="{{ query }}" maxlength="1024" />
-      </div>
-      
-      <div id="adv_search_title">
-        <a href="#">
-          Advanced Search
-        </a>
       </div>
       <div id="adv_search">
         <div id="separator-top"></div>
@@ -68,7 +68,7 @@
           <select id="{{ id }}" name="{{ name }}">
             <option value=""></option>
             {% for entry in values %}
-            <option value="{{ entry }}">{{ entry }}</option>
+            <option value="{{ entry|lower }}">{{ entry }}</option>
             {% endfor %}
           </select>
         {%- endmacro %}
@@ -120,15 +120,11 @@
                     <select id="section" name="aq_sec">
                       <option value=""></option>
                       {% for section in static["sections"] %}
-                        {% if section|length > 1 %}
                         <optgroup label="{{ section[0] }}">
                         {% for item in section[1:] %}
-                          <option value="{{ item }}">{{ item }}</option>
+                          <option value="{{ item|lower }}">{{ item }}</option>
                         {% endfor %}
                         </optgroup>
-                        {% else %}
-                        <option value="{{ section[0] }}">{{ section[0] }}</option>
-                        {% endif %}
                       {% endfor %}
                     </select>
                   </td>
@@ -177,15 +173,14 @@
             </td> 
           </tr>
         </table>
-        <div id="separator-bottom"></div>
-        <div id="simple_search">
-          <a href="#">
-            Simple Search
-          </a>
-        </div>
       </div>
-      <div style="text-align: center;">
+      <div style="text-align: center; margin-top: 10px;">
         <input id="search" type="submit" value="Search" />
+      </div>
+      <div id="advanced-search">
+        <a href="#" id="advanced-search-btn">
+          Advanced search
+        </a>
       </div>
     </form>
     </div>
@@ -194,12 +189,13 @@
     </div>
     {% if not query %}
     <div id="samples-box">
-      Sample searches:
-        <a href="/catalog?q=circuit+design">circuit design</a>,
-        <a href="/catalog?q=credits:30">credits:30</a>,
-        <a href="/catalog?q=section:mx+organic+materials">section:mx organic materials</a>,
-        <a href="/catalog?q=quantum+computing">quantum computing</a>,
-        <a href="/catalog?q=wood+design">wood design</a>
+      Examples of stuff you can find:
+      <div style="padding-left: 5px;">
+        <a href='/catalog?q=plan:"SHS-BA3"+literature+OR+design'>SHS courses on literature or design, taught in the 3rd bachelor semester</a></br>
+        <a href='/catalog?q=credits:2+"organic+materials"'>2-credit courses on organic materials</a><br/>
+        <a href="/catalog?q=semester:fall+java">Java courses taught in the Fall</a><br/>
+        <a href='/catalog?q=section:"MIN_IN_SEC" -cryptography'>Courses in the computer security minor that do not teach cryptography</a>
+      </div>
     </div>
     {% endif %}
     <div style="clear: both;"></div>

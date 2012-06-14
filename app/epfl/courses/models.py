@@ -93,3 +93,4 @@ class SearchQueryRecord(db.Model):
   offset = db.IntegerProperty()
   
   time_stamp = db.DateTimeProperty(auto_now_add=True)
+  client_address = db.StringProperty()

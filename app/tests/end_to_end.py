@@ -15,8 +15,7 @@ import urllib2
 import bs4
 
 
-app_url = "http://%d.courses-epfl.appspot.com/catalog?q=%s"
-app_version = 7
+app_url = "http://myedu.pocketcampus.org/catalog?q=%s"
 
 
 class FailedTestException(Exception):
@@ -44,7 +43,7 @@ class TestScenario(object):
   def Execute(self):
     logging.info("Processing query '%s'" % self.query)
     
-    url = app_url % (app_version, urllib2.quote(self.query))
+    url = app_url % urllib2.quote(self.query)
     logging.info("Generated URL: %s" % url)
     
     with contextlib.closing(urllib2.urlopen(url)) as f:

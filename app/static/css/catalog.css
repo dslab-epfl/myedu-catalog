@@ -4,6 +4,14 @@ h1 {
 	margin: 0px;
 }
 
+.beta-mark {
+	vertical-align: super;
+	font-size: 0.5em;
+	display: inline-block;
+	position: absolute;
+	margin-left: 0.3em;
+}
+
 #subtitle {
 	text-align: center;
 }
@@ -48,23 +56,13 @@ div#wrapper {
 }
 
 #samples-box {
+	margin-top: 12px;
 	padding-left: 12px;
 	color: #777;
 }
 
-#adv_search_title {
-	padding-top: 5px;
-	padding-bottom: 5px;
-}
-
 #separator-top {
 	margin-top: 10px;
-	margin-bottom: 5px;
-	border-top: solid 2px #eee;
-}
-
-#separator-bottom {
-	margin-top: 5px;
 	margin-bottom: 5px;
 	border-top: solid 2px #eee;
 }
@@ -76,6 +74,7 @@ div#wrapper {
 #adv_search .adv_label {
 	width: 75px;
 	min-width: 75px;
+	height: 30px;
 }
 
 #adv_search .adv_value {
@@ -115,7 +114,7 @@ input#query, #adv_search input, #adv_search select {
 	width: 1px;
 	white-space: nowrap;
 	vertical-align: middle;
-	padding: 3px 3px 3px 6px;
+	padding: 3px 3px 3px 31px;
 }
 
 #sched-hours span.input {

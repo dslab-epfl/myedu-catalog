@@ -41,6 +41,10 @@ class SearchQuery(object):
     self.filters = filters or []
     self.directives = directives or {}
     
+  def ReplaceFilter(self, key, value):
+    self.filters[:] = [(k, v) for k, v in self.filters if k != key]
+    self.filters.append((key, value))
+    
   def GetString(self, include_directives=True):
     query_string = []
     if self.directives and include_directives:

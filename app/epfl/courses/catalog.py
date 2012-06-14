@@ -48,8 +48,11 @@ class CatalogPage(base_handler.BaseHandler):
   def BuildQueryFromRequest(self):
     def append_filter(query, id_name, field_name):
       field_value = self.request.get(id_name)
+      
       if field_value:
-        query.filters.append((field_name, field_value))
+        if " " in field_value:
+          field_value = '"%s"' % field_value
+        query.ReplaceFilter(field_name, field_value)
       
     query = search.SearchQuery.ParseFromString(self.request.get("q", ""))
     
@@ -98,6 +101,8 @@ class CatalogPage(base_handler.BaseHandler):
     
     q_record.translated_query = query_string
     q_record.offset = offset
+    
+    q_record.client_address = os.environ["REMOTE_ADDR"]
     
     q_record.put()
     

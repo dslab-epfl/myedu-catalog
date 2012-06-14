@@ -127,11 +127,56 @@ def UpdateCourseInformation(course_list, course_data):
 
 class DumpHandler(base_handler.BaseHandler):
   """Shamelessly dumps the entire course information."""
-  def get(self):
+  def DumpTitles(self):
     results = models.Course.all().run(projection=('title', 'urls'))
     
     data = [{ "id": str(course.key()), "title": course.title, "urls": course.urls[0]}
             for course in results]
+    
+    return data
+  
+  def DumpAll(self):
+    data = []
+    for course in models.Course.all().run():
+      data.append({
+        "id": str(course.key()),
+        "title": course.title,
+        "language": course.language,
+        "instructors": course.instructors,
+        "sections": course.sections,
+        "study_plans": course.study_plans,
+        "urls": course.urls,
+        "credit_count": course.credit_count,
+        "coefficient": course.coefficient,
+        "semester": course.semester,
+        "exam_form": course.exam_form,
+        "lecture_time": course.lecture_time,
+        "lecture_weeks": course.lecture_weeks,
+        "recitation_time": course.recitation_time,
+        "recitation_weeks": course.recitation_weeks,
+        "project_time": course.project_time,
+        "project_weeks": course.project_weeks,
+        "learning_outcomes": course.learning_outcomes,
+        "content": course.content,
+        "prior_knowledge": course.prior_knowledge,
+        "type_of_teaching": course.type_of_teaching,
+        "bibliography": course.bibliography,
+        "keywords": course.keywords,
+        "exam_form_detail": course.exam_form_detail,
+        "note": course.note,
+        "prerequisite_for": course.prerequisite_for,
+        "library_recomm": course.library_recomm,
+        "links": course.links
+      })
+    
+    return data
+      
+  
+  def get(self):
+    if self.request.get("all"):
+      data = self.DumpAll()
+    else:
+      data = self.DumpTitles()
     
     self.RenderJSON(data)
 
