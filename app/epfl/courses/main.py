@@ -42,6 +42,7 @@ app = webapp2.WSGIApplication([
      webapp2.Route('/index', handler=admin.BuildSearchIndexHandler),
      webapp2.Route('/dump', handler=admin.DumpHandler),
      webapp2.Route('/stats', handler=admin.StatsHandler),
+     webapp2.Route('/qstats', handler=admin.QueryStatsHandler),
      webapp2.Route('/sitemap.xml', handler=admin.SitemapHandler),
      webapp2.Route('/sitemap.json', handler=admin.JSONSitemapHandler),
      webapp2.Route('/c/<course_key>.json', handler=catalog.CoursePage,

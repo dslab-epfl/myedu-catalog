@@ -36,26 +36,49 @@ def TokenizeQuery(query_string, discard_ws=True):
     
     
 class SearchQuery(object):
-  def __init__(self, terms=None, filters=None, directives=None):
-    self.terms = terms or []
-    self.filters = filters or []
-    self.directives = directives or {}
+  TERM = 0
+  FILTER = 1
+  DIRECTIVE = 2
+
+  def __init__(self, terms=None, filters=None, directives=None):    
+    self.components = []
+    if directives:
+      self.components.extend([(self.DIRECTIVE, (k, v)) for k, v in directives.iteritems()])
+    if filters:
+      self.components.extend([(self.FILTER, (k, v)) for k, v in filters])
+    if terms:
+      self.components.extend([(self.TERM, term) for term in terms])
     
+  @property
+  def terms(self):
+    return [term for t, term in self.components if t == self.TERM]
+  
+  @property
+  def filters(self):
+    return [filt for t, filt in self.components if t == self.FILTER]
+  
+  @property
+  def directives(self):
+    return dict([directive for t, directive in self.components
+                 if t == self.DIRECTIVE])
+
   def ReplaceFilter(self, key, value):
-    self.filters[:] = [(k, v) for k, v in self.filters if k != key]
-    self.filters.append((key, value))
+    self.components[:] = [(t, v) for t, v in self.components
+                          if t != self.FILTER or v[0] != key]
+    self.components.append((self.FILTER, (key, value)))
     
   def GetString(self, include_directives=True):
     query_string = []
-    if self.directives and include_directives:
-      query_string.append(" ".join(["@%s:%s" % (key, value)
-                                    for key, value in self.directives.items()]))
-    if self.filters:
-      query_string.append(" ".join(["%s:%s" % (key, value)
-                                    for key, value in self.filters]))
-      
-    if self.terms:
-      query_string.append(" ".join(self.terms))
+    
+    for t, value in self.components:
+      if t == self.DIRECTIVE and include_directives:
+        query_string.append("@s:%s" % (value[0], value[1]))
+        
+      if t == self.FILTER:
+        query_string.append("%s:%s" % (value[0], value[1]))
+        
+      if t == self.TERM:
+        query_string.append(value)
       
     return " ".join(query_string)
     
@@ -70,11 +93,11 @@ class SearchQuery(object):
     for tname, tvalue in TokenizeQuery(query_string):
       if tname == "doublequote" or tname == "singlequote" or tname == "term":
         if found_colon:
+          query.components.pop()
           if is_directive:
-            query.directives[last_term.lstrip("@")] = tvalue
+            query.components.append((cls.DIRECTIVE, (last_term.lstrip("@"), tvalue)))
           else:
-            query.filters.append((last_term, tvalue))
-          query.terms.pop()
+            query.components.append((cls.FILTER, (last_term, tvalue)))
 
           found_colon = False
           last_term = None
@@ -82,13 +105,13 @@ class SearchQuery(object):
         else:
           is_directive = tvalue.startswith("@")
           last_term = tvalue
-          query.terms.append(tvalue)
+          query.components.append((cls.TERM, tvalue))
       elif tname == "colon":
         if last_term:
           found_colon = True
         else:
           found_colon = False
-          query.terms.append(tvalue)
+          query.components.append((cls.TERM, tvalue))
           
     return query
 

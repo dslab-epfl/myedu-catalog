@@ -7,10 +7,18 @@
 
 __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
+
+import sys
 import unittest
+
+sdk_path = "/usr/local/google_appengine"
+sys.path.insert(0, sdk_path)
+import dev_appserver
+dev_appserver.fix_sys_path()
 
 from epfl.courses.search.parser import TokenizeQuery
 from epfl.courses.search.parser import SearchQuery
+
 
 class TestTokenizeQuery(unittest.TestCase):
   @classmethod
@@ -55,10 +63,10 @@ class TestTokenizeQuery(unittest.TestCase):
                               ("doublequote", '"George Candea"')])
     
   def test_unicode(self):
-    tokens = self.GetTokens("Rüdiger André Garçon")
-    self.assertEqual(tokens, [("term", "Rüdiger"),
-                              ("term", "André"),
-                              ("term", "Garçon")])
+    tokens = self.GetTokens("R√ºdiger Andr√© Gar√ßon")
+    self.assertEqual(tokens, [("term", "R√ºdiger"),
+                              ("term", "Andr√©"),
+                              ("term", "Gar√ßon")])
     
 
 class TestParseQuery(unittest.TestCase):
@@ -87,6 +95,12 @@ class TestParseQuery(unittest.TestCase):
     self.assertEqual(query.terms, ["query"])
     self.assertEqual(query.directives, { "loc": "db" })
     
+  def test_complex_query(self):
+    query = SearchQuery.ParseFromString('instructor:"le boudec" OR instructor:hubaux')
+    self.assertEqual(query.terms, ["OR"])
+    self.assertEqual(query.filters, [("instructor", '"le boudec"'), ("instructor", "hubaux")])
+    self.assertEqual(query.directives, {})
+    
     
 class TestQueryGetString(unittest.TestCase):
   def test_simple_query(self):
@@ -95,7 +109,21 @@ class TestQueryGetString(unittest.TestCase):
     
   def test_filters_simple(self):
     query = SearchQuery.ParseFromString("looking for credits:10")
-    self.assertEqual(query.GetString(), "credits:10 looking for")
+    self.assertEqual(query.GetString(), "looking for credits:10")
+    
+  def test_complex_query(self):
+    query = SearchQuery.ParseFromString('instructor:"le boudec" OR instructor:hubaux')
+    self.assertEqual(query.GetString(), 'instructor:"le boudec" OR instructor:hubaux')
+    
+
+class TestReplaceFilter(unittest.TestCase):
+  def test_complex_query(self):
+    query = SearchQuery.ParseFromString('instructor:"le boudec" OR instructor:hubaux')
+    query.ReplaceFilter("instructor", "candea")
+    
+    self.assertEqual(query.terms, ["OR"])
+    self.assertEqual(query.filters, [("instructor", "candea")])
+    self.assertEqual(query.GetString(), 'OR instructor:candea')
 
 
 if __name__ == "__main__":

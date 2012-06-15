@@ -5,15 +5,18 @@
 __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 import csv
+import datetime
 import json
 import logging
 import pprint
+import re
 
 from google.appengine.ext import db
 
 from epfl.courses import base_handler
 from epfl.courses import models
 from epfl.courses.search import appsearch_admin as appsearch
+from epfl.courses.search import parser
 
 
 COURSES_DATA_FILE = "data/all_epfl_import.csv"
@@ -211,7 +214,6 @@ class ReinitDataHandler(base_handler.BaseHandler):
     
     
 class BuildSearchIndexHandler(base_handler.BaseHandler):
-
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
     
@@ -245,6 +247,81 @@ class StatsHandler(base_handler.BaseHandler):
         
     pprint.pprint(sections, self.response.out)
     pprint.pprint(studies, self.response.out)
+    
+class QueryStatsHandler(base_handler.BaseHandler):
+  LAUNCH_DATE = datetime.datetime(2012, 6, 14, 17, 20)
+  
+  CANNED_QUERIES = [
+    'plan:"SHS-BA3" literature OR design',
+    'credits:2 "organic materials"',
+    'semester:fall java',
+    'section:"MIN_IN_SEC" -cryptography'
+  ]
+  
+  PAGE_SIZE = 20
+  
+  @classmethod
+  def ExtractTerms(cls, query_string):
+    parsed_query = parser.SearchQuery.ParseFromString(query_string)
+    
+    terms = []
+    
+    for term in parsed_query.terms:
+      terms.extend(re.findall(r"\w+", term, re.UNICODE))
+    
+    for _, value in parsed_query.filters:
+      terms.extend(re.findall(r"\w+", value, re.UNICODE))
+      
+    return terms
+  
+  def get(self):
+    self.response.headers['Content-Type'] = 'text/plain'
+    
+    count = 0
+    canned_count = 0
+    
+    no_results = []
+    many_results = []
+    
+    terms = {}
+    
+    for query in models.SearchQueryRecord.all().filter("time_stamp > ",
+                                                       self.LAUNCH_DATE).run():
+      count += 1
+      
+      if query.translated_query in self.CANNED_QUERIES:
+        canned_count += 1
+        continue
+      
+      for term in self.ExtractTerms(query.translated_query):
+        terms[term] = terms.get(term, 0) + 1
+      
+      if not query.results_count:
+        no_results.append(query.translated_query)
+      elif query.results_count > self.PAGE_SIZE:
+        many_results.append((query.translated_query, query.results_count))
+        
+    many_results.sort(key=lambda r: r[1], reverse=True)
+    ranked_terms = terms.items()[:20]
+    ranked_terms.sort(key=lambda r: r[1], reverse=True)
+      
+    self.response.out.write("Total queries: %d\n\n" % count)
+    
+    self.response.out.write("Example queries: %d (will be ignored in the analysis below)\n\n" % canned_count)
+    
+    self.response.out.write("%d queries with no results:\n" % len(no_results))
+    pprint.pprint(no_results, self.response.out)
+    self.response.out.write("\n")
+    
+    self.response.out.write("%d queries with many results (> 1 page):\n" % len(many_results))
+    pprint.pprint(many_results, self.response.out)
+    self.response.out.write("\n")
+    
+    self.response.out.write("Total number of terms found in queries: %d\n\n" % len(terms))
+    self.response.out.write("Most popular terms (term, number of occurrences):\n")
+    pprint.pprint(ranked_terms, self.response.out)
+    self.response.out.write("\n")
+    
 
 class SitemapHandler(base_handler.BaseHandler):
   # TODO(bucur): Cache the site map in the blob store
