@@ -96,7 +96,7 @@ class TestParseQuery(unittest.TestCase):
     self.assertEqual(query.directives, { "loc": "db" })
     
   def test_complex_query(self):
-    query = SearchQuery.ParseFromString('instructor:"le boudec" OR instructor:hubaux')
+    query = SearchQuery.ParseFromString('instructor:"le boudec" or instructor:hubaux')
     self.assertEqual(query.terms, ["OR"])
     self.assertEqual(query.filters, [("instructor", '"le boudec"'), ("instructor", "hubaux")])
     self.assertEqual(query.directives, {})
@@ -112,18 +112,24 @@ class TestQueryGetString(unittest.TestCase):
     self.assertEqual(query.GetString(), "looking for credits:10")
     
   def test_complex_query(self):
-    query = SearchQuery.ParseFromString('instructor:"le boudec" OR instructor:hubaux')
+    query = SearchQuery.ParseFromString('instructor:"le boudec" or instructor:hubaux')
     self.assertEqual(query.GetString(), 'instructor:"le boudec" OR instructor:hubaux')
     
 
 class TestReplaceFilter(unittest.TestCase):
   def test_complex_query(self):
-    query = SearchQuery.ParseFromString('instructor:"le boudec" OR instructor:hubaux')
+    query = SearchQuery.ParseFromString('instructor:"le boudec" or instructor:hubaux')
     query.ReplaceFilter("instructor", "candea")
     
     self.assertEqual(query.terms, ["OR"])
     self.assertEqual(query.filters, [("instructor", "candea")])
     self.assertEqual(query.GetString(), 'OR instructor:candea')
+    
+
+class TestExtractTerms(unittest.TestCase):
+  def test_simple_query(self):
+    query = SearchQuery.ParseFromString('test')
+    self.assertEqual(query.ExtractTerms(), ['test'])
 
 
 if __name__ == "__main__":

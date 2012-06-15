@@ -260,20 +260,6 @@ class QueryStatsHandler(base_handler.BaseHandler):
   
   PAGE_SIZE = 20
   
-  @classmethod
-  def ExtractTerms(cls, query_string):
-    parsed_query = parser.SearchQuery.ParseFromString(query_string)
-    
-    terms = []
-    
-    for term in parsed_query.terms:
-      terms.extend(re.findall(r"\w+", term, re.UNICODE))
-    
-    for _, value in parsed_query.filters:
-      terms.extend(re.findall(r"\w+", value, re.UNICODE))
-      
-    return terms
-  
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
     
@@ -293,7 +279,9 @@ class QueryStatsHandler(base_handler.BaseHandler):
         canned_count += 1
         continue
       
-      for term in self.ExtractTerms(query.translated_query):
+      parsed_query = parser.SearchQuery.ParseFromString(query.translated_query)
+      
+      for term in parsed_query.ExtractTerms():
         terms[term] = terms.get(term, 0) + 1
       
       if not query.results_count:
@@ -302,8 +290,7 @@ class QueryStatsHandler(base_handler.BaseHandler):
         many_results.append((query.translated_query, query.results_count))
         
     many_results.sort(key=lambda r: r[1], reverse=True)
-    ranked_terms = terms.items()[:20]
-    ranked_terms.sort(key=lambda r: r[1], reverse=True)
+    ranked_terms = sorted(terms.items(), key=lambda r: r[1], reverse=True)[:20]
       
     self.response.out.write("Total queries: %d\n\n" % count)
     

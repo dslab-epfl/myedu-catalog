@@ -81,6 +81,26 @@ class SearchQuery(object):
         query_string.append(value)
       
     return " ".join(query_string)
+  
+  def ExtractTerms(self):
+    result = []
+    
+    for t, value in self.components:
+      if t == self.FILTER:
+        result.extend(re.findall(r"\w+", value[1], re.UNICODE))
+        
+      if t == self.TERM:
+        result.extend(re.findall(r"\w+", value, re.UNICODE))
+      
+    return result
+  
+  @classmethod
+  def _FixSpecialTerm(cls, term):
+    lo_term = term.lower()
+    if lo_term == "or":
+      return "OR"
+    
+    return term
     
   @classmethod
   def ParseFromString(cls, query_string):
@@ -105,13 +125,13 @@ class SearchQuery(object):
         else:
           is_directive = tvalue.startswith("@")
           last_term = tvalue
-          query.components.append((cls.TERM, tvalue))
+          query.components.append((cls.TERM, cls._FixSpecialTerm(tvalue)))
       elif tname == "colon":
         if last_term:
           found_colon = True
         else:
           found_colon = False
-          query.components.append((cls.TERM, tvalue))
+          query.components.append((cls.TERM, cls._FixSpecialTerm(tvalue)))
           
     return query
 

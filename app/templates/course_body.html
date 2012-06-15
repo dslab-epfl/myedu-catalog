@@ -26,7 +26,7 @@
   <div id="aux_info" style="float:right;">
     <table style="width: 300px;">
       {% call infoitem("Sections:") %}
-        {% for section, _ in course.sections_ %}
+        {% for section in course.sections %}
           {{ searchable(section, "section") }}{{ "," if not loop.last }}
         {% endfor %}
       {% endcall %}
