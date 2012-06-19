@@ -120,8 +120,8 @@
                     <select id="section" name="aq_sec">
                       <option value=""></option>
                       {% for school in static["sections"] %}
-                        <optgroup label="{{ school[0] }}">
-                        {% for section in school[1] %}
+                        <optgroup label="{% if school[0] %}{{ school[0] }} - {% endif %}{{ school[1] }}">
+                        {% for section in school[2] %}
                           <option value="{{ section[0]|lower }}">{{ section[1] }}</option>
                         {% endfor %}
                         </optgroup>
@@ -265,7 +265,7 @@
         </td>
         <td class="td_section">
         {% for section in course.sections %}
-          {{ section.title() }}{{ ", " if not loop.last }}
+          <span title="{{ section.display_name() }}">{{ section.display_name(short=True) }}</span>{{ ", " if not loop.last }}
         {% endfor %}
         </td>
       </tr>

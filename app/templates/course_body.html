@@ -4,8 +4,9 @@
   Copyright 2012 EPFL. All rights reserved.
 #}
 
-{% macro searchable(content, query_field, query_value=None) -%}
-  <a rel="nofollow" href='/catalog?q={{query_field}}:"{% if query_value %}{{query_value}}{% else %}{{content}}{% endif %}"'>{{ content }}</a>
+{% macro searchable(content, query_field, query_value=None, tooltip=None) -%}
+  <a rel="nofollow" {% if tooltip %}title="{{ tooltip }}"{% endif %}
+    href='/catalog?q={{query_field}}:"{% if query_value %}{{query_value}}{% else %}{{content}}{% endif %}"'>{{ content }}</a>
 {%- endmacro %}
 
 {% macro infoitem(label, min_width=100, align_left=False) %}
@@ -27,8 +28,7 @@
     <table style="width: 300px;">
       {% call infoitem("Sections:") %}
         {% for section in course.sections %}
-          {{ section.school.code }} / {{ searchable(section.title(), "section", section.code) }}
-          {% if not loop.last %}<br/>{% endif %}
+          {{ searchable(section.display_name(short=True), "section", section.code, tooltip=section.display_name()) }}{% if not loop.last %},{% endif %}
         {% endfor %}
       {% endcall %}
       
@@ -120,7 +120,7 @@
     <table style="width: 100%;">
       {% call infoitem("Study plans:", min_width=200, align_left=True) %}
         {% for plan in course.study_plans %}
-          {{ searchable(plan.display_name(), "plan", plan.code) }}
+          {{ searchable(plan.display_name(short=True), "plan", plan.code, tooltip=plan.display_name()) }}
           {% if not loop.last %}
           <br/>
           {% endif %}
@@ -129,7 +129,7 @@
       
       {% call infoitem("IS-Academia homepage(s):", min_width=200, align_left=True) %}
         {% for section, url in course.sections_ %}
-          <a href="{{ url }}">{{ section.title() }}</a>{{ "," if not loop.last }}
+          <a href="{{ url }}" title="{{ section.display_name() }}">{{ section.display_name(short=True) }}</a>{{ "," if not loop.last }}
         {% endfor %}
       {% endcall %}
     </table>

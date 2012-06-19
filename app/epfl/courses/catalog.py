@@ -115,10 +115,15 @@ class CatalogPage(base_handler.BaseHandler):
     for school in models.School.all():
       sections = []
       for section in school.section_set:
+        if section.meta:
+          continue
         sections.append((section.code, section.display_name()))
+
       sections.sort(key=lambda section: section[1])
-      data.append((school.title, sections))
-    data.sort(key=lambda school: school[0])
+      data.append((school.code if school.code != models.School.OTHER else "",
+                   school.title, sections))
+
+    data.sort(key=lambda school: school[1])
     
     return data
     

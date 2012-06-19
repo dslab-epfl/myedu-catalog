@@ -22,6 +22,8 @@ LANGUAGE_MAPPING = {
 
 
 class School(db.Model):
+  OTHER = "other"
+  
   title_en = db.StringProperty()
   title_fr = db.StringProperty()
   
@@ -38,8 +40,7 @@ class School(db.Model):
 
 
 class Section(db.Model):
-  OTHER = "other"
-  
+  title_short = db.StringProperty()
   title_en = db.StringProperty()
   title_fr = db.StringProperty()
   
@@ -47,6 +48,7 @@ class Section(db.Model):
   
   minor = db.BooleanProperty(default=False)
   doctoral = db.BooleanProperty(default=False)
+  meta = db.BooleanProperty(default=False)
   
   def title(self, use_french=False):
     if use_french:
@@ -54,8 +56,12 @@ class Section(db.Model):
     else:
       return self.title_en or self.title_fr
     
-  def display_name(self, use_french=False):
-    name = self.title(use_french)
+  def display_name(self, use_french=False, short=False):
+    if short:
+      name = self.title_short or self.code
+    else:
+      name = self.title(use_french)
+
     if self.minor:
       name += " (minor)"
     elif self.doctoral:
@@ -80,10 +86,10 @@ class StudyPlan(db.Model):
   def semester_name(self):
     return static_data.StudyPlan.SEMESTERS.get(self.semester)
   
-  def display_name(self, use_french=False):
+  def display_name(self, use_french=False, short=False):
     name = []
     if self.section:
-      name.append("%s," % self.section.title(use_french))
+      name.append("%s," % self.section.display_name(use_french, short))
     
     if self.plan_name():
       name.append(self.plan_name())

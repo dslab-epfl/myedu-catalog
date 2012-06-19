@@ -105,11 +105,13 @@ class PopulateSections(base_handler.BaseHandler):
                     
     for section in static_data.SECTIONS.values():
       models.Section(key_name=section.code,
+                     title_short=section.title_short,
                      title_en=section.title_en,
                      title_fr=section.title_fr,
                      school=models.School.get_by_key_name(section.school),
                      minor=section.minor,
-                     doctoral=section.doctoral).put()
+                     doctoral=section.doctoral,
+                     meta=section.meta).put()
                      
     for study_plan in static_data.STUDY_PLANS.values():
       models.StudyPlan(key_name=study_plan.code,
