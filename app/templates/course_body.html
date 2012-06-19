@@ -27,7 +27,8 @@
     <table style="width: 300px;">
       {% call infoitem("Sections:") %}
         {% for section in course.sections %}
-          {{ searchable(section, "section") }}{{ "," if not loop.last }}
+          {{ section.school.code }} / {{ searchable(section.title(), "section", section.code) }}
+          {% if not loop.last %}<br/>{% endif %}
         {% endfor %}
       {% endcall %}
       
@@ -92,6 +93,7 @@
       {% endcall %}
     </table>
   </div>
+  <div style="clear: both;"></div>
   {% for title, content in [("Learning Outcomes", course.learning_outcomes),
                             ("Content", course.content),
                             ("Prior Knowledge", course.prior_knowledge),
@@ -118,13 +120,16 @@
     <table style="width: 100%;">
       {% call infoitem("Study plans:", min_width=200, align_left=True) %}
         {% for plan in course.study_plans %}
-          {{ searchable(plan, "plan") }}{{ "," if not loop.last }}
+          {{ searchable(plan.display_name(), "plan", plan.code) }}
+          {% if not loop.last %}
+          <br/>
+          {% endif %}
         {% endfor %}
       {% endcall %}
       
       {% call infoitem("IS-Academia homepage(s):", min_width=200, align_left=True) %}
         {% for section, url in course.sections_ %}
-          <a href="{{ url }}">{{ section }}</a>{{ "," if not loop.last }}
+          <a href="{{ url }}">{{ section.title() }}</a>{{ "," if not loop.last }}
         {% endfor %}
       {% endcall %}
     </table>

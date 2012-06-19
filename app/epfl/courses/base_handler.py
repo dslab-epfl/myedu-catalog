@@ -29,6 +29,12 @@ class BaseHandler(webapp2.RequestHandler):
   def RenderJSON(self, data):
     self.response.headers['Content-Type'] = 'application/json'
     json.dump(data, self.response.out, indent=True, encoding="utf-8")
+    
+  def SetAttachment(self, file_name):
+    self.response.headers['Content-Disposition'] = 'attachment;filename=%s' % file_name
+    
+  def SetTextMode(self):
+    self.response.headers['Content-Type'] = 'text/plain'
 
 
 class BaseCourseDescriptionHandler(BaseHandler):

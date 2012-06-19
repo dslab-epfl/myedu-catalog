@@ -9,6 +9,7 @@ __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 import logging
 import random
 import os
+import webapp2
 
 from google.appengine.ext import db
 
@@ -107,6 +108,19 @@ class CatalogPage(base_handler.BaseHandler):
     q_record.put()
     
     return q_record
+  
+  @webapp2.cached_property
+  def section_data(self):
+    data = []
+    for school in models.School.all():
+      sections = []
+      for section in school.section_set:
+        sections.append((section.code, section.display_name()))
+      sections.sort(key=lambda section: section[1])
+      data.append((school.title, sections))
+    data.sort(key=lambda school: school[0])
+    
+    return data
     
   def get(self):
     ACCURACY = 2000
@@ -150,7 +164,7 @@ class CatalogPage(base_handler.BaseHandler):
     template_args = {
       'courses': found_courses,
       'static': {
-        'sections': static_data.SECTIONS,
+        'sections': self.section_data,
         'exam': static_data.EXAM,
         'credits': static_data.CREDITS,
         'coeff': static_data.COEFFICIENT,

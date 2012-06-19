@@ -5,98 +5,261 @@
 
 __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
+# TODO(bucur): Split this in multiple files, so only the necessary data is
+# imported.
 
 ################################################################################
 # Course catalog
 ################################################################################
 
-# TODO(bucur): Extract this data automatically.
-# This content may become outdated.
-
-RAW_SECTIONS = {
- 'AR': 'Architecture',
- 'AR_ECH': 'Architecture Exchange',
- 'CGC' : 'Chemistry and Chemical Engineering',
- 'CGC_CHIM': 'Molecular and Biological Chemistry',
- 'CGC_ING': 'Chemical Engineering and Biotechnology',
- 'EDIC': 'Computer, Communication and Information Sciences',
- 'EDMT': 'Management of Technology',
- 'EDNE': 'Neuroscience',
- 'EL': 'Electrical and Electronics Engineering',
- 'EME_MES': 'Energy Management and Sustainability',
- 'ENAC': 'Architecture, Civil and Environmental Engineering',
- 'GC': 'Civil Engineering',
- 'GM': 'Mechanical Engineering',
- 'HPLANS': 'Hors Plans',
- 'IF': 'Financial Engineering',
- 'IN': 'Computer Science',
- 'ING_MATH': 'Mathematics Engineering',
- 'ING_PHYS': 'Physics Engineering',
- 'MA': 'Mathematics',
- 'MATH': 'Mathematics',
- 'MA_CO': 'Computational Science and Engineering',
- 'MIN_AREA_CULTURAL': 'Area and Cultural Studies minor',
- 'MIN_BIOCOMP': 'Biocomputing minor',
- 'MIN_BIOMED': 'Biomedical Technologies minor',
- 'MIN_BIOTECH': 'Biotechnology minor',
- 'MIN_DEV_TER': 'Territorial Development minor',
- 'MIN_ENER': 'Energy minor',
- 'MIN_IN_SEC': 'Information Security minor',
- 'MIN_MTE': 'Management of Technology and Entrepreneurship minor',
- 'MIN_TEC_SPACE': 'Space Technologies minor',
- 'MNIS': 'Micro and Nanotechnologies for Integrated Systems',
- 'MT': 'Microengineering',
- 'MTE': 'Management of Technology',
- 'MX': 'Materials Science and Engineering',
- 'PH': 'Physics',
- 'PHYS': 'Physics',
- 'PH_NE': 'Nuclear engineering',
- 'SC': 'Communication Systems',
- 'SC_EPFL': 'Communication Systems',
- 'SHS': 'Humanities and Social Sciences',
- 'SIE': 'Environmental Sciences and Engineering',
- 'SV': 'Life Sciences and Technologies',
- 'SV_B': 'Bioengineering',
- 'SV_STV': 'Life Sciences and Technologies',
- 'UNIL_BIU': 'UNIL - Biologie',
- 'UNIL_CSU': 'UNIL - Collège des sciences',
- 'UNIL_GEU': 'UNIL - Géosciences',
- 'UNIL_HEC': 'UNIL - Hautes études commerciales',
- 'UNIL_MEU': 'UNIL - Médicine',
- 'UNIL_PHU': 'UNIL - Pharmacie',
- 'UNIL_SFU': 'UNIL - Sciences forensiques',
-}
-
-
-def _OrganizeSections(sections):
-  result_dict = {}
-  for section in sections:
-    key = section.split("_")[0]
-    result_dict.setdefault(key, []).append(section)
+class School(object):
+  def __init__(self, code, title_en=None, title_fr=None):
+    self.code = code
+    self.title_en = title_en
+    self.title_fr = title_fr
     
-  return [ [ key ] + result_dict[key] for key in sorted(result_dict.keys()) ]
+    self.sections = []
+    
 
-SECTIONS = _OrganizeSections(RAW_SECTIONS)
+SCHOOLS = dict([(school.code, school) for school in [
+  School("ENAC",
+         title_en="Architecture, Civil, and Environmental Engineering"),
+  School("IC",
+         title_en="Computer and Communication Sciences"),
+  School("SB", 
+         title_en="Basic Sciences"),
+  School("STI",
+         title_en="Engineering",
+         title_fr=u"Sciences et techniques de l'ingénieur"),
+  School("SV",
+         title_en="Life Sciences",
+         title_fr=u"Sciences de la vie"),
+  School("CDH",
+         title_en="College of Humanities"),
+  School("CDM",
+         title_en="Management of Technology"),
+  School("UNIL",
+         title_en="University of Lausanne"),
+  School("other",
+         title_en="Other")
+]])
 
 
-EXAM = [
-  "During the semester",
-  "Oral",
-  "Term paper",
-  "Written"
-]
+def GetSchool(code, default="other"):
+  if code in SCHOOLS:
+    return SCHOOLS[code]
+  else:
+    return SCHOOLS[default]
 
-CREDITS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 20, 30]
 
-COEFFICIENT = [ 0.5, 1.0, 1.5, 2.0, 3.0, 4.0 ]
+class Section(object):
+  def __init__(self, code, school, title_en=None, title_fr=None,
+               minor=False, doctoral=False):
+    self.code = code
+    
+    self.title_en = title_en
+    self.title_fr = title_fr
+    self.school = school
+    self.minor = minor
+    self.doctoral = doctoral
+    
+    SCHOOLS[school].sections.append(self)
 
-LECTURE_TIME = [ 1, 2, 3, 4, 5, 6 ]
 
-RECITATION_TIME = [ 1, 2, 3, 4 ]
+SECTIONS = dict([(section.code, section) for section in [
+  # ENAC
+  Section('AR', 'ENAC',
+          title_en='Architecture'),
+  Section('AR_ECH', 'ENAC',
+          title_en='Architecture Exchange'),
+  Section('ENAC', 'ENAC',
+          title_en='Architecture, Civil, and Environmental Engineering'),
+  Section('GC', 'ENAC',
+          title_en='Civil Engineering'),
+  Section('MIN_DEV_TER', 'ENAC',
+          title_en='Territorial Development', minor=True),
+  Section('MIN_TEC_SPACE', 'ENAC',
+          title_en='Space Technologies', minor=True),
+  Section('SIE', 'ENAC',
+          title_en='Environmental Sciences and Engineering'),
+  
+  # IC
+  Section('EDIC', 'IC',
+          title_en='Computer, Communication and Information Sciences',
+          doctoral=True),
+  Section('IN', 'IC',
+          title_en='Computer Science'),
+  Section('SC', 'IC',
+          title_en='Communication Systems (SC)'),
+  Section('SC_EPFL', 'IC',
+          title_en='Communication Systems (SC_EPFL)'),
+  Section('MIN_BIOCOMP', 'IC',
+          title_en='Biocomputing', minor=True),
+  Section('MIN_IN_SEC', 'IC',
+          title_en='Information Security', minor=True),
+  
+  # SB
+  Section('CGC', 'SB',
+          title_en='Chemistry and Chemical Engineering'),
+  Section('CGC_CHIM', 'SB',
+          title_en='Molecular and Biological Chemistry'),
+  Section('CGC_ING', 'SB',
+          title_en='Chemical Engineering and Biotechnology'),
+  Section('ING_MATH', 'SB',
+          title_en='Mathematics Engineering'),
+  Section('ING_PHYS', 'SB',
+          title_en='Physics Engineering'),
+  Section('MA', 'SB',
+          title_en='Mathematics (MA)'),
+  Section('MATH', 'SB',
+          title_en='Mathematics (MA_CO)'),
+  Section('MA_CO', 'SB',
+          title_en='Computational Science and Engineering'),
+  Section('MIN_BIOMED', 'SB',
+          title_en='Biomedical Technologies', minor=True),
+  Section('MIN_ENER', 'SB',
+          title_en='Energy', minor=True),
+  Section('PH', 'SB',
+          title_en='Physics (PH)'),
+  Section('PHYS', 'SB',
+          title_en='Physics (PHYS)'),
+  Section('PH_NE', 'SB',
+          title_en='Nuclear engineering'),
+ 
+  # STI
+  Section('EL', 'STI',
+          title_en='Electrical and Electronics Engineering'),
+  Section('EME', 'STI',
+          title_en='Energy Management and Sustainability (EME)'),
+  Section('EME_MES', 'STI',
+          title_en='Energy Management and Sustainability (EME_MES)'),
+  Section('GM', 'STI',
+          title_en='Mechanical Engineering'),
+  Section('MNIS', 'STI',
+          title_en='Micro and Nanotechnologies for Integrated Systems'),
+  Section('MT', 'STI',
+          title_en='Microengineering'),
+  Section('MX', 'STI',
+          title_en='Materials Science and Engineering'),
+  
+  # SV
+  Section('EDNE', 'SV',
+          title_en='Neuroscience', doctoral=True),
+  Section('MIN_BIOTECH', 'SV',
+          title_en='Biotechnology', minor=True),
+  Section('SV', 'SV',
+          title_en='Life Sciences and Technologies (SV)'),
+  Section('SV_B', 'SV',
+          title_en='Bioengineering'),
+  Section('SV_STV', 'SV',
+          title_en='Life Sciences and Technologies (SV_STV)'),
+  
+  # CDH
+  Section('MIN_AREA_CULTURAL', 'CDH',
+          title_en='Area and Cultural Studies', minor=True),
+  Section('SHS', 'CDH',
+          title_en='Humanities and Social Sciences'),
+  
+  # CDM  
+  Section('EDMT', 'CDM',
+          title_en='Management of Technology', doctoral=True),
+  Section('IF', 'CDM',
+          title_en='Financial Engineering'),
+  Section('MIN_MTE', 'CDM',
+          title_en='Management of Technology and Entrepreneurship', minor=True),
+  Section('MTE', 'CDM',
+          title_en='Management of Technology'),
+ 
+  # UNIL
+  Section('UNIL_BIU', 'UNIL',
+          title_fr=u'UNIL - Biologie'),
+  Section('UNIL_CSU', 'UNIL',
+          title_fr=u'UNIL - Collège des sciences'),
+  Section('UNIL_GEU', 'UNIL',
+          title_fr=u'UNIL - Géosciences'),
+  Section('UNIL_HEC', 'UNIL',
+          title_fr=u'UNIL - Hautes études commerciales'),
+  Section('UNIL_MEU', 'UNIL',
+          title_fr=u'UNIL - Médicine'),
+  Section('UNIL_PHU', 'UNIL',
+          title_fr=u'UNIL - Pharmacie'),
+  Section('UNIL_SFU', 'UNIL',
+          title_fr=u'UNIL - Sciences forensiques'),
+ 
+  # Other
+  Section('HPLANS', 'other',
+          title_fr=u'Hors Plans'),
+  Section('AUDIT', 'other',
+          title_en='Audit'),
+  Section('MINEUR', 'other',
+          title_en='Minor')
+]])
 
-PROJECT_TIME = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 16 ]
 
-RAW_STUDY_PLANS = [
+def GetSection(code):
+  if code in SECTIONS:
+    return SECTIONS[code]
+  else:
+    return Section(code, SCHOOLS["other"],
+                   title_en=code,
+                   title_fr=code)
+
+
+class StudyPlan(object):
+  PLANS = {
+    "BA": "Bachelor",
+    "MA": "Master",
+    "PM": "Master project",
+  }
+  
+  SEMESTERS = {
+    "E": "Spring",
+    "H": "Fall",
+    "1": "1st Semester",
+    "2": "2nd Semester",
+    "3": "3rd Semester",
+    "4": "4th Semester",
+    "5": "5th Semester",
+    "6": "6th Semester"
+  }
+  
+  def __init__(self, code):
+    self.code = code
+    parts = self.code.split("-")
+    
+    self.section = SECTIONS[parts[0]]
+    self._plan = None
+    self._semester = None
+    
+    if len(parts) < 2:
+      return
+    
+    if len(parts[1]) == 3:
+      self._plan = parts[1][0:2]
+      self._semester = parts[1][2]
+    elif len(parts[1]) == 1:
+      self._semester = parts[1]
+    else:
+      raise ValueError("Invalid plan syntax")
+
+  @property
+  def plan_code(self):
+    return self._plan
+  
+  @property
+  def semester_code(self):
+    return self._semester
+  
+  @property
+  def plan(self):
+    return self.PLANS.get(self._plan)
+  
+  @property
+  def semester(self):
+    return self.SEMESTERS.get(self._semester)
+  
+
+STUDY_PLANS = dict([(sp.code, sp) for sp in [StudyPlan(code) for code in [
   "AR-BA1",
   "AR-BA2",
   "AR-BA3",
@@ -274,7 +437,28 @@ RAW_STUDY_PLANS = [
   "SV-MA3",
   "SV-PME",
   "SV-PMH"
+]]])
+
+
+# TODO(bucur): Extract this data automatically.
+# This content may become outdated.
+
+EXAM = [
+  "During the semester",
+  "Oral",
+  "Term paper",
+  "Written"
 ]
+
+CREDITS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 20, 30]
+
+COEFFICIENT = [ 0.5, 1.0, 1.5, 2.0, 3.0, 4.0 ]
+
+LECTURE_TIME = [ 1, 2, 3, 4, 5, 6 ]
+
+RECITATION_TIME = [ 1, 2, 3, 4 ]
+
+PROJECT_TIME = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 16 ]
 
 
 ################################################################################

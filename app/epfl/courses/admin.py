@@ -4,129 +4,20 @@
 
 __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
-import csv
 import datetime
-import json
 import logging
 import pprint
-import re
 
 from google.appengine.ext import db
+from google.appengine import runtime
 
 from epfl.courses import base_handler
+from epfl.courses import imports
 from epfl.courses import models
+from epfl.courses import static_data
 from epfl.courses.search import appsearch_admin as appsearch
 from epfl.courses.search import parser
 
-
-COURSES_DATA_FILE = "data/all_epfl_import.csv"
-CRAWL_DATA_FILE = "data/crawler_import.json"
-
-INVALID_SCIPER = 126096
-
-
-def _BuildCourse(row):
-  instructors = row["instructors"]
-  if row["scipers"] and row["scipers"][0] == INVALID_SCIPER:
-    instructors = ["multi"]
-     
-  return models.Course(
-      title=row["title"],
-      language=row["language"],
-      instructors=instructors,
-      sections=row["sections"],
-      study_plans=row["study_plans"],
-      urls=row["urls"])
-
-
-def _SanitizeRow(row):
-  def clean_up(field):
-    return field.decode("utf-8").strip().replace("\n", "")
-  def split_multiple(field):
-    return map(lambda x: clean_up(x), field.split("#"))
-  
-  row["title"] = clean_up(row["title"])
-  row["language"] = clean_up(row["language"])
-  row["study_plans"] = split_multiple(row["study_plans"])
-  
-  if row["scipers"]:
-    row["scipers"] = map(int, split_multiple(row["scipers"]))
-    row["instructors"] = split_multiple(row["instructors"])
-  else:
-    row["scipers"] = []
-    row["instructors"] = []
-  
-  row["sections"] = split_multiple(row["sections"])
-  row["urls"] = split_multiple(row["urls"])
-
-
-def ImportFromCSV(fs):
-  reader = csv.DictReader(fs,
-      ["_empty", "title", "language", "study_plans", "scipers", "instructors",
-       "sections", "urls"])
-  
-  skip_flag = True
-  
-  empty_line_count = 0
-  no_instructor_count = 0
-  invalid_course_titles = []
-  
-  all_courses = []
-  
-  for row in reader:
-    if not row["language"]:
-      empty_line_count += 1
-      continue
-    if skip_flag:
-      skip_flag = False
-      continue
-    
-    try:
-      _SanitizeRow(row)
-      if not row["scipers"]:
-        no_instructor_count += 1
-      all_courses.append(_BuildCourse(row))
-    except:
-      raise
-      invalid_course_titles.append(row["title"])
-      
-  logging.info("Created %d courses.\n" % len(all_courses))
-  
-  logging.info("Parsing stats: Empty lines: %d\n" 
-               % empty_line_count)
-  logging.info("Parsing stats: Unspecified instructor courses: %d\n" 
-               % no_instructor_count)
-  logging.info("Parsing stats: Invalid courses: %s\n" 
-               % invalid_course_titles)
-      
-  return all_courses
-
-
-def UpdateCourseInformation(course_list, course_data):
-  course_dict = {}
-  for course in course_list:
-    course_dict[course.title] = course
-    
-  updated_count = 0
-    
-  for entry in course_data:
-    course = course_dict.get(entry["title"])
-    updated = False
-    
-    if not course:
-      logging.warning("Could not find course '%s' when updating info" % entry["title"])
-      continue
-      
-    for key, value in entry["info"].iteritems():
-      if getattr(course, key) != value:
-        setattr(course, key, value)
-        course.needs_indexing_ = True
-        updated = True
-    if updated:
-      updated_count += 1
-      
-  logging.info("Updated %d courses." % updated_count)
-    
 
 class DumpHandler(base_handler.BaseHandler):
   """Shamelessly dumps the entire course information."""
@@ -141,39 +32,19 @@ class DumpHandler(base_handler.BaseHandler):
   def DumpAll(self):
     data = []
     for course in models.Course.all().run():
-      data.append({
-        "id": str(course.key()),
-        "title": course.title,
-        "language": course.language,
-        "instructors": course.instructors,
-        "sections": course.sections,
-        "study_plans": course.study_plans,
-        "urls": course.urls,
-        "credit_count": course.credit_count,
-        "coefficient": course.coefficient,
-        "semester": course.semester,
-        "exam_form": course.exam_form,
-        "lecture_time": course.lecture_time,
-        "lecture_weeks": course.lecture_weeks,
-        "recitation_time": course.recitation_time,
-        "recitation_weeks": course.recitation_weeks,
-        "project_time": course.project_time,
-        "project_weeks": course.project_weeks,
-        "learning_outcomes": course.learning_outcomes,
-        "content": course.content,
-        "prior_knowledge": course.prior_knowledge,
-        "type_of_teaching": course.type_of_teaching,
-        "bibliography": course.bibliography,
-        "keywords": course.keywords,
-        "exam_form_detail": course.exam_form_detail,
-        "note": course.note,
-        "prerequisite_for": course.prerequisite_for,
-        "library_recomm": course.library_recomm,
-        "links": course.links
-      })
+      props = {}
+      
+      props["meta"] = {
+        "key_id": str(course.key()),
+        "id": str(course.key().id()),
+      }
+      
+      for prop in models.Course.properties():
+        props[prop] = getattr(course, prop)
+        
+      data.append(props)
     
     return data
-      
   
   def get(self):
     if self.request.get("all"):
@@ -181,6 +52,7 @@ class DumpHandler(base_handler.BaseHandler):
     else:
       data = self.DumpTitles()
     
+    self.SetAttachment("dump.json")
     self.RenderJSON(data)
 
 
@@ -193,29 +65,21 @@ class ReinitDataHandler(base_handler.BaseHandler):
     logging.info("Deleted %d courses.\n" % len(course_keys))
     
   def get(self):
+    course_list = None
     if self.request.get("rebuild"):
       self.DeleteAllCourses()
-      with open(COURSES_DATA_FILE, "rU") as f:
-        all_courses = ImportFromCSV(f)  
-      db.put(all_courses)
-      logging.info("Added %d courses.\n" % len(all_courses))
-    else:
-      all_courses = models.Course.all().fetch(None)
+      course_list = imports.RebuildFromCSV()
+      logging.info("Added %d courses.\n" % len(course_list))    
+
+    imports.UpdateCoursesFromCrawl(course_list)
     
-    with open(CRAWL_DATA_FILE, "r") as f:
-      course_data = json.load(f, encoding="utf-8")
-    
-    UpdateCourseInformation(all_courses, course_data)
-    
-    db.put(all_courses)
-    
-    self.response.headers['Content-Type'] = 'text/plain'
+    self.SetTextMode()
     self.response.out.write('OK.\n')
     
     
 class BuildSearchIndexHandler(base_handler.BaseHandler):
   def get(self):
-    self.response.headers['Content-Type'] = 'text/plain'
+    self.SetTextMode()
     
     if self.request.get("erase"):
       appsearch.AppEngineIndex.ClearCourseIndex()
@@ -230,6 +94,56 @@ class BuildSearchIndexHandler(base_handler.BaseHandler):
       self.response.out.write('OK.\n')
     else:
       self.response.out.write("Search quota exceeded. Try again later.\n")
+      
+      
+class PopulateSections(base_handler.BaseHandler):
+  def get(self):
+    for school in static_data.SCHOOLS.values():
+      models.School(key_name=school.code,
+                    title_en=school.title_en,
+                    title_fr=school.title_fr).put()
+                    
+    for section in static_data.SECTIONS.values():
+      models.Section(key_name=section.code,
+                     title_en=section.title_en,
+                     title_fr=section.title_fr,
+                     school=models.School.get_by_key_name(section.school),
+                     minor=section.minor,
+                     doctoral=section.doctoral).put()
+                     
+    for study_plan in static_data.STUDY_PLANS.values():
+      models.StudyPlan(key_name=study_plan.code,
+                       section=models.Section.get_by_key_name(study_plan.section.code),
+                       plan=study_plan.plan_code,
+                       semester=study_plan.semester_code).put()
+                       
+    self.SetTextMode()
+    self.response.out.write('OK.\n')
+    
+    
+class ConnectSections(base_handler.BaseHandler):
+  def get(self):
+    self.SetTextMode()
+    
+    skipped = 0
+    processed = 0
+    
+    try:
+      for course in models.Course.all():
+        if course.section_keys and course.study_plan_keys:
+          skipped += 1
+          continue
+        
+        course.section_keys = [models.Section.get_by_key_name(section).key()
+                               for section in course.sections]
+        course.study_plan_keys = [models.StudyPlan.get_by_key_name(study_plan).key()
+                                  for study_plan in course.study_plans]
+        course.put()
+        processed += 1
+    except runtime.DeadlineExceededError:
+      self.response.out.write("Could not process all. Skipped: %d. Processed: %d.\n" % (skipped, processed))
+    else:
+      self.response.out.write('OK.\n')
 
 
 class StatsHandler(base_handler.BaseHandler):

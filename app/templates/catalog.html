@@ -119,10 +119,10 @@
                   <td class="adv_value">
                     <select id="section" name="aq_sec">
                       <option value=""></option>
-                      {% for section in static["sections"] %}
-                        <optgroup label="{{ section[0] }}">
-                        {% for item in section[1:] %}
-                          <option value="{{ item|lower }}">{{ item }}</option>
+                      {% for school in static["sections"] %}
+                        <optgroup label="{{ school[0] }}">
+                        {% for section in school[1] %}
+                          <option value="{{ section[0]|lower }}">{{ section[1] }}</option>
                         {% endfor %}
                         </optgroup>
                       {% endfor %}
@@ -263,7 +263,11 @@
           {{ course.instructors|join(", ") }}
         {% endif %}
         </td>
-        <td class="td_section">{{ course.sections|join(", ") }}</td>
+        <td class="td_section">
+        {% for section in course.sections %}
+          {{ section.title() }}{{ ", " if not loop.last }}
+        {% endfor %}
+        </td>
       </tr>
       {%- endfor %}
     </tbody>

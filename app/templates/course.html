@@ -21,8 +21,12 @@
       {{ attribute("title", course.title) }}
       {{ attribute("language", course.language_) }}
       {{ attribute("instructor", course.instructors|join(", ")) }}
-      {{ attribute("section", course.sections|join(", ")) }}
-      {{ attribute("plan", course.study_plans|join(", ")) }}
+      {% for section in course.sections -%}
+      {{ attribute("section", section.display_name()) }}
+      {%- endfor %}
+      {% for study_plan in course.study_plans -%}
+      {{ attribute("study_plan", study_plan.display_name()) }}
+      {%- endfor %}
       {{ attribute("credits", course.credit_count) }}
       {{ attribute("coefficient", course.coefficient) }}
       {{ attribute("semester", course.semester) }}
