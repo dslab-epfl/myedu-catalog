@@ -6,6 +6,8 @@
 
 __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
+import argparse
+import contextlib
 import json
 import logging
 import os
@@ -21,6 +23,9 @@ COURSE_BOOK_BASE_URL = "http://isa.epfl.ch/imoniteur_ISAP/!GEDPUBLICREPORTS.txt\
 COURSE_BOOK_BASE_URL_ALT = "http://isa.epfl.ch/imoniteur_ISAP/!GEDPUBLICREPORTS.txt\
 ?ww_i_reportModel=5059249&ww_i_reportModelXsl=5059315\
 &ww_x_MAT=%d&ww_x_PROGRAMME=%d"
+
+COURSE_DESCRIPTION_URL = "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm\
+?%s&ww_c_langue=%s"
 
 def GetCourseBookURL(course_url):
   url_params = dict([pair.split("=") 
@@ -42,8 +47,21 @@ def GetCourseBookURL(course_url):
     
   return course_book_url
 
+
+def GetCourseDescriptionURL(course_url, language="en"):
+  url_params = course_url.split("?")[1].rsplit("&", 1)[0]
+  
+  return COURSE_DESCRIPTION_URL % (url_params, language)
+
+
 def main():
   logging.basicConfig(level=logging.INFO)
+  
+  parser = argparse.ArgumentParser(description="Crawl IS-Academia URLs")
+  parser.add_argument("--lang", default="en",
+                      help="Language of the pages to fetch")
+  
+  args = parser.parse_args()
   
   course_data = None
   with open(DATA_FILE, "r") as f:
@@ -60,13 +78,14 @@ def main():
     
     logging.info("Processing '%s'" % course["title"])
     
-    url_handle = urllib.urlopen(course["urls"])
-    url_data = url_handle.read()
+    url = GetCourseDescriptionURL(course["urls"], language=args.lang)
+    
+    with contextlib.closing(urllib.urlopen(url)) as f:
+      url_data = f.read()
+    
     with open(os.path.join(os.path.dirname(__file__),
                            "%s-%d.html" % (course["id"], counters[course["id"]])), "w") as f:
       f.write(url_data)
-
-    url_handle.close()
 
 
 if __name__ == "__main__":
