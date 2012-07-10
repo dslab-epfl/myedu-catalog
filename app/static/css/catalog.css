@@ -8,8 +8,8 @@ h1 {
 	vertical-align: super;
 	font-size: 0.5em;
 	display: inline-block;
-	position: absolute;
-	margin-left: 0.3em;
+	/*position: absolute; // Doesn't show properly in Chrome 20.*/
+	margin-left: -0.3em;
 }
 
 #subtitle {
