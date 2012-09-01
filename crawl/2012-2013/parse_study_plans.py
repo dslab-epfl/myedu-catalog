@@ -12,8 +12,8 @@ import os
 import urllib
 import urlparse
 
-
 from bs4 import BeautifulSoup
+
 
 # The root of our parsing
 search_base_url = "http://search-test.epfl.ch"
@@ -25,6 +25,8 @@ course_list_path = os.path.join(this_dir, "course_list.json")
 
 
 # CACHING UTILITIES
+###################
+
 
 def CachedJSON(file_name):
   """Decorator factory that caches the result of a function in a JSON file."""
@@ -94,6 +96,10 @@ def CachedURLGet(url):
   return data
 
 
+# DATA PROCESSING
+#################
+
+
 def _ProcessStudyPlan(plan_id, plan_name, plan_soup, id_trim_size=3):
   sections = []
   for list_item in plan_soup.find_all('li'):
@@ -149,23 +155,71 @@ def FetchStudyPlans():
   }
   
 
-def _FetchCoursesInSection(section_url):
+def _FetchCoursesInSection(plan_id, section_id, section_url):
   section_html = CachedURLGet(section_url)
     
   soup = BeautifulSoup(section_html)
   
+  courses = []
+  
+  for course_entry in soup.find_all("div", class_="cours-name"):
+    if course_entry.a is None:
+      continue
+    
+    course_name = course_entry.a.string
+    course_url = course_entry.a["href"]
+    
+    # A valid course URL points to the IS Academia website
+    parsed_url = urlparse.urlsplit(course_url)
+    if parsed_url.netloc != "isa.epfl.ch":
+      print "-- Invalid course entry for ", course_name, "at", course_url
+      continue
+    
+    courses.append({
+      "name": course_name,
+      "url": course_url,
+      "plan": plan_id,
+      "section": section_id,
+    })
+    
+  return courses
+  
 
 @CachedJSON(course_list_path)
 def FetchCourseList(study_plans):
+  course_list = []
+  
   for plan in study_plans["plans"]:
     for section in plan["sections"]:
-      _FetchCoursesInSection(section["url"])
+      courses = _FetchCoursesInSection(plan["id"], section["id"], section["url"])
+      course_list.extend(courses)
+
+  return {
+    "courses": course_list
+  }
+  
+  
+def ShowCourseListStatistics(courses):
+  course_list = courses["courses"]
+  
+  name_set = set()
+  for course in course_list:
+    name_set.add(course["name"])
+  
+  print "Total courses:", len(course_list)
+  print "Unique course titles:", len(name_set)
+  
+  
+def FetchCourseDescriptions(courses):
+  for course in courses["courses"]:
+    course_desc_html = CachedURLGet(course["url"])
 
 
 def Main():
   study_plans = FetchStudyPlans()
-  FetchCourseList(study_plans)
-  
+  courses = FetchCourseList(study_plans)
+  ShowCourseListStatistics(courses)
+  FetchCourseDescriptions(courses)
 
 
 if __name__ == "__main__":
