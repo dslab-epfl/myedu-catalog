@@ -8,3 +8,4 @@ encoding//app/tests/parser_test.py=utf-8
 encoding//app/unidecode/__init__.py=utf-8
 encoding//app/xlwt/Workbook.py=windows-1252
 encoding//crawl/2011-2012/parse_courses_html.py=utf-8
+encoding//crawl/2012-2013/parse_study_plans.py=utf-8
