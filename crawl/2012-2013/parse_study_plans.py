@@ -11,6 +11,7 @@ import contextlib
 import json
 import logging
 import os
+import re
 import urllib
 import urlparse
 
@@ -27,6 +28,7 @@ this_dir = os.path.dirname(__file__)
 # Cached computations
 study_plans_path = os.path.join(this_dir, "study_plans.json")
 course_list_path = os.path.join(this_dir, "course_list.json")
+course_desc_path = os.path.join(this_dir, "course_desc.json")
 
 
 # CACHING UTILITIES
@@ -226,6 +228,7 @@ class ParsedCourseDescription(object):
   links_title = "Links"
   library_rec_title = "The library recommends"
 
+  # Make this a set, for quick lookup
   free_text_titles = set([
     "Prerequisite for",
     "Learning outcomes",
@@ -237,6 +240,13 @@ class ParsedCourseDescription(object):
     "Bibliography and material",
     "Note",
   ])
+  
+  week_hours_re = re.compile(r"(\d+)\s+Hour\(s\) per week x (\d+) weeks",
+                                 flags=re.UNICODE)
+  sem_hours_re = re.compile(r"(\d+)\s+Hour\(s\) per semester",
+                                flags=re.UNICODE)
+  total_hours_re = re.compile(r"(\d+)\s+Hour\(s\)",
+                              flags=re.UNICODE)
 
   def __init__(self, url, soup):
     self._soup = soup
@@ -245,11 +255,24 @@ class ParsedCourseDescription(object):
     self.title = None
     self.instructors = []
     self.language = None
+    
+    self.semester = None
+    self.credits = None
+    self.coefficient = None
+    self.exam_form = None
+    
+    self.lecture_hours = None
+    self.recitation_hours = None
+    self.project_hours = None
+    self.lab_hours = None
+    self.practical_hours = None
+    
+    self.free_text_desc = []
     self.links = []
     self.library_rec = None
-    self.free_text_desc = []
 
     self.unknown_subsections = set()
+    self.unknown_labels = set()
 
   def _ParseLecturer(self, subsection):
     """Populate the instructor list."""
@@ -301,10 +324,8 @@ class ParsedCourseDescription(object):
         contents = "".join(entry.contents)
 
     self.free_text_desc.append((title, contents))
-
-  def ParseDescription(self):
-    """Populate all course fields."""
-
+    
+  def _ParseMainContent(self):
     main_content = self._soup.find(id="content")
 
     # Title
@@ -326,13 +347,90 @@ class ParsedCourseDescription(object):
         self._ParseLibraryRec(subsection)
       else:
         self.unknown_subsections.add(subsection.string.strip())
-
-    # Sidebar
+        
+  @classmethod
+  def _ParseCourseHours(cls, value):
+    match = cls.week_hours_re.match(value)
+    if match:      
+      return {
+        "week_hours": int(match.group(1)),
+        "weeks": int(match.group(2)),
+      }
+    
+    match = cls.sem_hours_re.match(value)
+    if match:
+      return {
+        "total_hours": int(match.group(1)),      
+      }
+      
+    match = cls.total_hours_re.match(value)
+    if match:
+      return {
+        "total_hours": int(match.group(1)),
+      }
+    
+    print "** Invalid course hours '%s'" % value
+    exit(1)
+    return None
+        
+  def _ParseSideBar(self):
     side_bar = self._soup.find(class_="right-col")
+    first_plan = side_bar.find("ul").find("ul")
+    
+    if not first_plan:
+      return
+    
+    for item in first_plan.find_all("li"):
+      if not item.strong.string:
+        continue
+      
+      item_label = item.strong.string.strip()
+      item_value = " ".join([s for s in item.stripped_strings
+                             if s != item_label])
+      
+      if not item_value:
+        print "** Empty item value for '%s'" % item_label
+        continue
+      
+      print item_label, "=", item_value
+      
+      # TODO(bucur): Move string constants to class definition, to support
+      # French in the future.
+      if item_label == "Semester":
+        self.semester = item_value
+      elif item_label == "Exam form":
+        self.exam_form = item_value
+      elif (item_label == "Credits" 
+            or item_label == "Hour(s) per week x 14 weeks"):
+        self.credits = int(item_value)
+      elif item_label == "Coefficient":
+        self.coefficient = float(item_value)
+      elif item_label == "Subject examined":
+        pass # Ignored
+      elif item_label == "Lecture":
+        self.lecture_hours = self._ParseCourseHours(item_value)
+      elif item_label == "Recitation":
+        self.recitation_hours = self._ParseCourseHours(item_value)
+      elif item_label == "Project":
+        self.project_hours = self._ParseCourseHours(item_value)
+      elif item_label == "Labs":
+        self.lab_hours = self._ParseCourseHours(item_value)
+      elif item_label == "Practical work":
+        self.practical_hours = self._ParseCourseHours(item_value)
+      else:
+        self.unknown_labels.add(item_label)
 
+  def ParseDescription(self):
+    """Populate all course fields."""
 
+    self._ParseMainContent()
+    self._ParseSideBar()    
+
+@CachedJSON(course_desc_path)
 def FetchCourseDescriptions(courses):
   all_unknown_subsections = set()
+  
+  descriptions = []
 
   for course in courses["courses"]:
     course_desc_html = CachedURLGet(course["url"])
@@ -340,8 +438,31 @@ def FetchCourseDescriptions(courses):
 
     course_desc = ParsedCourseDescription(course["url"], soup)
     course_desc.ParseDescription()
+    
+    descriptions.append({
+      "title": course_desc.title,
+      "instructors": [{ "name": i[0], "url": i[1] }
+                      for i in course_desc.instructors],
+      "language": course_desc.language,
+      "semester": course_desc.semester,
+      "credits": course_desc.credits,
+      "coefficient": course_desc.coefficient,
+      "exam_form": course_desc.exam_form,
+      "lecture": course_desc.lecture_hours,
+      "recitation": course_desc.recitation_hours,
+      "project": course_desc.project_hours,
+      "lab": course_desc.lab_hours,
+      "practical_hours": course_desc.practical_hours,
+      "free_text": dict(course_desc.free_text_desc),
+      "links": course_desc.links,
+      "library_recommends": course_desc.library_rec,
+      "study_plan_entry": course,
+    })
 
-    assert course["title"] == course_desc.title
+    if course["title"] != course_desc.title:
+      print "** Mismatched course titles.",
+      print "Section title: '%s'" % course["title"],
+      print "Description title: '%s'" % course_desc.title
 
     print "-- Title:", course_desc.title
     print "-- Instructors:", ", ".join(["%s <%s>" % (i[0], i[1])
@@ -354,6 +475,10 @@ def FetchCourseDescriptions(courses):
 
   if all_unknown_subsections:
     print "** All unknown subsections:", ", ".join(all_unknown_subsections)
+    
+  return {
+    "descriptions": descriptions,
+  }
 
 
 def Main():
@@ -362,7 +487,7 @@ def Main():
   study_plans = FetchStudyPlans()
   courses = FetchCourseList(study_plans)
   ShowCourseListStatistics(courses)
-  FetchCourseDescriptions(courses)
+  descriptions = FetchCourseDescriptions(courses)
 
 
 if __name__ == "__main__":
