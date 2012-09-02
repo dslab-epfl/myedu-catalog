@@ -19,7 +19,10 @@ from bs4 import BeautifulSoup
 search_base_url = "http://search-test.epfl.ch"
 study_plans_url = urlparse.urljoin(search_base_url, "/eduweb.action")
 
+
 this_dir = os.path.dirname(__file__)
+
+# Cached computations
 study_plans_path = os.path.join(this_dir, "study_plans.json")
 course_list_path = os.path.join(this_dir, "course_list.json")
 
@@ -101,6 +104,8 @@ def CachedURLGet(url):
 
 
 def _ProcessStudyPlan(plan_id, plan_name, plan_soup, id_trim_size=3):
+  """Process a study plan soup."""
+  
   sections = []
   for list_item in plan_soup.find_all('li'):
     section_id = "-".join(list_item['id'].split("_")[id_trim_size:]).upper()
@@ -124,6 +129,8 @@ def _ProcessStudyPlan(plan_id, plan_name, plan_soup, id_trim_size=3):
 
 @CachedJSON(study_plans_path)
 def FetchStudyPlans():
+  """Fetch all study plans from the EPFL search site."""
+  
   study_plans_html = CachedURLGet(study_plans_url)
     
   plans = []
