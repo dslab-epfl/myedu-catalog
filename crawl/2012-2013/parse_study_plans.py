@@ -8,6 +8,7 @@ __author__ = "stefan.bucur@epfl.ch"
 
 import contextlib
 import json
+import logging
 import os
 import urllib
 import urlparse
@@ -39,20 +40,20 @@ def CachedJSON(file_name):
       try:
         with open(file_name, "r") as f:
           data = json.load(f, encoding="utf-8")
-        print "-- Found cached data at '%s'" % file_name
+        logging.info("Found cached data at '%s'" % file_name)
         return data
       except IOError:
         pass
       
-      print "-- Data not found at '%s'. Computing." % file_name
+      logging.info("Data not found at '%s'. Computing." % file_name)
       data = func(*args, **kwargs)
       
       try:
         with open(file_name, "w") as f:
           json.dump(data, f, indent=True, encoding="utf-8")
-        print "-- Saved computed data at '%s'" % file_name
+        logging.info("Saved computed data at '%s'" % file_name)
       except IOError:
-        print "-- Could not save computed data at '%s'" % file_name
+        logging.info("Could not save computed data at '%s'" % file_name)
       
       return data
     
@@ -74,12 +75,12 @@ def CachedURLGet(url):
   try:
     with open(cache_file_name, "r") as f:
       data = f.read()
-    print "-- URL cache found for %s [%s]" % (url, cache_file_name)
+    logging.info("URL cache found for %s [%s]" % (url, cache_file_name))
     return data
   except IOError:
     pass
   
-  print "-- URL not cached. Retrieving %s" % url
+  logging.info("URL not cached. Retrieving %s" % url)
   
   with contextlib.closing(urllib.urlopen(url)) as f:
     data = f.read()
@@ -92,9 +93,9 @@ def CachedURLGet(url):
     
     with open(cache_file_name, "w") as f:
       f.write(data)
-    print "-- Saved URL data for %s [%s]" % (url, cache_file_name)
+    logging.info("Saved URL data for %s [%s]" % (url, cache_file_name))
   except IOError:
-    print "-- Could not save cache for URL %s at %s" % (url, cache_file_name)
+    logging.info("Could not save cache for URL %s at %s" % (url, cache_file_name))
   
   return data
 
@@ -109,10 +110,8 @@ def _ProcessStudyPlan(plan_id, plan_name, plan_soup, id_trim_size=3):
   sections = []
   for list_item in plan_soup.find_all('li'):
     section_id = "-".join(list_item['id'].split("_")[id_trim_size:]).upper()
-    section_title = list_item.a.string
+    section_title = list_item.a.string.strip()
     section_url = search_base_url + list_item.a["href"]
-    
-    print section_id, section_title, section_url
     
     sections.append({
       "id": section_id,
@@ -173,7 +172,7 @@ def _FetchCoursesInSection(plan_id, section_id, section_url):
     if course_entry.a is None:
       continue
     
-    course_name = course_entry.a.string
+    course_name = course_entry.a.string.strip()
     course_url = course_entry.a["href"]
     
     # A valid course URL points to the IS Academia website
@@ -217,9 +216,74 @@ def ShowCourseListStatistics(courses):
   print "Unique course titles:", len(name_set)
   
   
+class ParsedCourseDescription(object):
+  # English titles for subsections
+  lecturer_title = "Lecturer"
+  language_title = "Language"
+  
+  def __init__(self, soup):
+    self._soup = soup
+    
+    self.title = None
+    self.instructors = []
+    self.language = None
+    
+    self.unknown_subsections = set()
+    
+  def _ParseLecturer(self, subsection):
+    """Populate the instructor list."""
+    
+    for entry in subsection.next_siblings:
+      if entry.name == "h4":
+        break
+      elif entry.name == "a":
+        self.instructors.append((entry.string.strip(), entry["href"]))
+        
+  def _ParseLanguage(self, subsection):
+    """Populate the language field."""
+    
+    for entry in subsection.next_siblings:
+      if entry.name == "h4":
+        break
+      elif entry.name == "p":
+        self.language = entry.string.strip()
+        break
+            
+  def ParseDescription(self):
+    """Populate all course fields."""
+    
+    main_content = self._soup.find(id="content")
+    side_bar = self._soup.find(class_="right-col")
+    
+    # Title
+    self.title = main_content.h2.string.strip()
+    
+    # Subsections
+    for subsection in main_content.find_all("h4"):
+      if self.lecturer_title in subsection.string:
+        self._ParseLecturer(subsection)
+      elif self.language_title in subsection.string:
+        self._ParseLanguage(subsection)
+      else:
+        self.unknown_subsections.add(subsection.string.strip())
+
+
 def FetchCourseDescriptions(courses):
   for course in courses["courses"]:
     course_desc_html = CachedURLGet(course["url"])
+    soup = BeautifulSoup(course_desc_html)
+    
+    course_desc = ParsedCourseDescription(soup)
+    course_desc.ParseDescription()
+    
+   
+    print "-- Title:", course_desc.title
+    print "-- Instructors:", ", ".join(["%s <%s>" % (i[0], i[1])
+                                        for i in course_desc.instructors])
+    print "-- Language:", course_desc.language
+    
+    if course_desc.unknown_subsections:
+      print "** Unknown subsections:", ", ".join(course_desc.unknown_subsections)
 
 
 def Main():
