@@ -11,6 +11,8 @@ __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 import logging
 import os
+import re
+import unicodedata
 
 import caching
 import parse_study_plans as psp
@@ -48,6 +50,26 @@ def _ConsolidateDescription(dest, src, append_set=None):
       
     if key not in dest:
       dest[key] = value
+      
+
+def _CreateCourseID(title):
+  """Create a course identifier based on its title."""
+  
+  if not title:
+    return "untitled"
+
+  # Convert accented characters as much as possible
+  # http://stackoverflow.com/questions/517923/what-is-the-best-way-to-remove-accents-in-a-python-unicode-string
+  title = filter(lambda c: unicodedata.category(c) != 'Mn',
+                 unicodedata.normalize('NFD', title))
+  # Filter the remaining non-ASCII characters
+  title = filter(lambda c: ord(c) < 128, title)
+  # Replace all non-alphanumerics with dashes
+  title = re.sub(r"[\W-]+", "-", title)
+  # Strip all trailing and ending dashes
+  title = title.strip("-")
+  # Lower-case everything
+  return title.lower()
 
 
 @caching.CachedJSON(consolidated_desc_path)
@@ -60,9 +82,12 @@ def ConsolidateCourseDescriptions(course_desc):
   append_set = set(["url", "study_plan_entry"])
   
   consolidations = []
+  cons_ids = set()
     
-  for title, course_list in title_dict.iteritems():
+  for title in sorted(title_dict.keys()):
     logging.info("Processing title '%s'" % title)
+    
+    course_list = title_dict[title]
     
     # The consolidation list is built progressively.  We first try to add each
     # course to one of the existing consolidations.  If none is applicable, we
@@ -70,6 +95,7 @@ def ConsolidateCourseDescriptions(course_desc):
     # consolidations.
     
     cons_descriptions = []
+    base_cons_id = _CreateCourseID(title)
     
     for course in course_list:
       success = False
@@ -83,9 +109,19 @@ def ConsolidateCourseDescriptions(course_desc):
           continue
     
       if not success:
-        new_cons = {}
+        new_cons_id = base_cons_id
+        id_counter = 2
+        while new_cons_id in cons_ids:
+          new_cons_id = "%s-%d" % (base_cons_id, id_counter)
+          id_counter += 1
+          
+        new_cons = {
+          "id": new_cons_id,
+        }
+        
         _ConsolidateDescription(new_cons, course, append_set)
         cons_descriptions.append(new_cons)
+        cons_ids.add(new_cons_id)
         
     logging.info("Title '%s' x %d consolidated in %d descriptions"
                  % (title, len(course_list), len(cons_descriptions)))
