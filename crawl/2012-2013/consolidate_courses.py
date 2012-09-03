@@ -111,7 +111,8 @@ def Main():
   consolidations = ConsolidateCourseDescriptions(course_desc)
   
   print "Total course descriptions:", len(course_desc["descriptions"])
-  print "Unique course titles:", len(set([course["title"] for course in course_desc["descriptions"]]))
+  print "Unique course titles:",
+  print len(set([course["title"] for course in course_desc["descriptions"]]))
   print "Consolidated titles:", len(consolidations["consolidations"])
 
 
