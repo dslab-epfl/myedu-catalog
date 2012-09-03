@@ -19,8 +19,6 @@ from epfl.courses import base_handler
 from epfl.courses import models
 from epfl.courses import static_data
 
-from google.appengine.ext import db
-
 
 class ImportCourseCatalog(base_handler.BaseHandler):
   """Import the entire course catalog."""
