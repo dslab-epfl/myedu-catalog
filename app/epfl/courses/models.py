@@ -13,14 +13,6 @@ from google.appengine.ext import db
 from google.appengine.ext.db import stats
 
 
-LANGUAGE_MAPPING = {
-  "en": "English",
-  "fr": "French",
-  "de": "German",
-  "fr_en": "French and English"
-}
-
-
 class School(db.Model):
   OTHER = "other"
   
@@ -47,8 +39,7 @@ class Section(db.Model):
   school = db.ReferenceProperty(School)
   
   minor = db.BooleanProperty(default=False)
-  doctoral = db.BooleanProperty(default=False)
-  meta = db.BooleanProperty(default=False)
+  master = db.BooleanProperty(default=False)
   
   def title(self, use_french=False):
     if use_french:
@@ -64,41 +55,11 @@ class Section(db.Model):
 
     if self.minor:
       name += " (minor)"
-    elif self.doctoral:
-      name += " (doctoral)"
+    elif self.master:
+      name += " (master)"
       
     return name
     
-  @property
-  def code(self):
-    return self.key().name()
-
-
-class StudyPlan(db.Model):
-  section = db.ReferenceProperty(Section)
-  plan = db.StringProperty(choices=set(["BA", "MA", "PM"]))
-  semester = db.StringProperty(choices=set(["E", "H", "1", "2", "3", "4",
-                                            "5", "6"]))
-  
-  def plan_name(self):
-    return static_data.StudyPlan.PLANS.get(self.plan)
-  
-  def semester_name(self):
-    return static_data.StudyPlan.SEMESTERS.get(self.semester)
-  
-  def display_name(self, use_french=False, short=False):
-    name = []
-    if self.section:
-      name.append("%s," % self.section.display_name(use_french, short))
-    
-    if self.plan_name():
-      name.append(self.plan_name())
-      
-    if self.semester_name():
-      name.append(self.semester_name())
-      
-    return " ".join(name)
-  
   @property
   def code(self):
     return self.key().name()
@@ -110,7 +71,7 @@ class Course(db.Model):
   language = db.StringProperty()
   
   section_keys = db.ListProperty(db.Key)
-  study_plan_keys = db.ListProperty(db.Key)
+  study_plans = db.StringListProperty()
   
   instructors = db.StringListProperty()
   urls = db.StringListProperty()
@@ -153,10 +114,6 @@ class Course(db.Model):
   @property
   def sections(self):
     return Section.get(self.section_keys)
-  
-  @property
-  def study_plans(self):
-    return StudyPlan.get(self.study_plan_keys)
     
 
 class SearchQueryRecord(db.Model):

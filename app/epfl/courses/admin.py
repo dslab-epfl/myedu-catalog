@@ -17,12 +17,29 @@ COURSES_DATA_FILE = "data/consolidated_desc.json"
 
 from epfl.courses import base_handler
 from epfl.courses import models
+from epfl.courses import static_data
 
 from google.appengine.ext import db
 
 
 class ImportCourseCatalog(base_handler.BaseHandler):
   """Import the entire course catalog."""
+  
+  @staticmethod
+  def PopulateSections():
+    for school in static_data.SCHOOLS.values():
+      models.School(key_name=school.code,
+                    title_en=school.title_en,
+                    title_fr=school.title_fr).put()
+                    
+    for section in static_data.SECTIONS.values():
+      models.Section(key_name=section.code,
+                     title_short=section.title_short,
+                     title_en=section.title_en,
+                     title_fr=section.title_fr,
+                     school=models.School.get_by_key_name(section.school),
+                     minor=section.minor,
+                     master=section.master).put()
   
   @staticmethod
   def ImportCourse(course_desc):
@@ -36,7 +53,10 @@ class ImportCourseCatalog(base_handler.BaseHandler):
     course.title = course_desc["title"]
     course.language = course_desc["language"]
     
-    # TODO(bucur): Sections and study plans
+    sections = [e["section"] for e in course_desc["study_plan_entry"]]
+    course.section_keys = [models.Section.get_by_key_name(section).key()
+                           for section in sections]
+    course.study_plans = [e["plan"] for e in course_desc["study_plan_entry"]]
     
     course.instructors = [i["name"] for i in course_desc["instructors"]]
     course.urls = [e["url"] for e in course_desc["study_plan_entry"]]
@@ -95,6 +115,7 @@ class ImportCourseCatalog(base_handler.BaseHandler):
       ImportCourseCatalog.ImportCourse(course_desc)
   
   def get(self):
+    self.PopulateSections()
     self.ImportAllCourses()
     
     self.SetTextMode()
