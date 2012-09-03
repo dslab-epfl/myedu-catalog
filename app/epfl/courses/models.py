@@ -103,10 +103,11 @@ class StudyPlan(db.Model):
   def code(self):
     return self.key().name()
 
+
 class Course(db.Model):
   title = db.StringProperty()
   
-  language = db.StringProperty(choices=set(["en", "fr", "de", "fr_en"]))
+  language = db.StringProperty()
   
   section_keys = db.ListProperty(db.Key)
   study_plan_keys = db.ListProperty(db.Key)
@@ -126,11 +127,9 @@ class Course(db.Model):
   recitation_time = db.IntegerProperty(default=0)
   recitation_weeks = db.IntegerProperty(default=0)
   
+  # This includes lab and practical hours
   project_time = db.IntegerProperty(default=0)
   project_weeks = db.IntegerProperty(default=0)
-  
-  practical_time = db.IntegerProperty(default=0)
-  practical_weeks = db.IntegerProperty(default=0)
   
   learning_outcomes = db.TextProperty()
   content = db.TextProperty()
@@ -142,7 +141,7 @@ class Course(db.Model):
   note = db.TextProperty()
   prerequisite_for = db.TextProperty()
   library_recomm = db.TextProperty()
-  links = db.TextProperty()
+  links = db.StringListProperty()
 
   needs_indexing_ = db.BooleanProperty(default=True)
   

@@ -7,7 +7,6 @@
 __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 import logging
-import random
 import os
 import webapp2
 
@@ -234,46 +233,3 @@ class CoursePage(base_handler.BaseHandler):
     }
     
     self.RenderJSON(data)
-
-
-class GoogleSearchHandler(base_handler.BaseHandler):
-  def get(self):
-    self.RenderTemplate('google_search.html', {})
-
-    
-################################################################################
-    
-    
-class ShowcasePage(base_handler.BaseHandler):
-  def get(self):
-    SECTIONS = {
-      'AR': "Architecture",
-      'EL': "Electrical Engineering",
-      'IN': "Computer Science",
-      'MA': "Mathematics",
-      'SV': "Life Sciences"
-    }
-    
-    COLORS = [
-      "f5ffff",
-      "fffdeb",
-      "fefcff",
-      "ffeffc",
-      "eefff5"
-    ]
-    
-    sections = []
-    for section in sorted(SECTIONS.keys()):
-      course_set = models.Course.all().filter("sections", section).order('title').fetch(None)
-      logging.info("Found %d courses in section %s" % (len(course_set), section))
-      for course in course_set:
-        course.color_ = random.choice(COLORS)
-        
-      sections.append ({
-        "id": section,
-        "name": SECTIONS[section],
-        "courses": course_set
-      })
-    
-    self.RenderTemplate('showcase.html', { "sections": sections})
-

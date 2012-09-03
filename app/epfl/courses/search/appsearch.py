@@ -7,11 +7,11 @@
 __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 import logging
+import unicodedata
 
 from google.appengine.api import search
 from google.appengine.runtime import apiproxy_errors
 
-import unidecode
 
 class AppSearchProvider(object):
   INDEX_NAME = 'courses-index'
@@ -22,7 +22,7 @@ class AppSearchProvider(object):
   
   @classmethod
   def GetQueryString(cls, query):
-    return unidecode.unidecode(query.GetString(include_directives=False))
+    return unicodedata.normalize('NFKD', query.GetString(include_directives=False)).encode("ascii", "ignore")
   
   @classmethod
   def Search(cls, query, results, limit=None, offset=None, accuracy=None):
