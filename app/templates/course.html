@@ -19,13 +19,13 @@
       {%- endif -%}
       {% endmacro -%}
       {{ attribute("title", course.title) }}
-      {{ attribute("language", course.language_) }}
+      {{ attribute("language", course.language) }}
       {{ attribute("instructor", course.instructors|join(", ")) }}
       {% for section in course.sections -%}
       {{ attribute("section", section.display_name()) }}
       {%- endfor %}
       {% for study_plan in course.study_plans -%}
-      {{ attribute("study_plan", study_plan.display_name()) }}
+      {{ attribute("study_plan", study_plan) }}
       {%- endfor %}
       {{ attribute("credits", course.credit_count) }}
       {{ attribute("coefficient", course.coefficient) }}
@@ -34,7 +34,6 @@
       {{ attribute("lecthours", course.lecture_time) }}
       {{ attribute("recithours", course.recitation_time) }}
       {{ attribute("projhours", course.project_time) }}
-      {{ attribute("practhours", course.practical_time) }}
     </DataObject>
   </PageMap>
   -->

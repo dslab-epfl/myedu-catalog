@@ -120,7 +120,7 @@
     <table style="width: 100%;">
       {% call infoitem("Study plans:", min_width=200, align_left=True) %}
         {% for plan in course.study_plans %}
-          {{ searchable(plan.display_name(short=True), "plan", plan.code, tooltip=plan.display_name()) }}
+          {{ plan }}
           {% if not loop.last %}
           <br/>
           {% endif %}
@@ -128,7 +128,7 @@
       {% endcall %}
       
       {% call infoitem("IS-Academia homepage(s):", min_width=200, align_left=True) %}
-        {% for section, url in course.sections_ %}
+        {% for section, study_plan, url in course.sections_ %}
           <a href="{{ url }}" title="{{ section.display_name() }}">{{ section.display_name(short=True) }}</a>{{ "," if not loop.last }}
         {% endfor %}
       {% endcall %}

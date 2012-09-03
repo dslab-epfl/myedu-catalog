@@ -28,8 +28,8 @@ class MainPage(base_handler.BaseHandler):
 app = webapp2.WSGIApplication([
    webapp2.Route('/', handler=MainPage),
    webapp2.Route('/catalog', handler=catalog.CatalogPage),
-   webapp2.Route('/c/<course_key>', handler=catalog.CoursePage,
-                 handler_method="get_frontend"),
+   webapp2.Route('/course/<course_key>', handler=catalog.CoursePage,
+                 name="course"),
    routes.PathPrefixRoute('/admin', [
      webapp2.Route('/reinit', handler=admin.ImportCourseCatalog),
      #webapp2.Route('/sections/populate', handler=admin.PopulateSections),
@@ -40,7 +40,5 @@ app = webapp2.WSGIApplication([
      #webapp2.Route('/qstats', handler=admin.QueryStatsHandler),
      #webapp2.Route('/sitemap.xml', handler=admin.SitemapHandler),
      #webapp2.Route('/sitemap.json', handler=admin.JSONSitemapHandler),
-     webapp2.Route('/c/<course_key>.json', handler=catalog.CoursePage,
-                   handler_method="get_backend"),
    ])],
    debug=True, config=config)

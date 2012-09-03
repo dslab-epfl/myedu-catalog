@@ -19,9 +19,13 @@ from epfl.courses import base_handler
 from epfl.courses import models
 from epfl.courses import static_data
 
+from google.appengine.ext import db
+
 
 class ImportCourseCatalog(base_handler.BaseHandler):
   """Import the entire course catalog."""
+  
+  bucket_size = 100
   
   @staticmethod
   def PopulateSections():
@@ -40,7 +44,7 @@ class ImportCourseCatalog(base_handler.BaseHandler):
                      master=section.master).put()
   
   @staticmethod
-  def ImportCourse(course_desc):
+  def CreateCourse(course_desc):
     """Import a single course description."""
     
     # Create a new instance of a course, which will overwrite the old
@@ -99,18 +103,28 @@ class ImportCourseCatalog(base_handler.BaseHandler):
     course.links = [link[1] for link in course_desc["links"]]
     
     course.needs_indexing_ = True
-    # Now commit everything...
-    course.put()
+    
+    return course
   
-  @staticmethod
-  def ImportAllCourses():
+  @classmethod
+  def ImportAllCourses(cls):
     """Import all courses found in the data file."""
     
     with open(COURSES_DATA_FILE, "r") as f:
       course_data = json.load(f, encoding="utf-8")
+      
+    course_bucket = []
     
     for course_desc in course_data["consolidations"]:
-      ImportCourseCatalog.ImportCourse(course_desc)
+      course = cls.CreateCourse(course_desc)
+      course_bucket.append(course)
+      
+      if len(course_bucket) == cls.bucket_size:
+        db.put(course_bucket)
+        course_bucket = []
+        
+    if course_bucket:
+      db.put(course_bucket)
   
   def get(self):
     self.PopulateSections()

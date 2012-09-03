@@ -7,7 +7,6 @@
 
 __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
-from epfl.courses import static_data
 
 from google.appengine.ext import db
 from google.appengine.ext.db import stats
