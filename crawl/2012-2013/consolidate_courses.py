@@ -59,11 +59,8 @@ def _CreateCourseID(title):
     return "untitled"
 
   # Convert accented characters as much as possible
-  # http://stackoverflow.com/questions/517923/what-is-the-best-way-to-remove-accents-in-a-python-unicode-string
-  title = filter(lambda c: unicodedata.category(c) != 'Mn',
-                 unicodedata.normalize('NFD', title))
-  # Filter the remaining non-ASCII characters
-  title = filter(lambda c: ord(c) < 128, title)
+  # http://stackoverflow.com/questions/5258623/remove-special-characters-from-string?lq=1
+  title = unicodedata.normalize('NFKD', title).encode("ascii", "ignore")
   # Replace all non-alphanumerics with dashes
   title = re.sub(r"[\W-]+", "-", title)
   # Strip all trailing and ending dashes
