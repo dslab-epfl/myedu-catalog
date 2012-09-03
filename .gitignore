@@ -7,3 +7,8 @@
 # Log files
 bulkloader-log-*
 bulkloader-progress-*
+
+# Eclipse project files
+.project
+.pydevproject
+.settings/
