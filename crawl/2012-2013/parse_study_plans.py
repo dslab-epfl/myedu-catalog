@@ -3,12 +3,13 @@
 #
 # Copyright 2012 EPFL. All rights reserved.
 
+# pylint: disable-msg=W0311
+
 """Parse the 2012-2013 course descriptions starting from study plan URLs."""
 
 __author__ = "stefan.bucur@epfl.ch"
 
 import contextlib
-import json
 import logging
 import os
 import re
@@ -16,6 +17,8 @@ import urllib
 import urlparse
 
 from bs4 import BeautifulSoup
+
+import caching
 
 
 # The root of our parsing
@@ -29,78 +32,6 @@ this_dir = os.path.dirname(__file__)
 study_plans_path = os.path.join(this_dir, "study_plans.json")
 course_list_path = os.path.join(this_dir, "course_list.json")
 course_desc_path = os.path.join(this_dir, "course_desc.json")
-
-
-# CACHING UTILITIES
-###################
-
-
-def CachedJSON(file_name):
-  """Decorator factory that caches the result of a function in a JSON file."""
-
-  def decorator(func):
-    def wrapper(*args, **kwargs):
-      try:
-        with open(file_name, "r") as f:
-          data = json.load(f, encoding="utf-8")
-        logging.info("Found cached data at '%s'" % file_name)
-        return data
-      except IOError:
-        pass
-
-      logging.info("Data not found at '%s'. Computing." % file_name)
-      data = func(*args, **kwargs)
-
-      try:
-        with open(file_name, "w") as f:
-          json.dump(data, f, indent=True, encoding="utf-8")
-        logging.info("Saved computed data at '%s'" % file_name)
-      except IOError:
-        logging.info("Could not save computed data at '%s'" % file_name)
-
-      return data
-
-    return wrapper
-  return decorator
-
-
-def CachedURLGet(url):
-  """Read and cache the contents of a URL."""
-
-  # Construct the file name of the cache
-  parsed_url = urlparse.urlsplit(url)
-  parsed_url_path = parsed_url.path.lstrip("/")
-  if parsed_url.query:
-    parsed_url_path += "?" + parsed_url.query
-
-  cache_file_name = os.path.join(this_dir, parsed_url.netloc, parsed_url_path)
-
-  try:
-    with open(cache_file_name, "r") as f:
-      data = f.read()
-    logging.info("URL cache found for %s [%s]" % (url, cache_file_name))
-    return data
-  except IOError:
-    pass
-
-  logging.info("URL not cached. Retrieving %s" % url)
-
-  with contextlib.closing(urllib.urlopen(url)) as f:
-    data = f.read()
-
-  try:
-    try:
-      os.makedirs(os.path.dirname(cache_file_name))
-    except OSError:
-      pass
-
-    with open(cache_file_name, "w") as f:
-      f.write(data)
-    logging.info("Saved URL data for %s [%s]" % (url, cache_file_name))
-  except IOError:
-    logging.info("Could not save cache for URL %s at %s" % (url, cache_file_name))
-
-  return data
 
 
 # DATA PROCESSING
@@ -129,11 +60,11 @@ def _ProcessStudyPlan(plan_id, plan_name, plan_soup, id_trim_size=3):
   }
 
 
-@CachedJSON(study_plans_path)
+@caching.CachedJSON(study_plans_path)
 def FetchStudyPlans():
   """Fetch all study plans from the EPFL search site."""
 
-  study_plans_html = CachedURLGet(study_plans_url)
+  study_plans_html = caching.CachedURLGet(study_plans_url)
 
   plans = []
 
@@ -165,7 +96,7 @@ def FetchStudyPlans():
 
 
 def _FetchCoursesInSection(plan_id, section_id, section_url):
-  section_html = CachedURLGet(section_url)
+  section_html = caching.CachedURLGet(section_url)
 
   soup = BeautifulSoup(section_html)
 
@@ -194,13 +125,14 @@ def _FetchCoursesInSection(plan_id, section_id, section_url):
   return courses
 
 
-@CachedJSON(course_list_path)
+@caching.CachedJSON(course_list_path)
 def FetchCourseList(study_plans):
   course_list = []
 
   for plan in study_plans["plans"]:
     for section in plan["sections"]:
-      courses = _FetchCoursesInSection(plan["id"], section["id"], section["url"])
+      courses = _FetchCoursesInSection(plan["id"], section["id"],
+                                       section["url"])
       course_list.extend(courses)
 
   return {
@@ -426,14 +358,15 @@ class ParsedCourseDescription(object):
     self._ParseMainContent()
     self._ParseSideBar()    
 
-@CachedJSON(course_desc_path)
+
+@caching.CachedJSON(course_desc_path)
 def FetchCourseDescriptions(courses):
   all_unknown_subsections = set()
   
   descriptions = []
 
   for course in courses["courses"]:
-    course_desc_html = CachedURLGet(course["url"])
+    course_desc_html = caching.CachedURLGet(course["url"])
     soup = BeautifulSoup(course_desc_html)
 
     course_desc = ParsedCourseDescription(course["url"], soup)
@@ -470,7 +403,8 @@ def FetchCourseDescriptions(courses):
     print "-- Language:", course_desc.language
 
     if course_desc.unknown_subsections:
-      print "** Unknown subsections:", ", ".join(course_desc.unknown_subsections)
+      print "** Unknown subsections:",
+      print ", ".join(course_desc.unknown_subsections)
       all_unknown_subsections.update(course_desc.unknown_subsections)
 
   if all_unknown_subsections:
