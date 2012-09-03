@@ -34,10 +34,6 @@ course_list_path = os.path.join(this_dir, "course_list.json")
 course_desc_path = os.path.join(this_dir, "course_desc.json")
 
 
-# DATA PROCESSING
-#################
-
-
 def _ProcessStudyPlan(plan_id, plan_name, plan_soup, id_trim_size=3):
   """Process a study plan soup."""
 
@@ -385,7 +381,7 @@ def FetchCourseDescriptions(courses):
       "recitation": course_desc.recitation_hours,
       "project": course_desc.project_hours,
       "lab": course_desc.lab_hours,
-      "practical_hours": course_desc.practical_hours,
+      "practical": course_desc.practical_hours,
       "free_text": dict(course_desc.free_text_desc),
       "links": course_desc.links,
       "library_recommends": course_desc.library_rec,

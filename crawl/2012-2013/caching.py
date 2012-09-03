@@ -9,6 +9,11 @@ __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 import json
 import logging
+import os
+import urlparse
+
+
+this_dir = os.path.dirname(__file__)
 
 
 def CachedJSON(file_name):
