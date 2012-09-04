@@ -81,7 +81,7 @@
       {% endcall %}
       
       {% call infoitem("Language:") %}
-        {{ searchable(course.language_, "language") }}
+        {{ searchable(course.language, "language") }}
       {% endcall %}
       
       {% call infoitem("Semester:") %}
@@ -102,20 +102,42 @@
                             ("Keywords", course.keywords),
                             ("Form of Examination", course.exam_form_detail),
                             ("Note", course.note),
-                            ("Prerequisite For", course.prerequisite_for),
-                            ("Library Recommends", course.library_recomm),
-                            ("Links", course.links)] %}
+                            ("Prerequisite For", course.prerequisite_for)] %}
   {% if content %}
   <div>
     <div style="font-size: 1em; font-weight: bold;">
       {{ title }}
     </div>
     <div style="background-color: #fafafa; border: solid #eee 1px; border-radius: 5px; padding: 5px; margin-bottom: 10px;">
-      {{ content|safe }}
+      {{ content|isamarkup|safe }}
     </div>
   </div>
   {% endif %}
   {% endfor %}
+  {% if course.library_recomm %}
+  <div>
+    <div style="font-size: 1em; font-weight: bold;">
+      Library Recommends
+    </div>
+    <div style="background-color: #fafafa; border: solid #eee 1px; border-radius: 5px; padding: 5px; margin-bottom: 10px;">
+      {{ course.library_recomm|safe }}
+    </div>
+  </div>
+  {% endif %}
+  {% if course.links %}
+  <div>
+    <div style="font-size: 1em; font-weight: bold;">
+      Links
+    </div>
+    <div style="background-color: #fafafa; border: solid #eee 1px; border-radius: 5px; padding: 5px; margin-bottom: 10px;">
+      <ul>
+        {% for link in course.links %}
+        <li><a href="{{ link }}">{{ link }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
   <div id="footer_info" style="margin-top: 20px;">
     <table style="width: 100%;">
       {% call infoitem("Study plans:", min_width=200, align_left=True) %}

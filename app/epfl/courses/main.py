@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# Copyright 2012 EPFL. All rights reserved.
 
 """The main web application."""
 
@@ -17,14 +20,18 @@ config['webapp2_extras.sessions'] = {
   'secret_key': 'our secret plan is world domination'
 }
 
+config['webapp2_extras.jinja2'] = {
+  'filters': {
+    'isamarkup': base_handler.BaseHandler.ISAMarkup,
+  }
+}
+
 
 class MainPage(base_handler.BaseHandler):
   def get(self):
     self.RenderTemplate("main.html", {})
 
 
-# TODO(bucur): Hide the administration URLs
-# TODO(bucur): Major restructuring of the app
 app = webapp2.WSGIApplication([
    webapp2.Route('/', handler=MainPage),
    webapp2.Route('/catalog', handler=catalog.CatalogPage),
