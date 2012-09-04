@@ -5,5 +5,65 @@ div#wrapper {
 h1 {
 	text-align: left;
 	border-bottom: solid #000 2px;
-	margin: 0px 0px 15px 0px;
+	margin: 0px;
+}
+
+#course-content {
+  padding: 10px;
+}
+
+#section-info {
+  float: right;
+}
+
+#head-info {
+  background-color: #fafaf6;
+  padding: 15px 5px 5px 5px;
+  margin-bottom: 10px;
+}
+
+.main-info {
+  width: 500px;
+  margin-bottom: 10px;
+}
+
+.left-info {
+  width: 200px;
+}
+
+.right-info {
+  width: 300px;
+}
+
+.label {
+  text-align: right;
+  padding-right: 20px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  font-weight: bold;
+  min-width: 100px;
+  width: 100px;
+}
+
+.value {
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+.sec-title {
+  font-size: 1em;
+  font-weight: bold;
+  margin: 0px;
+  border-bottom: solid #000 1px;
+}
+
+.sec-content {
+  margin-bottom: 20px;
+  background-color: #fafaf6;
+  padding: 5px;
+}
+
+table {
+  table-layout: fixed;
+  margin: 0px;
 }

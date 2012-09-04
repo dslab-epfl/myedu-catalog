@@ -43,73 +43,32 @@
 
 {% macro searchable(content, query_field, query_value=None, tooltip=None) -%}
 {% set query = '%s: "%s"' % (query_field, query_value if query_value else content) %}
-{% set url = url_for("catalog", q=query.encode("utf-8")) %}
-                                               
+{% set url = url_for("catalog", q=query.encode("utf-8")) %}                                  
 <a rel="nofollow" {% if tooltip %}title="{{ tooltip }}"{% endif %}
    href='{{ url }}'>{{ content }}</a>
 {%- endmacro %}
 
 {% macro infoitem(label, min_width=100, align_left=False) %}
 <tr>
-  <td style="text-align: right; padding-right: 20px; padding-top: 3px; padding-bottom: 3px; font-weight: bold; min-width: {{ min_width }}px; {{ 'text-align: left;' if align_left }}">
-    {{ label }}
-  </td>
-  <td style="padding-top: 3px; padding-bottom: 3px; width: 100%;">
-    {{ caller() }}
-  </td>
+  <td class="label">{{ label }}</td>
+  <td class="value">{{ caller() }}</td>
 </tr>
 {% endmacro %}
 
-<div style="padding: 10px;">
+<div id="course-content">
   {% if not no_title %}
   <h1>{{ course.title }}</h1>
   {% endif %}
-  <div id="aux_info" style="float:right;">
-    <table style="width: 300px;">
-      {% call infoitem("Sections:") %}
-        {% for section in course.sections %}
-          {{ searchable(section.display_name(short=True), "section", section.code, tooltip=section.display_name()) }}{% if not loop.last %},{% endif %}
-        {% endfor %}
-      {% endcall %}
-      
-      {% call infoitem("Coefficient:" if course.coefficient and not course.credit_count else "ECTS credits:") %}
-        {% if course.coefficient and not course.credit_count %}
-          {{ searchable(course.coefficient, "coefficient") }}
-        {% elif course.credit_count %}
-          {{ searchable(course.credit_count, "credits") }}
-        {% else %}
-          N/A
-        {% endif %}
-        {% if course.show_trio_ -%}
-        (<span title="Lecture hours">{{ searchable(course.lecture_time, "lecthours") }}</span>-<span title="Recitation hours">{{ searchable(course.recitation_time, "recithours") }}</span>-<span title="Project/practice hours">
-        {%- if course.practical_time and not course.project_time -%}
-          {{ searchable(course.practical_time, "practhours") }}
-        {%- else -%}
-          {{ searchable(course.project_time, "projhours") }}
-        {%- endif -%}</span>)
-        {%- endif %}
-      {% endcall %}
-      
-      {% macro planning(name, hours, weeks) -%}
-        {%- if hours -%}
-          {%- if weeks -%}
-            {{name}} {{hours}}h/week x {{weeks}} weeks<br/>
-          {%- else -%}
-            {{hours}}h/term {{name}}<br/>
-          {%- endif -%}
-        {%- endif -%} 
-      {%- endmacro %}
-      
-      {% call infoitem("Schedule:") %}
-        {{ planning("lecture", course.lecture_time, course.lecture_weeks) }}
-        {{ planning("recitation", course.recitation_time, course.recitation_weeks) }}
-        {{ planning("project", course.project_time, course.project_weeks) }}
-        {{ planning("practical work", course.practical_time, course.practical_weeks) }}
-      {% endcall %}
-    </table>
+  <div id="head-info">
+  <div id="section-info">
+    {% call infoitem("Sections:") %}
+      {% for section in course.sections %}
+        {{ searchable(section.display_name(short=True), "section", section.code, tooltip=section.display_name()) }}{% if not loop.last %},{% endif %}
+      {% endfor %}
+    {% endcall %}
   </div>
-  <div id="main_info">
-    <table style="width: 400px;">
+  <div>
+    <table class="main-info">
       {% call infoitem("Instructors:" if course.instructors|length > 1 else "Instructor:") %}
         {% if course.instructors and course.instructors[0] == "multi" %}
           <span style="font-style: italic;">Various instructors</span>
@@ -119,19 +78,60 @@
           {% endfor %}
         {% endif %}
       {% endcall %}
-      
-      {% call infoitem("Language:") %}
-        {{ searchable(course.language, "language") }}
-      {% endcall %}
-      
-      {% call infoitem("Semester:") %}
-        {{ searchable(course.semester, "semester") }}
-      {% endcall %}
-      
-      {% call infoitem("Exam:") %}
-        {{ searchable(course.exam_form, "exam") }}
-      {% endcall %}
     </table>
+    <table class="main-info">
+      <tr>
+        <td class="left-info"><table>
+          {% call infoitem("Language:") %}
+            {{ searchable(course.language, "language") }}
+          {% endcall %}
+          {% call infoitem("Semester:") %}
+            {{ searchable(course.semester, "semester") }}
+          {% endcall %}
+          {% call infoitem("Exam:") %}
+            {{ searchable(course.exam_form, "exam") }}
+          {% endcall %}
+        </table></td>
+        
+        <td class="right-info"><table>
+        {% call infoitem("Coefficient:" if course.coefficient and not course.credit_count else "ECTS credits:") %}
+          {% if course.coefficient and not course.credit_count %}
+            {{ searchable(course.coefficient, "coefficient") }}
+          {% elif course.credit_count %}
+            {{ searchable(course.credit_count, "credits") }}
+          {% else %}
+            N/A
+          {% endif %}
+          {% if course.show_trio_ -%}
+          (<span title="Lecture hours">{{ searchable(course.lecture_time, "lecthours") }}</span>-<span title="Recitation hours">{{ searchable(course.recitation_time, "recithours") }}</span>-<span title="Project/practice hours">
+          {%- if course.practical_time and not course.project_time -%}
+            {{ searchable(course.practical_time, "practhours") }}
+          {%- else -%}
+            {{ searchable(course.project_time, "projhours") }}
+          {%- endif -%}</span>)
+          {%- endif %}
+        {% endcall %}
+        
+        {% macro planning(name, hours, weeks) -%}
+          {%- if hours -%}
+            {%- if weeks -%}
+              {{name}} {{hours}}h/week x {{weeks}} weeks<br/>
+            {%- else -%}
+              {{hours}}h/term {{name}}<br/>
+            {%- endif -%}
+          {%- endif -%} 
+        {%- endmacro %}
+        
+        {% call infoitem("Schedule:") %}
+          {{ planning("lecture", course.lecture_time, course.lecture_weeks) }}
+          {{ planning("recitation", course.recitation_time, course.recitation_weeks) }}
+          {{ planning("project", course.project_time, course.project_weeks) }}
+          {{ planning("practical work", course.practical_time, course.practical_weeks) }}
+        {% endcall %}
+        </table></td>
+      </tr>
+    </table>
+  </div>
   </div>
   <div style="clear: both;"></div>
   {% for title, content in [("Learning Outcomes", course.learning_outcomes),
@@ -145,31 +145,23 @@
                             ("Prerequisite For", course.prerequisite_for)] %}
   {% if content %}
   <div>
-    <div style="font-size: 1em; font-weight: bold;">
-      {{ title }}
-    </div>
-    <div style="background-color: #fafafa; border: solid #eee 1px; border-radius: 5px; padding: 5px; margin-bottom: 10px;">
-      {{ content|isamarkup|safe }}
-    </div>
+    <div class="sec-title">{{ title }}</div>
+    <div class="sec-content">{{ content|isamarkup|safe }}</div>
   </div>
   {% endif %}
   {% endfor %}
   {% if course.library_recomm %}
   <div>
-    <div style="font-size: 1em; font-weight: bold;">
-      Library Recommends
-    </div>
-    <div style="background-color: #fafafa; border: solid #eee 1px; border-radius: 5px; padding: 5px; margin-bottom: 10px;">
+    <div class="sec-title">Library Recommends</div>
+    <div class="sec-content">
       {{ course.library_recomm|safe }}
     </div>
   </div>
   {% endif %}
   {% if course.links %}
   <div>
-    <div style="font-size: 1em; font-weight: bold;">
-      Links
-    </div>
-    <div style="background-color: #fafafa; border: solid #eee 1px; border-radius: 5px; padding: 5px; margin-bottom: 10px;">
+    <div class="sec-title">Links</div>
+    <div class="sec-content">
       <ul>
         {% for link in course.links %}
         <li><a href="{{ link }}">{{ link }}</a></li>
