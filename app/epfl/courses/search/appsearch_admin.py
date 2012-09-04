@@ -5,14 +5,15 @@
 __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 import logging
+import unicodedata
 
 from google.appengine.api import search
 from google.appengine.ext import db
 from google.appengine.runtime import apiproxy_errors
 
+from epfl.courses import base_handler
 from epfl.courses import models
 
-import unidecode
 
 class AppEngineIndex(object):
   INDEX_NAME = 'courses-index'
@@ -34,7 +35,7 @@ class AppEngineIndex(object):
         value = self.orig_value
         
       if self.search_field != search.NumberField:
-        value = unidecode.unidecode(value)
+        value = unicodedata.normalize('NFKD', value).encode("ascii", "ignore")
       
       return self.search_field(name=self.field_name,
                                value=value)
@@ -69,14 +70,14 @@ class AppEngineIndex(object):
   def _CreateDocumentForCourse(cls, course):
     mappings = [
       cls.FieldMapper(course.title, search.TextField, 'title'),
-      cls.FieldMapper(course.language, search.TextField, 'language',
-                      lambda value: models.LANGUAGE_MAPPING[value]),
+      cls.FieldMapper(course.language, search.TextField, 'language'),
       cls.FieldMapper(course.instructors, search.TextField, 'instructor',
                       lambda value: ", ".join(value)),
       cls.FieldMapper(course.sections, search.TextField, 'section',
-                      lambda value: ", ".join(value)),
+                      lambda value: ", ".join(["%s (%s)" % (s.code, s.title_en)
+                                               for s in value])),
       cls.FieldMapper(course.study_plans, search.TextField, 'plan',
-                      lambda value: ", ".join(value)),
+                      lambda value: ", ".join(["%s (%s)" % (p, models.Course.STUDY_PLANS[p]) for p in value])),
       cls.FieldMapper(course.credit_count, search.NumberField, 'credits'),
       cls.FieldMapper(course.coefficient, search.NumberField, 'coefficient'),
       cls.FieldMapper(course.semester, search.AtomField, 'semester'),
@@ -84,19 +85,28 @@ class AppEngineIndex(object):
       cls.FieldMapper(course.lecture_time, search.NumberField, 'lecthours'),
       cls.FieldMapper(course.recitation_time, search.NumberField, 'recithours'),
       cls.FieldMapper(course.project_time, search.NumberField, 'projhours'),
-      cls.FieldMapper(course.practical_time, search.NumberField, 'practhours'),
       # TODO(bucur): Maybe consolidate these in one field?
-      cls.FieldMapper(course.learning_outcomes, search.HtmlField, 'outcomes'),
-      cls.FieldMapper(course.content, search.HtmlField, 'content'),
-      cls.FieldMapper(course.prior_knowledge, search.HtmlField, 'prereq'),
-      cls.FieldMapper(course.type_of_teaching, search.HtmlField, 'teaching'),
-      cls.FieldMapper(course.bibliography, search.HtmlField, 'biblio'),
-      cls.FieldMapper(course.keywords, search.HtmlField, 'keywords'),
-      cls.FieldMapper(course.exam_form_detail, search.HtmlField, 'examdetail'),
-      cls.FieldMapper(course.note, search.HtmlField, 'note'),
-      cls.FieldMapper(course.prerequisite_for, search.HtmlField, 'prereqfor'),
+      cls.FieldMapper(course.learning_outcomes, search.HtmlField, 'outcomes',
+                      lambda value: base_handler.BaseHandler.ISAMarkup(value)),
+      cls.FieldMapper(course.content, search.HtmlField, 'content',
+                      lambda value: base_handler.BaseHandler.ISAMarkup(value)),
+      cls.FieldMapper(course.prior_knowledge, search.HtmlField, 'prereq',
+                      lambda value: base_handler.BaseHandler.ISAMarkup(value)),
+      cls.FieldMapper(course.type_of_teaching, search.HtmlField, 'teaching',
+                      lambda value: base_handler.BaseHandler.ISAMarkup(value)),
+      cls.FieldMapper(course.bibliography, search.HtmlField, 'biblio',
+                      lambda value: base_handler.BaseHandler.ISAMarkup(value)),
+      cls.FieldMapper(course.keywords, search.HtmlField, 'keywords',
+                      lambda value: base_handler.BaseHandler.ISAMarkup(value)),
+      cls.FieldMapper(course.exam_form_detail, search.HtmlField, 'examdetail',
+                      lambda value: base_handler.BaseHandler.ISAMarkup(value)),
+      cls.FieldMapper(course.note, search.HtmlField, 'note',
+                      lambda value: base_handler.BaseHandler.ISAMarkup(value)),
+      cls.FieldMapper(course.prerequisite_for, search.HtmlField, 'prereqfor',
+                      lambda value: base_handler.BaseHandler.ISAMarkup(value)),
       cls.FieldMapper(course.library_recomm, search.HtmlField, 'libraryrec'),
-      cls.FieldMapper(course.links, search.HtmlField, 'links')
+      cls.FieldMapper(course.links, search.HtmlField, 'links',
+                      lambda value: ", ".join(value)),
     ]
     doc_fields = []
     
@@ -105,7 +115,7 @@ class AppEngineIndex(object):
       if field:
         doc_fields.append(field)
     
-    return search.Document(doc_id=str(course.key()),
+    return search.Document(doc_id=course.key().name(),
                            fields=doc_fields)
   
   @classmethod  

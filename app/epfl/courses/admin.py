@@ -9,6 +9,8 @@ __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 import json
 
+from epfl.courses.search import appsearch_admin
+
 
 # SCIPER used to mark non-existent/multiple instructor
 INVALID_SCIPER = 126096
@@ -132,3 +134,35 @@ class ImportCourseCatalog(base_handler.BaseHandler):
     
     self.SetTextMode()
     self.response.out.write("OK.\n")
+    
+
+class SitemapHandler(base_handler.BaseHandler):
+  # TODO(bucur): Cache the site map in the blob store
+  def get(self):
+    course_keys = models.Course.all().fetch(None, keys_only=True)
+    
+    template_args = {
+      "course_keys": course_keys,
+    }
+    
+    self.response.headers['Content-Type'] = 'application/xml'
+    self.RenderTemplate('sitemap.xml', template_args)
+    
+    
+class BuildSearchIndexHandler(base_handler.BaseHandler):
+  def get(self):
+    self.SetTextMode()
+    
+    if self.request.get("erase"):
+      appsearch_admin.AppEngineIndex.ClearCourseIndex()
+      self.response.out.write('OK.\n')
+      return
+    
+    if self.request.get("rebuild"):
+      courses = models.Course.all().fetch(None)
+      appsearch_admin.AppEngineIndex.ClearIndexingStatus(courses)
+    
+    if appsearch_admin.AppEngineIndex.UpdateCourseIndex():
+      self.response.out.write('OK.\n')
+    else:
+      self.response.out.write("Search quota exceeded. Try again later.\n")

@@ -5,8 +5,11 @@
 #}
 
 {% macro searchable(content, query_field, query_value=None, tooltip=None) -%}
-  <a rel="nofollow" {% if tooltip %}title="{{ tooltip }}"{% endif %}
-    href='/catalog?q={{query_field}}:"{% if query_value %}{{query_value}}{% else %}{{content}}{% endif %}"'>{{ content }}</a>
+{% set url = url_for("catalog", q='%s: "%s"' % (query_field,
+                                                query_value if query_value else content)) %}
+                                               
+<a rel="nofollow" {% if tooltip %}title="{{ tooltip }}"{% endif %}
+   href='{{ url }}'>{{ content }}</a>
 {%- endmacro %}
 
 {% macro infoitem(label, min_width=100, align_left=False) %}

@@ -40,12 +40,14 @@
 {% endblock head %}
 
 {% macro jumpoffset(target_offset, label) -%}
-<a href="/catalog?q={{query}}&offset={{target_offset}}{{ '&exact=1' if exact }}">{{ label }}</a>
+{% set url = url_for("catalog", q=query, offset=target_offset,
+                     exact=exact if exact else None) %}
+<a href="{{ url }}">{{ label }}</a>
 {%- endmacro %}
 
 {% block content %}
   <h1>Find EPFL Courses <span class="beta-mark">beta</span></h1>
-  <div id="subtitle">BS and MS, 2011-2012</div>
+  <div id="subtitle">Academic Year 2012-2013</div>
   
   <div id="search_box_wrapper">
   <div id="search_box">
@@ -252,7 +254,9 @@
       {%- for course in courses %}
       <tr>
         <td class="td_index">{{ offset + loop.index }}</td>
-        <td class="td_title"><a href="/c/{{ course.key() }}">{{ course.title }}</a></td>
+        <td class="td_title">
+          <a href="{{ url_for('course', course_key=course.key().name()) }}">{{ course.title }}</a>
+        </td>
         <td class="td_credits">{{ course.credit_count|default("N/A", True) }}</td>
         <td class="td_instr">
         {% if not course.instructors %}

@@ -6,6 +6,7 @@
 
 __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
+
 import logging
 import os
 import webapp2
@@ -16,6 +17,7 @@ from epfl.courses import base_handler
 from epfl.courses import models
 from epfl.courses import search
 from epfl.courses import static_data
+
 
 class SearchPagination(object):
   PAGE_SIZE = 20
@@ -114,8 +116,6 @@ class CatalogPage(base_handler.BaseHandler):
     for school in models.School.all():
       sections = []
       for section in school.section_set:
-        if section.meta:
-          continue
         sections.append((section.code, section.display_name()))
 
       sections.sort(key=lambda section: section[1])

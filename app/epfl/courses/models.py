@@ -113,6 +113,14 @@ class Course(db.Model):
   @property
   def sections(self):
     return Section.get(self.section_keys)
+  
+  STUDY_PLANS = {
+    "prop": "Propedeutics",
+    "bachelor": "Bachelor",
+    "master": "Master",
+    "edoc": "Doctoral",
+    "min": "Minor",
+  }
     
 
 class SearchQueryRecord(db.Model):

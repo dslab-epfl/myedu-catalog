@@ -7,7 +7,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   {% for course_key in course_keys -%}
   <url>
-    <loc>{{ url_prefix }}/{{ course_key }}</loc>
+    <loc>{{ url_for("course", _full=True, course_key=course_key.name()) }}</loc>
   </url>
   {% endfor %} 
 </urlset>
