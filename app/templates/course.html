@@ -42,8 +42,8 @@
 {% block content %}
 
 {% macro searchable(content, query_field, query_value=None, tooltip=None) -%}
-{% set url = url_for("catalog", q='%s: "%s"' % (query_field,
-                                                query_value if query_value else content)) %}
+{% set query = '%s: "%s"' % (query_field, query_value if query_value else content) %}
+{% set url = url_for("catalog", q=query.encode("utf-8")) %}
                                                
 <a rel="nofollow" {% if tooltip %}title="{{ tooltip }}"{% endif %}
    href='{{ url }}'>{{ content }}</a>

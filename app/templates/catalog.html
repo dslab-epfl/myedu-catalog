@@ -40,7 +40,7 @@
 {% endblock head %}
 
 {% macro jumpoffset(target_offset, label) -%}
-{% set url = url_for("catalog", q=query, offset=target_offset,
+{% set url = url_for("catalog", q=query.encode("utf-8"), offset=target_offset,
                      exact=exact if exact else None) %}
 <a href="{{ url }}">{{ label }}</a>
 {%- endmacro %}
