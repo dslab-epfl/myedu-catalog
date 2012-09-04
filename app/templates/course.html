@@ -41,9 +41,10 @@
 
 {% block content %}
 
-{% macro searchable(content, query_field, query_value=None, tooltip=None) -%}
-{% set query = '%s: "%s"' % (query_field, query_value if query_value else content) %}
-{% set url = url_for("catalog", q=query.encode("utf-8")) %}                                  
+{% macro searchable(content, query_field, query_value=None, tooltip=None, quoted=True) -%}
+{%- set formatter = '%s: "%s""' if quoted else "%s: %s" -%}
+{%- set query = formatter % (query_field, query_value if query_value else content) -%}
+{%- set url = url_for("catalog", q=query.encode("utf-8")) -%}                                  
 <a rel="nofollow" {% if tooltip %}title="{{ tooltip }}"{% endif %}
    href='{{ url }}'>{{ content }}</a>
 {%- endmacro %}
@@ -96,19 +97,16 @@
         <td class="right-info"><table>
         {% call infoitem("Coefficient:" if course.coefficient and not course.credit_count else "ECTS credits:") %}
           {% if course.coefficient and not course.credit_count %}
-            {{ searchable(course.coefficient, "coefficient") }}
+            {{ searchable(course.coefficient, "coefficient", quoted=False) }}
           {% elif course.credit_count %}
-            {{ searchable(course.credit_count, "credits") }}
+            {{ searchable(course.credit_count, "credits", quoted=False) }}
           {% else %}
             N/A
           {% endif %}
           {% if course.show_trio_ -%}
-          (<span title="Lecture hours">{{ searchable(course.lecture_time, "lecthours") }}</span>-<span title="Recitation hours">{{ searchable(course.recitation_time, "recithours") }}</span>-<span title="Project/practice hours">
-          {%- if course.practical_time and not course.project_time -%}
-            {{ searchable(course.practical_time, "practhours") }}
-          {%- else -%}
-            {{ searchable(course.project_time, "projhours") }}
-          {%- endif -%}</span>)
+          (<span title="Lecture hours">{{ searchable(course.lecture_time, "lecthours", quoted=False) if course.lecture_time else "0" }}</span><!--
+        -->-<span title="Recitation hours">{{ searchable(course.recitation_time, "recithours", quoted=False) if course.recitation_time else "0" }}</span><!--
+        -->-<span title="Project/practice/lab hours">{{ searchable(course.project_time, "projhours", quoted=False) if course.project_time else "0" }}</span>)
           {%- endif %}
         {% endcall %}
         
@@ -170,7 +168,7 @@
     </div>
   </div>
   {% endif %}
-  <div id="footer_info" style="margin-top: 20px;">
+  <div id="footer-info">
     <span class="label">IS-Academia homepage(s):</span>
     {% for section, study_plan, url in course.sections_ %}
       <a href="{{ url }}" title="{{ section.display_name() }}">{{ section.display_name(short=True) }}</a>{{ "," if not loop.last }}

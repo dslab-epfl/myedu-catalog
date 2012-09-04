@@ -67,3 +67,7 @@ table {
   table-layout: fixed;
   margin: 0px;
 }
+
+#footer-info {
+  margin-top: 20px;
+}
