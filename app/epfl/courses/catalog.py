@@ -11,16 +11,13 @@ import logging
 import os
 import webapp2
 
-from google.appengine.ext import db
-
 from epfl.courses import base_handler
+from epfl.courses import config
 from epfl.courses import models
 from epfl.courses import search
-from epfl.courses import static_data
 
 
 class SearchPagination(object):
-  PAGE_SIZE = 20
   
   def __init__(self, results):
     self.offset = results.offset
@@ -32,17 +29,17 @@ class SearchPagination(object):
     self.next_offset = None
     
     if self.total_found:
-      self.total_pages = (self.total_found-1)/self.PAGE_SIZE + 1
+      self.total_pages = (self.total_found-1)/config.PAGE_SIZE + 1
       
       for i in range(self.total_pages):
-        self.pages.append((i, i*self.PAGE_SIZE))
+        self.pages.append((i, i*config.PAGE_SIZE))
       
-      self.page = self.offset/self.PAGE_SIZE
+      self.page = self.offset/config.PAGE_SIZE
       
       if self.page > 0:
-        self.prev_offset = (min(self.page, self.total_pages) - 1)*self.PAGE_SIZE
+        self.prev_offset = (min(self.page, self.total_pages) - 1)*config.PAGE_SIZE
       if self.page < self.total_pages - 1:
-        self.next_offset = (self.page + 1)*self.PAGE_SIZE
+        self.next_offset = (self.page + 1)*config.PAGE_SIZE
     
 
 class CatalogPage(base_handler.BaseHandler):
@@ -151,7 +148,7 @@ class CatalogPage(base_handler.BaseHandler):
       
       autocorr_provider.Search(query,
                                search_results,
-                               limit=SearchPagination.PAGE_SIZE,
+                               limit=config.PAGE_SIZE,
                                offset=offset,
                                accuracy=ACCURACY)
       
@@ -160,21 +157,19 @@ class CatalogPage(base_handler.BaseHandler):
         q_record.suggested_query = autocorr_provider.suggested_query
         q_record.put()
         
-        if os.environ['SERVER_SOFTWARE'].startswith('Development'):
-          found_courses = []
-        else:
-          found_courses = db.get(search_results.results)
+        found_courses = models.Course.get_by_key_name(search_results.results)
     
     template_args = {
       'courses': found_courses,
       'static': {
         'sections': self.section_data,
-        'exam': static_data.EXAM,
-        'credits': static_data.CREDITS,
-        'coeff': static_data.COEFFICIENT,
-        'lecture': static_data.LECTURE_TIME,
-        'recitation': static_data.RECITATION_TIME,
-        'project': static_data.PROJECT_TIME
+        'exam': config.EXAM,
+        'credits': config.CREDITS,
+        'coeff': config.COEFFICIENT,
+        'lecture': config.LECTURE_TIME,
+        'recitation': config.RECITATION_TIME,
+        'project': config.PROJECT_TIME,
+        'samples': config.SAMPLE_QUERIES,
       },
       'query': query_string,
       'original_query': autocorr_provider.original_query,

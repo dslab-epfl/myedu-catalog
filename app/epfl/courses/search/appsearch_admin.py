@@ -12,6 +12,7 @@ from google.appengine.ext import db
 from google.appengine.runtime import apiproxy_errors
 
 from epfl.courses import base_handler
+from epfl.courses import config
 from epfl.courses import models
 
 
@@ -77,7 +78,7 @@ class AppEngineIndex(object):
                       lambda value: ", ".join(["%s (%s)" % (s.code, s.title_en)
                                                for s in value])),
       cls.FieldMapper(course.study_plans, search.TextField, 'plan',
-                      lambda value: ", ".join(["%s (%s)" % (p, models.Course.STUDY_PLANS[p]) for p in value])),
+                      lambda value: ", ".join(["%s (%s)" % (p, config.STUDY_PLANS[p]) for p in value])),
       cls.FieldMapper(course.credit_count, search.NumberField, 'credits'),
       cls.FieldMapper(course.coefficient, search.NumberField, 'coefficient'),
       cls.FieldMapper(course.semester, search.AtomField, 'semester'),

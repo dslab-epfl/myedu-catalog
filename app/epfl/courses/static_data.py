@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
+# Copyright 2012 EPFL. All rights reserved.
 
-"""Static data about instructors and courses."""
+"""Static data used to populate the datastore."""
 
 __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
@@ -211,25 +213,3 @@ SECTIONS = dict([(section.code, section) for section in [
   Section('EME-MES', 'other', title_short='ME-SEME',
           title_en='Energy Management and Sustainability'),
 ]])
-
-
-# TODO(bucur): Extract this data automatically.
-# This content may become outdated.
-
-
-EXAM = [
-  "During the semester",
-  "Oral",
-  "Term paper",
-  "Written"
-]
-
-CREDITS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 20, 30]
-
-COEFFICIENT = [ 0.5, 1.0, 1.5, 2.0, 3.0, 4.0 ]
-
-LECTURE_TIME = [ 1, 2, 3, 4, 5, 6 ]
-
-RECITATION_TIME = [ 1, 2, 3, 4 ]
-
-PROJECT_TIME = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 16 ]

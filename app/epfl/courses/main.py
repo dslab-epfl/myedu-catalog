@@ -30,26 +30,15 @@ config['webapp2_extras.jinja2'] = {
 }
 
 
-class MainPage(base_handler.BaseHandler):
-  def get(self):
-    self.RenderTemplate("main.html", {})
-
-
 app = webapp2.WSGIApplication([
-   webapp2.Route('/', handler=MainPage),
+   routes.RedirectRoute('/', redirect_to_name="catalog"),
    webapp2.Route('/sitemap.xml', handler=admin.SitemapHandler),
    webapp2.Route('/catalog', handler=catalog.CatalogPage, name="catalog"),
    webapp2.Route('/course/<course_key>', handler=catalog.CoursePage,
                  name="course"),
    routes.PathPrefixRoute('/admin', [
      webapp2.Route('/reinit', handler=admin.ImportCourseCatalog),
-     #webapp2.Route('/sections/populate', handler=admin.PopulateSections),
-     #webapp2.Route('/sections/transition', handler=admin.ConnectSections),
      webapp2.Route('/index', handler=admin.BuildSearchIndexHandler),
-     #webapp2.Route('/dump', handler=admin.DumpHandler),
-     #webapp2.Route('/stats', handler=admin.StatsHandler),
-     #webapp2.Route('/qstats', handler=admin.QueryStatsHandler),
-     #
-     #webapp2.Route('/sitemap.json', handler=admin.JSONSitemapHandler),
+     webapp2.Route('/qstats', handler=admin.QueryStatsHandler),
    ])],
    debug=True, config=config)

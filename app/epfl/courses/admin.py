@@ -8,8 +8,16 @@ __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 
 import json
+import pprint
 
+from epfl.courses import base_handler
+from epfl.courses import config
+from epfl.courses import models
+from epfl.courses import static_data
 from epfl.courses.search import appsearch_admin
+from epfl.courses.search import parser
+
+from google.appengine.ext import db
 
 
 # SCIPER used to mark non-existent/multiple instructor
@@ -17,16 +25,11 @@ INVALID_SCIPER = 126096
 
 COURSES_DATA_FILE = "data/consolidated_desc.json"
 
-from epfl.courses import base_handler
-from epfl.courses import models
-from epfl.courses import static_data
-
-from google.appengine.ext import db
-
 
 class ImportCourseCatalog(base_handler.BaseHandler):
   """Import the entire course catalog."""
   
+  # The courses are imported in buckets of this size
   bucket_size = 100
   
   @staticmethod
@@ -166,3 +169,58 @@ class BuildSearchIndexHandler(base_handler.BaseHandler):
       self.response.out.write('OK.\n')
     else:
       self.response.out.write("Search quota exceeded. Try again later.\n")
+      
+
+class QueryStatsHandler(base_handler.BaseHandler):  
+  
+  def get(self):
+    count = 0
+    canned_count = 0
+    
+    no_results = []
+    many_results = []
+    
+    terms = {}
+    
+    sample_queries = set([q[0] for q in config.SAMPLE_QUERIES])
+    
+    for query in models.SearchQueryRecord.all().filter("time_stamp > ",
+                                                       config.LAUNCH_DATE).run():
+      count += 1
+      
+      if query.translated_query in sample_queries:
+        canned_count += 1
+        continue
+      
+      parsed_query = parser.SearchQuery.ParseFromString(query.translated_query)
+      
+      for term in parsed_query.ExtractTerms():
+        terms[term] = terms.get(term, 0) + 1
+      
+      if not query.results_count:
+        no_results.append(query.translated_query)
+      elif query.results_count > config.PAGE_SIZE:
+        many_results.append((query.translated_query, query.results_count))
+        
+    many_results.sort(key=lambda r: r[1], reverse=True)
+    ranked_terms = sorted(terms.items(), key=lambda r: r[1], reverse=True)[:20]
+    
+    self.SetTextMode()
+      
+    self.response.out.write("Total queries: %d\n\n" % count)
+    
+    self.response.out.write("Example queries: %d (will be ignored in the analysis below)\n\n" % canned_count)
+    
+    self.response.out.write("%d queries with no results:\n" % len(no_results))
+    pprint.pprint(no_results, self.response.out)
+    self.response.out.write("\n")
+    
+    self.response.out.write("%d queries with many results (> 1 page):\n" % len(many_results))
+    pprint.pprint(many_results, self.response.out)
+    self.response.out.write("\n")
+    
+    self.response.out.write("Total number of terms found in queries: %d\n\n" % len(terms))
+    self.response.out.write("Most popular terms (term, number of occurrences):\n")
+    pprint.pprint(ranked_terms, self.response.out)
+    self.response.out.write("\n")
+

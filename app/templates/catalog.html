@@ -52,7 +52,7 @@
   <div id="search_box_wrapper">
   <div id="search_box">
     <div id="form_box">
-    <form action="/catalog" method="get" id="searchform" name="searchform">
+    <form action="{{ url_for('catalog') }}" method="get" id="searchform" name="searchform">
       <div id="query_box">
         <input id="query" type="search" name="q" value="{{ query }}" maxlength="1024" />
       </div>
@@ -193,10 +193,10 @@
     <div id="samples-box">
       Examples of stuff you can find (click on the links to see how):
       <div style="padding-left: 5px;">
-        <a href='/catalog?q=plan:"SHS-BA3"+literature+OR+design'>SHS courses on literature or design, taught in the 3rd bachelor semester</a></br>
-        <a href='/catalog?q=credits:2+"organic+materials"'>2-credit courses on organic materials</a><br/>
-        <a href="/catalog?q=semester:fall+java">Java-related courses taught in the Fall</a><br/>
-        <a href='/catalog?q=section:"MIN_IN_SEC" -cryptography'>Courses in the computer security minor that do not teach cryptography</a>
+        {% for sample_query, text in static['samples'] %}
+        <a href='{{ url_for("catalog", q=sample_query) }}'>{{ text }}</a>
+        {% if not loop.last %}<br/>{% endif %}
+        {% endfor %}
       </div>
     </div>
     {% endif %}
