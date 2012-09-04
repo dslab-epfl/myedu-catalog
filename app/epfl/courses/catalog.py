@@ -117,7 +117,7 @@ class CatalogPage(base_handler.BaseHandler):
 
       sections.sort(key=lambda section: section[1])
       data.append((school.code if school.code != models.School.OTHER else "",
-                   school.title, sections))
+                   school.title(), sections))
 
     data.sort(key=lambda school: school[1])
     
@@ -193,6 +193,15 @@ class CatalogPage(base_handler.BaseHandler):
 class CoursePage(base_handler.BaseHandler):
   def AnnotateCourseEntry(self, course):
     course.sections_ = zip(course.sections, course.study_plans, course.urls)
+    
+    course.hierarchy_ = {}
+    
+    for section_trio in course.sections_:
+      school = section_trio[0].school
+      school_title = course.hierarchy_.setdefault("%s - %s" % (school.code, school.title()), {})
+      
+      section_ = school_title.setdefault(section_trio[0].title(), (section_trio[0].code, []))
+      section_[1].append((config.STUDY_PLANS[section_trio[1]], section_trio[1]))
     
     show_vector = [getattr(course, '%s_time' % s, None)
                    and not getattr(course, '%s_weeks' % s, None)

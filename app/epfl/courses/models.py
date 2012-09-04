@@ -18,7 +18,6 @@ class School(db.Model):
   title_en = db.StringProperty()
   title_fr = db.StringProperty()
   
-  @property
   def title(self, use_french=False):
     if use_french:
       return self.title_fr or self.title_en

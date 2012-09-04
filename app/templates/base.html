@@ -1,8 +1,8 @@
-{#
+{#-
   Basic page structure. Contains the Analytics scripts, JQuery, and common CSS.
   Author: Stefan Bucur (stefan.bucur@epfl.ch)
   Copyright 2012 EPFL. All rights reserved.
-#}
+-#}
 
 <html>
   <head>
@@ -25,20 +25,10 @@
     </script>
     {% endblock head %}
   </head>
-  <body>
-    <div id="wrapper">
+  <body {% if not dont_center %}class="centered"{% endif %}>
+    <div id="wrapper" {% if not dont_center %}class="centered"{% endif %}>
       <div id="content">
         {% block content %}
-        {% endblock %}
-      </div>
-      <div id="footer" style="color: #777; text-align: center; margin-top: 10px; padding-bottom: 10px;">
-        {% block footer %}
-        {% if login is defined %}
-        <form action="/admin/logout" />
-          <span style="vertical-align: middle;">Logged in as: <span style="font-weight: bold;">{{ login }}</span></span>
-          <input type="submit" value="Logout" />
-        </form>
-        {% endif %}
         {% endblock %}
       </div>
     </div>
