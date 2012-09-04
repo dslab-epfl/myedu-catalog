@@ -158,6 +158,7 @@ class CatalogPage(base_handler.BaseHandler):
         q_record.put()
         
         found_courses = models.Course.get_by_key_name(search_results.results)
+        found_courses = filter(lambda course: course is not None, found_courses)
     
     template_args = {
       'courses': found_courses,

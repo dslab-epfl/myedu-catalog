@@ -17,6 +17,9 @@ PAGE_SIZE = 20
 # The official launch date of the application
 LAUNCH_DATE = datetime.datetime(2012, 6, 14, 17, 20)
 
+# The Google Custom Search ID
+SEARCH_ENGINE_ID = "000528554756935640955:t5p6oxkfane"
+
 
 STUDY_PLANS = {
   "prop": "Propedeutics",

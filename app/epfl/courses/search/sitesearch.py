@@ -13,9 +13,10 @@ import urllib
 import urllib2
 from xml.etree import ElementTree
 
+from epfl.courses import config
+
 
 class SiteSearchProvider(object):
-  SEARCH_ENGINE_ID = "000528554756935640955:t5p6oxkfane"
   SEARCH_URL = "http://www.google.com/search?hl=en&q=%s&ie=utf8&oe=utf8&client=google-csbe&output=xml_no_dtd&cx=%s"
   
   FILTER_MAPPING = {
@@ -76,7 +77,7 @@ class SiteSearchProvider(object):
 
     escaped_query = cls.EscapeQueryString(query_string)
     
-    url = cls.SEARCH_URL % (escaped_query, cls.SEARCH_ENGINE_ID)
+    url = cls.SEARCH_URL % (escaped_query, config.SEARCH_ENGINE_ID)
     if limit:
       url += "&num=%d" % limit
     if offset:
