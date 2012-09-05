@@ -37,8 +37,12 @@ app = webapp2.WSGIApplication([
                         name="catalog", strict_slash=True),
    routes.RedirectRoute('/course', name="no-course",
                         redirect_to_name="catalog", strict_slash=True),
-   webapp2.Route('/course/<course_key>', handler=catalog.CoursePage,
+                               
+   routes.RedirectRoute("/course/<course_key>", handler=catalog.CoursePage,
+                        name="catalog-stripped", strict_slash=True),
+   webapp2.Route('/course/<course_key>/<lang>', handler=catalog.CoursePage,
                  name="course"),
+                               
    routes.PathPrefixRoute('/admin', [
      webapp2.Route('/reinit', handler=admin.ImportCourseCatalog),
      webapp2.Route('/index', handler=admin.BuildSearchIndexHandler),

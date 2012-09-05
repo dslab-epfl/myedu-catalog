@@ -218,8 +218,14 @@ class CoursePage(base_handler.BaseHandler):
     decoded_links = [urllib.unquote_plus(link) for link in course.links]
     course.links_ = zip(course.links, decoded_links)
     
-  def get(self, course_key):
-    course = models.Course.get_by_key_name(course_key)
+  def get(self, course_key, lang=None):
+    if lang not in ["en", "fr"]:
+      return self.redirect_to("course", course_key=course_key, lang="en")
+    
+    course = models.Course.get_by_key_name("%s:%s" % (lang, course_key))
+    
+    if not course:
+      self.abort(404)
     
     self.ComputeSectionHierarchy(course)
     self.ComputeHoursVisibility(course)
