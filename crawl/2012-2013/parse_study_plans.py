@@ -411,7 +411,7 @@ class ParsedCourseDescriptionFrench(ParsedCourseDescription):
     u"Remarque",
   ])
 
-  week_hours_re = re.compile(r"(\d+)\s+Heure(s) hebdo x (\d+) semaines",
+  week_hours_re = re.compile(r"(\d+)\s+Heure\(s\) hebdo x (\d+) semaines",
                              flags=re.UNICODE)
   sem_hours_re = re.compile(r"(\d+)\s+Hour\(s\) per semester",
                             flags=re.UNICODE)
