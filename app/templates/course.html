@@ -114,7 +114,14 @@
 {% endmacro %}
 
 <div id="course-content" {% if dont_center %} class="left" {% endif %}>
-  <h1>{{ course.title }}</h1>
+  <div id="title">
+    <div id="go-back">
+      <a href="{{ back_link }}">Back to Search</a>
+    </div>
+    <h1>
+      {{ course.title }}
+    </h1>
+  </div>
   {% if dont_center %}
   {{ section_info_nav() }}
   {% endif %}
@@ -180,13 +187,13 @@
     </table>
   </div>
   </div>
-  {% for title, content in [("Learning Outcomes", course.learning_outcomes),
+  {% for title, content in [("Learning outcomes", course.learning_outcomes),
                             ("Content", course.content),
-                            ("Prior Knowledge", course.prior_knowledge),
-                            ("Type of Teaching", course.type_of_teaching),
+                            ("Required prior knowledge", course.prior_knowledge),
+                            ("Type of teaching", course.type_of_teaching),
                             ("Bibliography", course.bibliography),
                             ("Keywords", course.keywords),
-                            ("Form of Examination", course.exam_form_detail),
+                            ("Grading", course.exam_form_detail),
                             ("Note", course.note),
                             ("Prerequisite For", course.prerequisite_for)] %}
   {% if content %}
@@ -198,7 +205,7 @@
   {% endfor %}
   {% if course.library_recomm %}
   <div>
-    <div class="sec-title isa-title">Library Recommends</div>
+    <div class="sec-title isa-title">Textbooks</div>
     <div class="sec-content isa-content">
       {{ course.library_recomm|safe }}
     </div>
@@ -209,8 +216,8 @@
     <div class="sec-title isa-title">Links</div>
     <div class="sec-content isa-content">
       <ul>
-        {% for link in course.links %}
-        <li><a href="{{ link }}">{{ link|safe }}</a></li>
+        {% for link, decoded_link in course.links_ %}
+        <li><a href="{{ link }}">{{ decoded_link }}</a></li>
         {% endfor %}
       </ul>
     </div>

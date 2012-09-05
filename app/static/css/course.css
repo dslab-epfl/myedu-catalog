@@ -2,10 +2,23 @@ div#wrapper {
 	width: 800px;
 }
 
+#title {
+  border-bottom: 2px solid #000;
+  position: relative;
+}
+
 h1 {
 	text-align: left;
-	border-bottom: 2px solid #000;
 	margin: 0px;
+	width: 750px;
+}
+
+#go-back {
+  float: right;
+  vertical-align: bottom;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
 }
 
 #section-info-nav {

@@ -41,7 +41,7 @@
 
 {% macro jumpoffset(target_offset, label) -%}
 {% set url = url_for("catalog", q=query.encode("utf-8"), offset=target_offset,
-                     exact=exact if exact else None) %}
+                     exact=exact if exact else "") %}
 <a href="{{ url }}">{{ label }}</a>
 {%- endmacro %}
 
@@ -224,12 +224,12 @@
   <div class="table_header">
     {% if original_query %}
     <div class="suggestion_box">
-      Showing results for <span class="suggestion"><a href="/catalog?q={{ suggested_query }}">{{ suggested_query }}</a></span>.
-      Search for <span class="suggestion"><a href="/catalog?q={{ original_query }}&exact=1">{{ original_query }}</a></span>  instead.
+      Showing results for <span class="suggestion"><a href="{{ url_for('catalog', q=suggested_query) }}">{{ suggested_query }}</a></span>.
+      Search for <span class="suggestion"><a href="{{ url_for('catalog', q=original_query, exact=1) }}">{{ original_query }}</a></span>  instead.
     </div>
     {% elif suggested_query %}
     <div class="suggestion_box">
-      Did you mean <span class="suggestion"><a href="/catalog?q={{ suggested_query }}">{{ suggested_query }}</a></span>?
+      Did you mean <span class="suggestion"><a href="{{ url_for('catalog', q=suggested_query) }}">{{ suggested_query }}</a></span>?
     </div>
     {% endif %}
     <div class="info_box">
@@ -255,7 +255,10 @@
       <tr>
         <td class="td_index">{{ offset + loop.index }}</td>
         <td class="td_title">
-          <a href="{{ url_for('course', course_key=course.key().name()) }}">{{ course.title }}</a>
+          <a href="{{ url_for('course', course_key=course.key().name(),
+                              orig_q=query.encode('utf-8'),
+                              orig_offset=offset if offset else '',
+                              orig_exact=exact if exact else '') }}">{{ course.title }}</a>
         </td>
         <td class="td_credits">{{ course.credit_count|default("N/A", True) }}</td>
         <td class="td_instr">
@@ -312,12 +315,6 @@
     Search provider: {{ debug["provider"] }} <br/>
     {% if debug["url"] %}
     Underlying search URL: <a href="{{ debug['url'] }}">{{ debug["url"] }}</a><br/>
-    {% if debug["results"] %}
-    Search results: <br/>
-    {% for result in debug["results"] %}
-    <a href="/c/{{ result }}">{{ result }}</a> <br/>
-    {% endfor %}
-    {% endif %}
     {% endif %}
   </div>
   {% endif %}

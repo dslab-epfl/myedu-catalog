@@ -9,6 +9,7 @@ __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 import logging
 import os
+import urllib
 import webapp2
 
 from epfl.courses import base_handler
@@ -191,30 +192,44 @@ class CatalogPage(base_handler.BaseHandler):
     
 
 class CoursePage(base_handler.BaseHandler):
-  def AnnotateCourseEntry(self, course):
+  def ComputeSectionHierarchy(self, course):
     course.sections_ = zip(course.sections, course.study_plans, course.urls)
     
     course.hierarchy_ = {}
     
     for section_trio in course.sections_:
       school = section_trio[0].school
-      school_title = course.hierarchy_.setdefault("%s - %s" % (school.code, school.title()), {})
+      school_title = course.hierarchy_.setdefault("%s - %s" % (school.code,
+                                                               school.title()),
+                                                  {})
       
-      section_ = school_title.setdefault(section_trio[0].title(), (section_trio[0].code, []))
+      section_ = school_title.setdefault(section_trio[0].title(),
+                                         (section_trio[0].code, []))
       section_[1].append((config.STUDY_PLANS[section_trio[1]], section_trio[1]))
     
+  def ComputeHoursVisibility(self, course):
     show_vector = [getattr(course, '%s_time' % s, None)
                    and not getattr(course, '%s_weeks' % s, None)
                    for s in ["lecture", "recitation", "project"]]
     
     course.show_trio_ = not reduce(lambda x, y: x or y, show_vector)
     
+  def DecodeLinksURLs(self, course):
+    decoded_links = [urllib.unquote_plus(link) for link in course.links]
+    course.links_ = zip(course.links, decoded_links)
+    
   def get(self, course_key):
     course = models.Course.get_by_key_name(course_key)
-    self.AnnotateCourseEntry(course)
+    
+    self.ComputeSectionHierarchy(course)
+    self.ComputeHoursVisibility(course)
+    self.DecodeLinksURLs(course)
     
     template_args = {
       "course": course,
+      "back_link": self.uri_for("catalog", q=self.request.get("orig_q", ""),
+                                offset=self.request.get("orig_offset", ""),
+                                exact=self.request.get("orig_exact", "")),
     }
     
     self.RenderTemplate('course.html', template_args)
