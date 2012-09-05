@@ -456,7 +456,6 @@ def FetchCourseDescriptions(courses):
         "free_text": dict(course_desc.free_text_desc),
         "links": course_desc.links,
         "library_recommends": course_desc.library_rec,
-        "study_plan_entry": course,
       }
 
     descriptions.append(description)

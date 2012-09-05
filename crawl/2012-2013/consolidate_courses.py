@@ -26,7 +26,23 @@ class ConsolidationError(Exception):
   pass
 
 
-def _ConsolidateDescription(dest, src, append_set=None):
+def _CanConsolidate(dest, src, append_set=None):
+  for key, value in src.iteritems():
+    # Ignore keys that are appended
+    if append_set and key in append_set:
+      continue
+    # Consolidation is done recursively
+    elif (key in dest and isinstance(value, dict)
+          and isinstance(dest[key], dict)):
+      if not _CanConsolidate(dest[key], value):
+        return False
+    elif key in dest and dest[key] != value:
+      return False
+    
+  return True
+
+
+def _ConsolidateDescription(dest, src, append_set=None, try_consolidate=True):
   """
   Add all keys in src to dest, according to some rules.
   
@@ -37,18 +53,16 @@ def _ConsolidateDescription(dest, src, append_set=None):
   """
   
   # Raise first any exception, so we don't end up with incomplete consolidations
-  for key, value in src.iteritems():
-    if append_set and key in append_set:
-      continue
-    if key in dest and dest[key] != value:
-      raise ConsolidationError("Cannot consolidate key '%s'" % key)
+  if try_consolidate and not _CanConsolidate(dest, src, append_set):
+    raise ConsolidationError("Cannot consolidate")
     
   for key, value in src.iteritems():
     if append_set and key in append_set:
       dest.setdefault(key, []).append(value)
-      continue
-      
-    if key not in dest:
+    elif (key in dest and isinstance(value, dict)
+          and isinstance(dest[key], dict)):
+      _ConsolidateDescription(dest[key], value, try_consolidate=False)  
+    elif key not in dest:
       dest[key] = value
       
 
@@ -74,9 +88,9 @@ def ConsolidateCourseDescriptions(course_desc):
   title_dict = {}
   
   for course in course_desc["descriptions"]:
-    title_dict.setdefault(course["title"], []).append(course)
+    title_dict.setdefault(course["en"]["title"], []).append(course)
     
-  append_set = set(["url", "study_plan_entry"])
+  append_set = ["study_plan_entry"]
   
   consolidations = []
   cons_ids = set()
@@ -145,7 +159,7 @@ def Main():
   
   print "Total course descriptions:", len(course_desc["descriptions"])
   print "Unique course titles:",
-  print len(set([course["title"] for course in course_desc["descriptions"]]))
+  print len(set([course["en"]["title"] for course in course_desc["descriptions"]]))
   print "Consolidated titles:", len(consolidations["consolidations"])
 
 
