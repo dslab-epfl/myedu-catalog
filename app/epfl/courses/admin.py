@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # Copyright 2012 EPFL. All rights reserved.
 
@@ -32,6 +33,33 @@ class ImportCourseCatalog(base_handler.BaseHandler):
   # The courses are imported in buckets of this size
   bucket_size = 100
   
+  # Mappings to read from the right free text descriptions. Keys are course
+  # attributes, and values are the titles as parsed from ISA URLs.
+  free_text_map = {
+    "en": {
+      "learning_outcomes": "Learning outcomes",
+      "content": "Content",
+      "prior_knowledge": "Required prior knowledge",
+      "type_of_teaching": "Type of teaching",
+      "bibliography": "Bibliography and material",
+      "keywords": "Keywords",
+      "exam_form_detail": "Form of examination",
+      "note": "Note",
+      "prerequisite_for": "Prerequisite for",
+    },
+    "fr": {
+      "learning_outcomes": u"Objectifs d'apprentissage",
+      "content": u"Contenu",
+      "prior_knowledge": u"Prérequis",
+      "type_of_teaching": u"Forme d'enseignement",
+      "bibliography": u"Bibliographie et matériel",
+      "keywords": u"Mots clés",
+      "exam_form_detail": u"Forme du contrôle",
+      "note": u"Remarque",
+      "prerequisite_for": u"Préparation pour",
+    }
+  }
+  
   @staticmethod
   def PopulateSections():
     for school in static_data.SCHOOLS.values():
@@ -48,31 +76,38 @@ class ImportCourseCatalog(base_handler.BaseHandler):
                      minor=section.minor,
                      master=section.master).put()
   
-  @staticmethod
-  def CreateCourse(course_desc):
+  @classmethod
+  def CreateCourse(cls, course_desc, language):
     """Import a single course description."""
     
     # Create a new instance of a course, which will overwrite the old
     # one with the same key (if any).
-    course = models.Course(key_name=course_desc["id"])
+    course_desc_lang = course_desc[language]
+    course_key_name = "%s:%s" % (language, course_desc["id"])
+    course = models.Course(key_name=course_key_name)
+    course.desc_language_ = language
     
     # Set all the attributes
-    course.title = course_desc["title"]
-    course.language = course_desc["language"]
+    course.title = course_desc_lang["title"]
+    course.language = course_desc_lang["language"]
     
     sections = [e["section"] for e in course_desc["study_plan_entry"]]
     course.section_keys = [models.Section.get_by_key_name(section).key()
                            for section in sections]
     course.study_plans = [e["plan"] for e in course_desc["study_plan_entry"]]
     
-    course.instructors = [i["name"] for i in course_desc["instructors"]]
-    course.urls = [e["url"] for e in course_desc["study_plan_entry"]]
+    course.instructors = [i["name"]
+                          for i in course_desc_lang["instructors"]]
+    if language == "en":
+      course.urls = [e["url"] for e in course_desc["study_plan_entry"]]
+    else:
+      course.urls = [e["url_fr"] for e in course_desc["study_plan_entry"]]
     
-    course.credit_count = course_desc["credits"]
-    course.coefficient = course_desc["coefficient"]
+    course.credit_count = course_desc_lang["credits"]
+    course.coefficient = course_desc_lang["coefficient"]
     
-    course.semester = course_desc["semester"]
-    course.exam_form = course_desc["exam_form"]
+    course.semester = course_desc_lang["semester"]
+    course.exam_form = course_desc_lang["exam_form"]
     
     hours_mapping = {
       "lecture": "lecture",
@@ -83,29 +118,23 @@ class ImportCourseCatalog(base_handler.BaseHandler):
     }
     
     for src, dest in hours_mapping.iteritems():
-      if not course_desc[src]:
+      if not course_desc_lang[src]:
         continue
-      if "week_hours" in course_desc[src]:
+      if "week_hours" in course_desc_lang[src]:
         setattr(course, "%s_time" % dest,
                 getattr(course, "%s_time" % dest) 
-                + course_desc[src]["week_hours"])
-        setattr(course, "%s_weeks" % dest, course_desc[src]["weeks"])
-      elif "total_hours" in course_desc[src]:
+                + course_desc_lang[src]["week_hours"])
+        setattr(course, "%s_weeks" % dest, course_desc_lang[src]["weeks"])
+      elif "total_hours" in course_desc_lang[src]:
         setattr(course, "%s_time" % dest,
                 getattr(course, "%s_time" % dest) 
-                + course_desc[src]["total_hours"])
+                + course_desc_lang[src]["total_hours"])
         
-    course.learning_outcomes = course_desc["free_text"].get("Learning outcomes")
-    course.content = course_desc["free_text"].get("Content")
-    course.prior_knowledge = course_desc["free_text"].get("Required prior knowledge")
-    course.type_of_teaching = course_desc["free_text"].get("Type of teaching")
-    course.bibliography = course_desc["free_text"].get("Bibliography and material")
-    course.keywords = course_desc["free_text"].get("Keywords")
-    course.exam_form_detail = course_desc["free_text"].get("Form of examination")
-    course.note = course_desc["free_text"].get("Note")
-    course.prerequisite_for = course_desc["free_text"].get("Prerequisite for")
-    course.library_recomm = course_desc["library_recommends"]
-    course.links = [link[1] for link in course_desc["links"]]
+    course.library_recomm = course_desc_lang["library_recommends"]
+    course.links = [link[1] for link in course_desc_lang["links"]]
+    
+    for attr, title in cls.free_text_map[language].iteritems():
+      setattr(course, attr, course_desc_lang["free_text"].get(title))
     
     course.needs_indexing_ = True
     
@@ -121,10 +150,13 @@ class ImportCourseCatalog(base_handler.BaseHandler):
     course_bucket = []
     
     for course_desc in course_data["consolidations"]:
-      course = cls.CreateCourse(course_desc)
-      course_bucket.append(course)
+      course_en = cls.CreateCourse(course_desc, "en")
+      course_fr = cls.CreateCourse(course_desc, "fr")
       
-      if len(course_bucket) == cls.bucket_size:
+      course_bucket.append(course_en)
+      course_bucket.append(course_fr)
+      
+      if len(course_bucket) >= cls.bucket_size:
         db.put(course_bucket)
         course_bucket = []
         

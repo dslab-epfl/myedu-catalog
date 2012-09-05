@@ -64,6 +64,8 @@ class Section(db.Model):
 
 
 class Course(db.Model):
+  desc_language_ = db.StringProperty(choices=set(["en", "fr"]))
+  
   title = db.StringProperty()
   
   language = db.StringProperty()
@@ -77,7 +79,7 @@ class Course(db.Model):
   credit_count = db.IntegerProperty()
   coefficient = db.FloatProperty()
   
-  semester = db.StringProperty(choices=set(["Fall", "Spring"]))
+  semester = db.StringProperty()
   exam_form = db.StringProperty()
   
   lecture_time = db.IntegerProperty(default=0)
