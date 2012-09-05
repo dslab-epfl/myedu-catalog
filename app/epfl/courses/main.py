@@ -33,7 +33,10 @@ config['webapp2_extras.jinja2'] = {
 app = webapp2.WSGIApplication([
    routes.RedirectRoute('/', redirect_to_name="catalog"),
    webapp2.Route('/sitemap.xml', handler=admin.SitemapHandler),
-   webapp2.Route('/catalog', handler=catalog.CatalogPage, name="catalog"),
+   routes.RedirectRoute('/catalog', handler=catalog.CatalogPage,
+                        name="catalog", strict_slash=True),
+   routes.RedirectRoute('/course', name="no-course",
+                        redirect_to_name="catalog", strict_slash=True),
    webapp2.Route('/course/<course_key>', handler=catalog.CoursePage,
                  name="course"),
    routes.PathPrefixRoute('/admin', [

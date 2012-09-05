@@ -4,7 +4,7 @@
   Copyright 2012 EPFL. All rights reserved.
 #}
 
-{% set dont_center = True %}
+{% set dont_center = False %}
 
 {% extends "base.html" %}
 {% block title %}{{ course.title }}{% endblock %}
@@ -58,34 +58,66 @@
 </tr>
 {% endmacro %}
 
-<div id="course-content">
-  <h1>{{ course.title }}</h1>
-  <div id="section-info">
-    <ul class="hierarchy">
-      {% for school, sections in course.hierarchy_|dictsort %}
-      <li> <span class="school">{{ school }}</span>
-        <ul class="hierarchy">
-          {% for section, (code, study_plans) in sections|dictsort %}
-            <li> <span>{{ searchable(section, "section", code) }}</span>
-              <ul class="hierarchy">
-                {% for study_plan, study_code in study_plans %}
-                  <li>
-                    <span class="prop">
-                    {% set query = 'section: "%s" plan: "%s"' % (code, study_code) %}
-                    <a href="{{ url_for('catalog', q=query.encode('utf-8')) }}">
-                      {{ study_plan }}
-                    </a>
-                    </span>
-                  </li>
-                {% endfor %}
-              </ul>
-            </li>
-          {% endfor %}
-        </ul>
+{% macro section_info_nav() %}
+<div id="section-info-nav">
+  <ul class="hierarchy">
+    {% for school, sections in course.hierarchy_|dictsort %}
+    <li> <span class="school">{{ school }}</span>
+      <ul class="hierarchy">
+        {% for section, (code, study_plans) in sections|dictsort %}
+          <li> <span>{{ searchable(section, "section", code) }}</span>
+            <ul class="hierarchy">
+              {% for study_plan, study_code in study_plans %}
+                <li>
+                  <span class="prop">
+                  {% set query = 'section: "%s" plan: "%s"' % (code, study_code) %}
+                  <a href="{{ url_for('catalog', q=query.encode('utf-8')) }}">
+                    {{ study_plan }}
+                  </a>
+                  </span>
+                </li>
+              {% endfor %}
+            </ul>
+          </li>
+        {% endfor %}
+      </ul>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endmacro %}
+
+{% macro section_info_bread() %}
+<div id="section-info-bread">
+  <ul class="school-list">
+    {% for school, sections in course.hierarchy_|dictsort %}
+    <li><ul class="sec-list">
+      {% for section, (code, study_plans) in sections|dictsort %}
+      <li>
+        <span class="school">{{ school }}</span> /
+        <span>{{ searchable(section, "section", code) }}</span> (
+        {%- for study_plan, study_code in study_plans -%}
+        <span class="prop">
+        {%- set query = 'section: "%s" plan: "%s"' % (code, study_code) -%}
+        <a href="{{ url_for('catalog', q=query.encode('utf-8')) }}">
+          {{- study_plan -}}
+        </a></span>
+        {{- ", " if not loop.last -}}
+        {%- endfor -%}
+        )
       </li>
       {% endfor %}
-    </ul>
-  </div>
+    </ul></li>
+    {% endfor %}
+  </ul>
+</div>
+{% endmacro %}
+
+<div id="course-content" {% if dont_center %} class="left" {% endif %}>
+  <h1>{{ course.title }}</h1>
+  {% if dont_center %}
+  {{ section_info_nav() }}
+  {% endif %}
   <div id="head-info">
   <div id="side-info">
     <table>
@@ -159,36 +191,44 @@
                             ("Prerequisite For", course.prerequisite_for)] %}
   {% if content %}
   <div>
-    <div class="sec-title">{{ title }}</div>
-    <div class="sec-content">{{ content|isamarkup|safe }}</div>
+    <div class="sec-title isa-title">{{ title }}</div>
+    <div class="sec-content isa-content">{{ content|isamarkup|safe }}</div>
   </div>
   {% endif %}
   {% endfor %}
   {% if course.library_recomm %}
   <div>
-    <div class="sec-title">Library Recommends</div>
-    <div class="sec-content">
+    <div class="sec-title isa-title">Library Recommends</div>
+    <div class="sec-content isa-content">
       {{ course.library_recomm|safe }}
     </div>
   </div>
   {% endif %}
   {% if course.links %}
   <div>
-    <div class="sec-title">Links</div>
-    <div class="sec-content">
+    <div class="sec-title isa-title">Links</div>
+    <div class="sec-content isa-content">
       <ul>
         {% for link in course.links %}
-        <li><a href="{{ link }}">{{ link }}</a></li>
+        <li><a href="{{ link }}">{{ link|safe }}</a></li>
         {% endfor %}
       </ul>
     </div>
   </div>
   {% endif %}
   <div id="footer-info">
-    <span class="label">IS-Academia homepage(s):</span>
-    {% for section, study_plan, url in course.sections_ %}
-      <a href="{{ url }}" title="{{ section.display_name() }}">{{ section.display_name(short=True) }}</a>{{ "," if not loop.last }}
-    {% endfor %}
+    {% if not dont_center %}
+    <div class="sec-title footer-title">In sections</div>
+    <div class="sec-content footer-content">
+      {{ section_info_bread() }}
+    </div>
+    {% endif %}
+    <div class="sec-title footer-title">IS-Academia homepage(s)</div>
+    <div class="sec-content footer-content">
+      {% for section, study_plan, url in course.sections_ %}
+        <a href="{{ url }}" title="{{ section.display_name() }}">{{ section.display_name(short=True) }}</a>{{ "," if not loop.last }}
+      {% endfor %}
+    </div>
   </div>
 </div>
 {% endblock content %}
