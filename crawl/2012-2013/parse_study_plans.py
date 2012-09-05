@@ -32,7 +32,6 @@ this_dir = os.path.dirname(__file__)
 study_plans_path = os.path.join(this_dir, "study_plans.json")
 course_list_path = os.path.join(this_dir, "course_list.json")
 course_desc_path = os.path.join(this_dir, "course_desc.json")
-course_desc_path_fr = os.path.join(this_dir, "course_desc_fr.json")
 
 
 def _ProcessStudyPlan(plan_id, plan_name, plan_soup, id_trim_size=3):
@@ -420,82 +419,63 @@ class ParsedCourseDescriptionFrench(ParsedCourseDescription):
                               flags=re.UNICODE)
 
 
-def _FetchCourseDescriptions(courses, use_french=False):
-  all_unknown_subsections = set()
-
+@caching.CachedJSON(course_desc_path)
+def FetchCourseDescriptions(courses):
   descriptions = []
 
   for course in courses["courses"]:
-    if use_french:
-      course_desc_html = caching.CachedURLGet(course["url_fr"])
-    else:
-      course_desc_html = caching.CachedURLGet(course["url"])
-    
-
-    soup = BeautifulSoup(course_desc_html)
-
-    if use_french:
-      course_desc = ParsedCourseDescriptionFrench(soup)
-    else:
-      course_desc = ParsedCourseDescription(soup)
-      
-    try:
-      course_desc.ParseDescription()
-    except ParsingError as e:
-      print "** Parsing error:", e.message
-      raise
-
-    descriptions.append({
-      "title": course_desc.title,
-      "instructors": [{ "name": i[0], "url": i[1] }
-                      for i in course_desc.instructors],
-      "language": course_desc.language,
-      "semester": course_desc.semester,
-      "credits": course_desc.credits,
-      "coefficient": course_desc.coefficient,
-      "exam_form": course_desc.exam_form,
-      "lecture": course_desc.lecture_hours,
-      "recitation": course_desc.recitation_hours,
-      "project": course_desc.project_hours,
-      "lab": course_desc.lab_hours,
-      "practical": course_desc.practical_hours,
-      "free_text": dict(course_desc.free_text_desc),
-      "links": course_desc.links,
-      "library_recommends": course_desc.library_rec,
+    description = {
       "study_plan_entry": course,
-    })
+    }
+    for language, url, parser in [("en", course["url"],
+                                   ParsedCourseDescription),
+                                  ("fr", course["url_fr"],
+                                   ParsedCourseDescriptionFrench)]:
+      course_desc_html = caching.CachedURLGet(url)
+      soup = BeautifulSoup(course_desc_html)
+      course_desc = parser(soup)
+      try:
+        course_desc.ParseDescription()
+      except ParsingError as e:
+        print "** Parsing error:", e.message
+        raise
+      description[language] = {
+        "title": course_desc.title,
+        "instructors": [{ "name": i[0], "url": i[1] }
+                        for i in course_desc.instructors],
+        "language": course_desc.language,
+        "semester": course_desc.semester,
+        "credits": course_desc.credits,
+        "coefficient": course_desc.coefficient,
+        "exam_form": course_desc.exam_form,
+        "lecture": course_desc.lecture_hours,
+        "recitation": course_desc.recitation_hours,
+        "project": course_desc.project_hours,
+        "lab": course_desc.lab_hours,
+        "practical": course_desc.practical_hours,
+        "free_text": dict(course_desc.free_text_desc),
+        "links": course_desc.links,
+        "library_recommends": course_desc.library_rec,
+        "study_plan_entry": course,
+      }
 
-    if course["title"] != course_desc.title:
+    descriptions.append(description)
+
+    if course["title"] != description["en"]["title"]:
       print "** Mismatched course titles.",
       print "Section title: '%s'" % course["title"],
-      print "Description title: '%s'" % course_desc.title
+      print "Description title: '%s'" % description["en"]["title"]
 
-    print "-- Title:", course_desc.title
-    print "-- Instructors:", ", ".join(["%s <%s>" % (i[0], i[1])
-                                        for i in course_desc.instructors])
-    print "-- Language:", course_desc.language
-
-    if course_desc.unknown_subsections:
-      print "** Unknown subsections:",
-      print ", ".join(course_desc.unknown_subsections)
-      all_unknown_subsections.update(course_desc.unknown_subsections)
-
-  if all_unknown_subsections:
-    print "** All unknown subsections:", ", ".join(all_unknown_subsections)
+    print "-- Title:", description["en"]["title"],
+    print "/", description["fr"]["title"]
+    
+    print "-- Instructors:", ", ".join(["%s <%s>" % (i["name"], i["url"])
+                                        for i in description["en"]["instructors"]])
+    print "-- Language:", description["en"]["language"]
 
   return {
     "descriptions": descriptions,
   }
-  
-  
-@caching.CachedJSON(course_desc_path)
-def FetchCourseDescriptionsEnglish(courses):
-  return _FetchCourseDescriptions(courses, use_french=False)
-
-
-@caching.CachedJSON(course_desc_path_fr)
-def FetchCourseDescriptionsFrench(courses):
-  return _FetchCourseDescriptions(courses, use_french=True)
 
 
 def Main():
@@ -505,8 +485,7 @@ def Main():
   courses = FetchCourseList(study_plans)
   ShowCourseListStatistics(courses)
   
-  FetchCourseDescriptionsEnglish(courses)
-  FetchCourseDescriptionsFrench(courses)
+  FetchCourseDescriptions(courses)
 
 
 if __name__ == "__main__":
