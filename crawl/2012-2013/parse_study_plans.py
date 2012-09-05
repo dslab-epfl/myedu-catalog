@@ -110,10 +110,13 @@ def _FetchCoursesInSection(plan_id, section_id, section_url):
     if parsed_url.netloc != "isa.epfl.ch":
       print "-- Invalid course entry for ", course_name, "at", course_url
       continue
+    
+    course_url_fr = re.sub(r"ww_c_langue=en", "ww_c_langue=fr", course_url)
 
     courses.append({
       "title": course_name,
       "url": course_url,
+      "url_fr": course_url_fr,
       "plan": plan_id,
       "section": section_id,
     })
@@ -363,6 +366,8 @@ def FetchCourseDescriptions(courses):
 
   for course in courses["courses"]:
     course_desc_html = caching.CachedURLGet(course["url"])
+    course_desc_html_fr = caching.CachedURLGet(course["url_fr"])
+    
     soup = BeautifulSoup(course_desc_html)
 
     course_desc = ParsedCourseDescription(course["url"], soup)

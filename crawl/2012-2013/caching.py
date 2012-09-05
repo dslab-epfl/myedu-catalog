@@ -7,9 +7,11 @@
 __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 
+import contextlib
 import json
 import logging
 import os
+import urllib
 import urlparse
 
 
