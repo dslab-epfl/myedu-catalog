@@ -44,7 +44,7 @@ app = webapp2.WSGIApplication([
                  name="course"),
                                
    routes.PathPrefixRoute('/admin', [
-     webapp2.Route('/reinit', handler=admin.ImportCourseCatalog),
+     webapp2.Route('/reinit/<lang>', handler=admin.ImportCourseCatalog),
      webapp2.Route('/index', handler=admin.BuildSearchIndexHandler),
      webapp2.Route('/qstats', handler=admin.QueryStatsHandler),
    ])],

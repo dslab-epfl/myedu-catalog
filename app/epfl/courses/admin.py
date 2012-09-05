@@ -141,20 +141,17 @@ class ImportCourseCatalog(base_handler.BaseHandler):
     return course
   
   @classmethod
-  def ImportAllCourses(cls):
+  def ImportAllCourses(cls, language):
     """Import all courses found in the data file."""
-    
+
     with open(COURSES_DATA_FILE, "r") as f:
       course_data = json.load(f, encoding="utf-8")
       
     course_bucket = []
     
     for course_desc in course_data["consolidations"]:
-      course_en = cls.CreateCourse(course_desc, "en")
-      course_fr = cls.CreateCourse(course_desc, "fr")
-      
-      course_bucket.append(course_en)
-      course_bucket.append(course_fr)
+      course = cls.CreateCourse(course_desc, language)
+      course_bucket.append(course)
       
       if len(course_bucket) >= cls.bucket_size:
         db.put(course_bucket)
@@ -163,12 +160,15 @@ class ImportCourseCatalog(base_handler.BaseHandler):
     if course_bucket:
       db.put(course_bucket)
   
-  def get(self):
+  def get(self, lang):
+    if lang not in ["en", "fr"]:
+      self.abort(400)
+      
     self.PopulateSections()
-    self.ImportAllCourses()
+    self.ImportAllCourses(lang)
     
     self.SetTextMode()
-    self.response.out.write("OK.\n")
+    self.response.out.write("OK (%s).\n" % lang)
     
 
 class SitemapHandler(base_handler.BaseHandler):
