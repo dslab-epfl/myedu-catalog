@@ -22,11 +22,20 @@ SEARCH_ENGINE_ID = "000528554756935640955:t5p6oxkfane"
 
 
 STUDY_PLANS = {
-  "prop": "Propedeutics",
-  "bachelor": "Bachelor",
-  "master": "Master",
-  "edoc": "Doctoral",
-  "min": "Minor",
+  "en": {
+    "prop": "Propedeutics",
+    "bachelor": "Bachelor",
+    "master": "Master",
+    "edoc": "Doctoral",
+    "min": "Minor",
+  },
+  "fr": {
+    "prop": "Propedeutics",
+    "bachelor": "Bachelor",
+    "master": "Master",
+    "edoc": "Doctoral",
+    "min": "Minor",
+  },
 }
 
 EXAM = [

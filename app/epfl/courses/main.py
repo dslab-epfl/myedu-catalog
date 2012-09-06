@@ -45,7 +45,7 @@ app = webapp2.WSGIApplication([
                                
    routes.PathPrefixRoute('/admin', [
      webapp2.Route('/reinit/<lang>', handler=admin.ImportCourseCatalog),
-     webapp2.Route('/index', handler=admin.BuildSearchIndexHandler),
+     webapp2.Route('/index/<operation>', handler=admin.BuildSearchIndexHandler),
      webapp2.Route('/qstats', handler=admin.QueryStatsHandler),
    ])],
    debug=True, config=config)

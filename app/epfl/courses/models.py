@@ -115,6 +115,10 @@ class Course(db.Model):
   def sections(self):
     return Section.get(self.section_keys)
   
+  @property
+  def course_id(self):
+    return self.key().name()[3:]
+  
 
 class SearchQueryRecord(db.Model):
   q = db.TextProperty()

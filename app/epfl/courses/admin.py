@@ -185,22 +185,25 @@ class SitemapHandler(base_handler.BaseHandler):
     
     
 class BuildSearchIndexHandler(base_handler.BaseHandler):
-  def get(self):
+  def get(self, operation):
     self.SetTextMode()
     
-    if self.request.get("erase"):
+    if operation == "erase":
       appsearch_admin.AppEngineIndex.ClearCourseIndex()
       self.response.out.write('OK.\n')
       return
     
-    if self.request.get("rebuild"):
+    if operation == "rebuild":
       courses = models.Course.all().fetch(None)
       appsearch_admin.AppEngineIndex.ClearIndexingStatus(courses)
     
-    if appsearch_admin.AppEngineIndex.UpdateCourseIndex():
-      self.response.out.write('OK.\n')
+    if operation == "update" or operation == "rebuild":
+      if appsearch_admin.AppEngineIndex.UpdateCourseIndex():
+        self.response.out.write('OK.\n')
+      else:
+        self.response.out.write("Search quota exceeded. Try again later.\n")
     else:
-      self.response.out.write("Search quota exceeded. Try again later.\n")
+      self.abort(400)
       
 
 class QueryStatsHandler(base_handler.BaseHandler):  

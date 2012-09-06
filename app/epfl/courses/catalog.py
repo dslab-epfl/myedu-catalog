@@ -219,8 +219,10 @@ class CoursePage(base_handler.BaseHandler):
     course.links_ = zip(course.links, decoded_links)
     
   def get(self, course_key, lang=None):
-    if lang not in ["en", "fr"]:
+    if not lang:
       return self.redirect_to("course", course_key=course_key, lang="en")
+    if lang not in ["en", "fr"]:
+      self.abort(404)
     
     course = models.Course.get_by_key_name("%s:%s" % (lang, course_key))
     
