@@ -66,14 +66,6 @@
       </div>
       <div id="adv_search">
         <div id="separator-top"></div>
-        
-        {% macro advfield(label, id, name, type="text", min=None) -%}
-        <td class="adv_label"><label for="{{id}}">{{label}}:</label></td>
-        <td class="adv_value"><input id="{{id}}" type="{{type}}" name="{{name}}"
-          {% if not min is none %}min="{{ min }}"{% endif %}
-          {% if type == "text" %}maxlength="1024"{% endif %}/></td>
-        {%- endmacro %}
-        
         {% macro multichoice(id, name, values) -%}
           <select id="{{ id }}" name="{{ name }}">
             <option value=""></option>
@@ -88,31 +80,49 @@
             <td style="width: 50%; padding: 0px;">
               <table style="border-collapse: collapse; table-layout: fixed;">
                 <tr>
-                  <td class="adv_label"><label for="course">Course title:</label></td>
+                  <td class="adv_label"><label for="course">
+                    {{ localized("Course title:", "Titre:") }}
+                  </label></td>
                   <td class="adv_value">
                     <input id="course" type="text" name="aq_t" maxlength="1024" />
                   </td>
                 </tr>
                 <tr>
-                  <td class="adv_label">Language:</td>
+                  <td class="adv_label">
+                    {{ localized("Language:", "Langue:") }}
+                  </td>
                   <td class="adv_value">
                     <input id="lang_en" type="radio" name="aq_lang" value="english" class="radio" />
                     <label for="lang_en">English</label>
                     <input id="lang_fr" type="radio" name="aq_lang" value="francais" class="radio" />
-                    <label for="lang_fr">French</label>
+                    <label for="lang_fr">Français</label>
                   </td>
                 </tr>
                 <tr>
-                  <td class="adv_label">Semester:</td>
+                  <td class="adv_label">
+                    {{ localized("Semester:", "Semestre:") }}
+                  </td>
                   <td class="adv_value">
-                    <input id="sem_fall" type="radio" name="aq_sem" value="fall" class="radio" />
-                    <label for="sem_fall">Fall</label>
-                    <input id="sem_spring" type="radio" name="aq_sem" value="spring" class="radio" />
-                    <label for="sem_spring">Spring</label>
+                    <input id="sem_fall" type="radio" name="aq_sem"
+                           value="{{ localized('fall', 'automne') }}"
+                           class="radio" />
+                    <label for="sem_fall">
+                      {{ localized("Fall", "Automne") }}
+                    </label>
+                    <input id="sem_spring" type="radio" name="aq_sem"
+                           value="{{ localized('spring', 'printemps') }}"
+                           class="radio" />
+                    <label for="sem_spring">
+                      {{ localized("Spring", "Printemps") }}
+                    </label>
                   </td>
                 </tr>
                 <tr>
-                  <td class="adv_label"><label for="credits">Credits:</label></td>
+                  <td class="adv_label">
+                    <label for="credits">
+                      {{ localized("Credits:", "Crédits:") }}
+                    </label>
+                  </td>
                   <td class="adv_value">
                     {{ multichoice("credits", "aq_cred", static["credits"]) }}
                   </td>
@@ -122,10 +132,20 @@
             <td style="width: 50%; padding: 0px;">
               <table style="border-collapse: collapse; table-layout: fixed;">
                 <tr>
-                  {{ advfield("Instructor", "instructor", "aq_in") }}
+                  <td class="adv_label">
+                    <label for="instructor">
+                      {{ localized("Instructor:", "Enseignant:") }}
+                    </label>
+                  </td>
+                  <td class="adv_value">
+                    <input id="instructor" type="text" name="aq_in" maxlength="1024"/>
+                  </td>
                 </tr>
                 <tr>
-                  <td class="adv_label"><label for="section">Section:</label>
+                  <td class="adv_label">
+                    <label for="section">
+                      {{ localized("Section:", "Section:") }}
+                    </label>
                   <td class="adv_value">
                     <select id="section" name="aq_sec">
                       <option value=""></option>
@@ -165,19 +185,25 @@
           <tr>
             <td style="width: 33%; padding: 0px;">
               <div class="field">
-                <label for="lecture">Lecture:</label>
+                <label for="lecture">
+                  {{ localized("Lecture:", "Cours:") }}
+                </label>
                 <span class="input">{{ multichoice("lecture", "aq_hours_l", static["lecture"]) }}</span>
               </div>
             </td>
             <td style="width: 33%; padding: 0px;">
               <div class="field">
-                <label for="recitation">Recitation:</label>
+                <label for="recitation">
+                  {{ localized("Recitation:", "Exercices:") }}
+                </label>
                 <span class="input">{{ multichoice("recitation", "aq_hours_r", static["recitation"]) }}</span>
               </div>
             </td>
             <td style="width: 33%; padding: 0px;">
               <div class="field">
-                <label for="project">Project:</label>
+                <label for="project">
+                  {{ localized("Project:", "Projet:") }}
+                </label>
                 <span class="input">{{ multichoice("project", "aq_hours_p", static["project"]) }}</span>
               </div>
             </td> 
@@ -235,8 +261,12 @@
   <div class="table_header">
     {% if original_query %}
     <div class="suggestion_box">
-      Showing results for <span class="suggestion"><a href="{{ url_for('catalog', lang=language, q=suggested_query) }}">{{ suggested_query }}</a></span>.
-      Search for <span class="suggestion"><a href="{{ url_for('catalog', lang=language, q=original_query, exact=1) }}">{{ original_query }}</a></span>  instead.
+      {{ localized("Showing results for", "Affichage des résultats pour") }}
+      <span class="suggestion">
+        <a href="{{ url_for('catalog', lang=language, q=suggested_query) }}">
+          {{ suggested_query }}</a></span>.
+      {{ localized("Search instead for", "Essayez avec l'orthographe") }}
+      <span class="suggestion"><a href="{{ url_for('catalog', lang=language, q=original_query, exact=1) }}">{{ original_query }}</a></span>.
     </div>
     {% elif suggested_query %}
     <div class="suggestion_box">
@@ -244,21 +274,21 @@
     </div>
     {% endif %}
     <div class="info_box">
-      Showing results  
+      {{ localized("Showing results", "Page") }}
         <span style="font-weight: bold;">
           {{ pagination.offset + 1 }}-{{ pagination.offset + courses|length }}</span>
-      out of
+      {{ localized("out of", "sur") }}
         <span style="font-weight: bold;">{{ pagination.total_found }}</span>:
     </div>
   </div>
   <table class="catalog" id="results">
     <thead>
       <tr class="header">
-        <th class="td_index">Rank</th>
-        <th class="td_title">Title</th>
-        <th class="td_credits">Credits</th>
-        <th class="td_instr">Instructor(s)</th>
-        <th class="td_section">Section(s)</th>
+        <th class="td_index">{{ localized("Rank", "Rang") }}</th>
+        <th class="td_title">{{ localized("Title", "Titre") }}</th>
+        <th class="td_credits">{{ localized("Credits", "Crédits") }}</th> 
+        <th class="td_instr">{{ localized("Instructor", "Enseignant") }}</th>
+        <th class="td_section">{{ localized("Section", "Section") }}</th>
       </tr>
     </thead>
     <tbody>
@@ -270,7 +300,9 @@
                               course_key=course.course_id,
                               orig_q=query.encode('utf-8'),
                               orig_offset=offset if offset else '',
-                              orig_exact=exact if exact else '') }}">{{ course.title }}</a>
+                              orig_exact=exact if exact else '') }}">
+            {{ course.title }}
+          </a>
         </td>
         <td class="td_credits">{{ course.credit_count|default("N/A", True) }}</td>
         <td class="td_instr">
@@ -296,7 +328,9 @@
   {% if not pagination.prev_offset is none %}
     {{ jumpoffset(pagination.prev_offset, "Previous") }}
   {% else %}
-    <span style="font-weight: bold;">Previous</span>
+    <span style="font-weight: bold;">
+      {{ localized("Previous", "Précédent") }}
+    </span>
   {% endif %}
   {% for crt_page, crt_offset in pagination.pages %}
     {% if crt_page == page %}
@@ -308,13 +342,15 @@
   {% if not pagination.next_offset is none %}
     {{ jumpoffset(pagination.next_offset, "Next") }}
   {% else %}
-    <span style="font-weight: bold;">Next</span>
+    <span style="font-weight: bold;">
+    {{ localized("Next", "Suivant") }}
+    </span>
   {% endif %}
   </div>
   {% endif %}
   {% elif query %}
   <div class="table_header">
-  No search results.
+    {{ localized("No search results.", "Aucun résultat.") }}
   </div>
   {% endif %}
   {% if debug_mode %}
