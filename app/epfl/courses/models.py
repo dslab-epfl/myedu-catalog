@@ -121,7 +121,10 @@ class Course(db.Model):
   
   @classmethod
   def GetByCourseID(cls, course_id, lang="en"):
-    return cls.get_by_key_name("%s:%s" % (lang, course_id))
+    if isinstance(course_id, basestring):
+      return cls.get_by_key_name("%s:%s" % (lang, course_id))
+    else:
+      return cls.get_by_key_name(["%s:%s" % (lang, cid) for cid in course_id])
   
 
 class SearchQueryRecord(db.Model):

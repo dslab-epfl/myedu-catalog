@@ -12,16 +12,19 @@
   
   <script type="text/javascript">
   	$(document).ready(function() {
+  		var adv_search = "{{ localized('Advanced search', 'Recherche avancée') }}";
+  		var simple_search = "{{ localized('Back to simple search', 'Retour à la recherche simple') }}";
+  		
   		$("#adv_search").hide();
-  		$("#advanced-search-btn").text("Advanced search");
+  		$("#advanced-search-btn").text(adv_search);
   		
   		$("#advanced-search-btn").click(function() {
   			$("#adv_search").slideToggle(200);
   			text = $("#advanced-search-btn").text()
-  			if (text == "Advanced search")
-  				text = "Back to simple search";
+  			if (text == adv_search)
+  				text = simple_search;
   			else
-  				text = "Advanced search";
+  				text = adv_search;
   			
   			$("#advanced-search-btn").text(text);
   		});
@@ -40,19 +43,24 @@
 {% endblock head %}
 
 {% macro jumpoffset(target_offset, label) -%}
-{% set url = url_for("catalog", q=query.encode("utf-8"), offset=target_offset,
+{% set url = url_for("catalog", lang=language, q=query.encode("utf-8"), offset=target_offset,
                      exact=exact if exact else "") %}
 <a href="{{ url }}">{{ label }}</a>
 {%- endmacro %}
 
 {% block content %}
-  <h1>Find EPFL Courses <span class="beta-mark">beta</span></h1>
-  <div id="subtitle">Academic Year 2012-2013</div>
+  <div id="language-switch">
+    <a href="{{ switch_lang_link }}">
+      {{ localized("Français", "English") }}
+    </a>
+  </div>
+  <h1>{{ localized("Find EPFL Courses", "Rechercher un cours à l'EPFL") }} <span class="beta-mark">beta</span></h1>
+  <div id="subtitle">{{ localized("Academic Year 2012-2013", "Année académique 2012-2013") }}</div>
   
   <div id="search_box_wrapper">
   <div id="search_box">
     <div id="form_box">
-    <form action="{{ url_for('catalog') }}" method="get" id="searchform" name="searchform">
+    <form action="{{ url_for('catalog', lang=language) }}" method="get" id="searchform" name="searchform">
       <div id="query_box">
         <input id="query" type="search" name="q" value="{{ query }}" maxlength="1024" />
       </div>
@@ -90,7 +98,7 @@
                   <td class="adv_value">
                     <input id="lang_en" type="radio" name="aq_lang" value="english" class="radio" />
                     <label for="lang_en">English</label>
-                    <input id="lang_fr" type="radio" name="aq_lang" value="french" class="radio" />
+                    <input id="lang_fr" type="radio" name="aq_lang" value="francais" class="radio" />
                     <label for="lang_fr">French</label>
                   </td>
                 </tr>
@@ -150,7 +158,7 @@
 
         <div style="margin-top:10px;">
           <div style="padding: 3px;">
-            Scheduled hours:
+            {{ localized("Scheduled hours:", "Horaire:") }}
           </div>
         </div>
         <table id="sched-hours" style="border-spacing: 10px; table-layout: fixed;">
@@ -177,24 +185,27 @@
         </table>
       </div>
       <div style="text-align: center; margin-top: 10px;">
-        <input id="search" type="submit" value="Search" />
+        <input id="search" type="submit" value="{{ localized('Search', 'Recherche') }}" />
       </div>
       <div id="advanced-search">
         <a href="#" id="advanced-search-btn">
-          Advanced search
+          {{ localized("Advanced search", "Recherche avancée") }}
         </a>
       </div>
     </form>
     </div>
     <div id="feedback-box">
-      <a href="https://docs.google.com/spreadsheet/viewform?formkey=dDJ1UVpEM1VFRkszclBrdTRjc3JfYkE6MQ#gid=0" target="_blank">Got feedback?</a>
+      <a href="https://docs.google.com/spreadsheet/viewform?formkey=dDJ1UVpEM1VFRkszclBrdTRjc3JfYkE6MQ#gid=0" target="_blank">
+        {{ localized("Got feedback?", "Passez nous votre feedback") }}
+      </a>
     </div>
     {% if not query %}
     <div id="samples-box">
-      Examples of stuff you can find (click on the links to see how):
+      {{ localized("Examples of stuff you can find (click on the links to see how):",
+                   "Des exemples de requêtes avancées (cliquez sur les liens ci-dessous pour les voir):") }}
       <div style="padding-left: 5px;">
         {% for sample_query, text in static['samples'] %}
-        <a href='{{ url_for("catalog", q=sample_query) }}'>{{ text }}</a>
+        <a href='{{ url_for("catalog", lang=language, q=sample_query) }}'>{{ text }}</a>
         {% if not loop.last %}<br/>{% endif %}
         {% endfor %}
       </div>
@@ -224,12 +235,12 @@
   <div class="table_header">
     {% if original_query %}
     <div class="suggestion_box">
-      Showing results for <span class="suggestion"><a href="{{ url_for('catalog', q=suggested_query) }}">{{ suggested_query }}</a></span>.
-      Search for <span class="suggestion"><a href="{{ url_for('catalog', q=original_query, exact=1) }}">{{ original_query }}</a></span>  instead.
+      Showing results for <span class="suggestion"><a href="{{ url_for('catalog', lang=language, q=suggested_query) }}">{{ suggested_query }}</a></span>.
+      Search for <span class="suggestion"><a href="{{ url_for('catalog', lang=language, q=original_query, exact=1) }}">{{ original_query }}</a></span>  instead.
     </div>
     {% elif suggested_query %}
     <div class="suggestion_box">
-      Did you mean <span class="suggestion"><a href="{{ url_for('catalog', q=suggested_query) }}">{{ suggested_query }}</a></span>?
+      Did you mean <span class="suggestion"><a href="{{ url_for('catalog', lang=language, q=suggested_query) }}">{{ suggested_query }}</a></span>?
     </div>
     {% endif %}
     <div class="info_box">
@@ -255,7 +266,8 @@
       <tr>
         <td class="td_index">{{ offset + loop.index }}</td>
         <td class="td_title">
-          <a href="{{ url_for('course', course_key=course.key().name(),
+          <a href="{{ url_for('course', lang=language,
+                              course_key=course.course_id,
                               orig_q=query.encode('utf-8'),
                               orig_offset=offset if offset else '',
                               orig_exact=exact if exact else '') }}">{{ course.title }}</a>

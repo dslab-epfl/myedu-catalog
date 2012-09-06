@@ -124,7 +124,12 @@ class CatalogPage(base_handler.BaseHandler):
     
     return data
     
-  def get(self):
+  def get(self, lang=None):
+    if not lang:
+      return self.redirect_to("catalog", lang="en")
+    if lang not in ["en", "fr"]:
+      self.abort(404)
+      
     ACCURACY = 2000
     
     query = self.BuildQueryFromRequest()
@@ -158,10 +163,12 @@ class CatalogPage(base_handler.BaseHandler):
         q_record.suggested_query = autocorr_provider.suggested_query
         q_record.put()
         
-        found_courses = models.Course.get_by_key_name(search_results.results)
+        found_courses = models.Course.GetByCourseID(search_results.results,
+                                                    lang=lang)
         found_courses = filter(lambda course: course is not None, found_courses)
     
     template_args = {
+      'language': lang,
       'courses': found_courses,
       'static': {
         'sections': self.section_data,
@@ -186,6 +193,9 @@ class CatalogPage(base_handler.BaseHandler):
         'provider': None,
         'url': search_results.original_url_,
       },
+      "switch_lang_link": self.uri_for("catalog",
+                                       lang="en" if lang == "fr" else "fr",
+                                       **self.request.GET),
     }
     
     self.RenderTemplate('catalog.html', template_args)
@@ -236,9 +246,13 @@ class CoursePage(base_handler.BaseHandler):
     template_args = {
       "language": lang,
       "course": course,
-      "back_link": self.uri_for("catalog", q=self.request.get("orig_q", ""),
+      "back_link": self.uri_for("catalog", lang=lang,
+                                q=self.request.get("orig_q", ""),
                                 offset=self.request.get("orig_offset", ""),
                                 exact=self.request.get("orig_exact", "")),
+      "switch_lang_link": self.uri_for("course", course_key=course_key,
+                                       lang="en" if lang == "fr" else "fr",
+                                       **self.request.GET),
     }
     
     self.RenderTemplate('course.html', template_args)
