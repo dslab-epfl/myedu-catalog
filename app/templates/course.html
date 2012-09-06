@@ -43,7 +43,8 @@
 
 {% block content %}
 
-{% macro searchable(content, query_field, query_value=None, tooltip=None, quoted=True) -%}
+{% macro searchable(content, query_field, query_value=None, tooltip=None,
+                    quoted=True) -%}
 {%- set formatter = '%s: "%s"' if quoted else "%s: %s" -%}
 {%- set query = formatter % (query_field, query_value if query_value else content) -%}
 {%- set url = url_for("catalog", q=query.encode("utf-8")) -%}                                  
@@ -116,7 +117,7 @@
 <div id="course-content" {% if dont_center %} class="left" {% endif %}>
   <div id="title">
     <div id="go-back">
-      <a href="{{ back_link }}">Back to Search</a>
+      <a href="{{ back_link }}">{{ localized("Back to Search", "Retour à la recherche") }}</a>
     </div>
     <h1>
       {{ course.title }}
@@ -128,11 +129,13 @@
   <div id="head-info">
   <div id="side-info">
     <table>
-      {% call infoitem("Exam:") %}
+      {% call infoitem(localized("Exam:", "Forme de l'examen:")) %}
         {{ searchable(course.exam_form, "exam") }}
       {% endcall %}
       
-      {% call infoitem("Coefficient:" if course.coefficient and not course.credit_count else "ECTS credits:") %}
+      {% call infoitem(localized("Coefficient:", "Coefficient:")
+                       if course.coefficient and not course.credit_count
+                       else localized("ECTS credits:", "Crédits:")) %}
         {% if course.coefficient and not course.credit_count %}
           {{ searchable(course.coefficient, "coefficient", quoted=False) }}
         {% elif course.credit_count %}
@@ -167,7 +170,9 @@
   </div>
   <div id="main-info">
     <table>
-      {% call infoitem("Instructors:" if course.instructors|length > 1 else "Instructor:") %}
+      {% call infoitem(localized("Instructors:", "Enseignants:")
+                       if course.instructors|length > 1
+                       else localized("Instructor:", "Enseignant:")) %}
         {% if course.instructors and course.instructors[0] == "multi" %}
           <span style="font-style: italic;">Various instructors</span>
         {% else %}
@@ -177,25 +182,37 @@
         {% endif %}
       {% endcall %}
       
-      {% call infoitem("Language:") %}
+      {% call infoitem(localized("Language:", "Langue:")) %}
         {{ searchable(course.language, "language") }}
       {% endcall %}
       
-      {% call infoitem("Semester:") %}
+      {% call infoitem(localized("Semester:", "Semestre:")) %}
         {{ searchable(course.semester, "semester") }}
       {% endcall %}
     </table>
   </div>
   </div>
-  {% for title, content in [("Learning outcomes", course.learning_outcomes),
-                            ("Content", course.content),
-                            ("Required prior knowledge", course.prior_knowledge),
-                            ("Type of teaching", course.type_of_teaching),
-                            ("Bibliography", course.bibliography),
-                            ("Keywords", course.keywords),
-                            ("Grading", course.exam_form_detail),
-                            ("Note", course.note),
-                            ("Prerequisite For", course.prerequisite_for)] %}
+  {% set free_text_sec = [
+      (localized("Learning outcomes", "Objectifs d'apprentissage"),
+       course.learning_outcomes),
+      (localized("Content", "Contenu"),
+       course.content),
+      (localized("Required prior knowledge", "Prérequis"),
+       course.prior_knowledge),
+      (localized("Type of teaching", "Forme d'enseignement"),
+       course.type_of_teaching),
+      (localized("Bibliography", "Bibliographie et matériel"),
+       course.bibliography),
+      (localized("Keywords", "Mots clés"),
+       course.keywords),
+      (localized("Grading", "Forme du contrôle"),
+       course.exam_form_detail),
+      (localized("Note", "Remarque"),
+       course.note),
+      (localized("Prerequisite for", "Préparation pour"),
+       course.prerequisite_for)
+     ] %}
+  {% for title, content in free_text_sec %}
   {% if content %}
   <div>
     <div class="sec-title isa-title">{{ title }}</div>
@@ -205,7 +222,9 @@
   {% endfor %}
   {% if course.library_recomm %}
   <div>
-    <div class="sec-title isa-title">Textbooks</div>
+    <div class="sec-title isa-title">
+      {{ localized("Textbooks", "La bibliothèque vous propose") }}
+    </div>
     <div class="sec-content isa-content">
       {{ course.library_recomm|safe }}
     </div>
@@ -213,7 +232,9 @@
   {% endif %}
   {% if course.links %}
   <div>
-    <div class="sec-title isa-title">Links</div>
+    <div class="sec-title isa-title">
+      {{ localized("Links", "Liens") }}
+    </div>
     <div class="sec-content isa-content">
       <ul>
         {% for link, decoded_link in course.links_ %}
@@ -225,12 +246,16 @@
   {% endif %}
   <div id="footer-info">
     {% if not dont_center %}
-    <div class="sec-title footer-title">In sections</div>
+    <div class="sec-title footer-title">
+      {{ localized("Sections", "Sections") }}
+    </div>
     <div class="sec-content footer-content">
       {{ section_info_bread() }}
     </div>
     {% endif %}
-    <div class="sec-title footer-title">IS-Academia homepage(s)</div>
+    <div class="sec-title footer-title">
+      {{ localized("IS-Academia homepage(s)", "IS-Academia homepage(s)") }}
+    </div>
     <div class="sec-content footer-content">
       {% for section, study_plan, url in course.sections_ %}
         <a href="{{ url }}" title="{{ section.display_name() }}">{{ section.display_name(short=True) }}</a>{{ "," if not loop.last }}

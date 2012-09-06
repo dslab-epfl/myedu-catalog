@@ -119,6 +119,10 @@ class Course(db.Model):
   def course_id(self):
     return self.key().name()[3:]
   
+  @classmethod
+  def GetByCourseID(cls, course_id, lang="en"):
+    return cls.get_by_key_name("%s:%s" % (lang, course_id))
+  
 
 class SearchQueryRecord(db.Model):
   q = db.TextProperty()

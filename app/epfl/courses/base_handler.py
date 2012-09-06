@@ -38,7 +38,12 @@ class BaseHandler(webapp2.RequestHandler):
   def RenderTemplate(self, filename, template_args):
     """Render a template to the response output stream."""
     
-    self.response.write(self.jinja2.render_template(filename, **template_args))
+    values = {
+      "language": "en",
+    }
+    values.update(template_args)
+    
+    self.response.write(self.jinja2.render_template(filename, **values))
     
   def GetRenderedTemplate(self, filename, template_args):
     """Return a rendered template, without writing in the response."""

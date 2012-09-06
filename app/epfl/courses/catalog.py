@@ -192,7 +192,7 @@ class CatalogPage(base_handler.BaseHandler):
     
 
 class CoursePage(base_handler.BaseHandler):
-  def ComputeSectionHierarchy(self, course):
+  def ComputeSectionHierarchy(self, course, lang):
     course.sections_ = zip(course.sections, course.study_plans, course.urls)
     
     course.hierarchy_ = {}
@@ -200,12 +200,12 @@ class CoursePage(base_handler.BaseHandler):
     for section_trio in course.sections_:
       school = section_trio[0].school
       school_title = course.hierarchy_.setdefault("%s - %s" % (school.code,
-                                                               school.title()),
+                                                               school.title(use_french=(lang == "fr"))),
                                                   {})
       
-      section_ = school_title.setdefault(section_trio[0].title(),
+      section_ = school_title.setdefault(section_trio[0].title(use_french=(lang == "fr")),
                                          (section_trio[0].code, []))
-      section_[1].append((config.STUDY_PLANS[section_trio[1]], section_trio[1]))
+      section_[1].append((config.STUDY_PLANS[lang][section_trio[1]], section_trio[1]))
     
   def ComputeHoursVisibility(self, course):
     show_vector = [getattr(course, '%s_time' % s, None)
@@ -224,16 +224,17 @@ class CoursePage(base_handler.BaseHandler):
     if lang not in ["en", "fr"]:
       self.abort(404)
     
-    course = models.Course.get_by_key_name("%s:%s" % (lang, course_key))
+    course = models.Course.GetByCourseID(course_key, lang)
     
     if not course:
       self.abort(404)
     
-    self.ComputeSectionHierarchy(course)
+    self.ComputeSectionHierarchy(course, lang)
     self.ComputeHoursVisibility(course)
     self.DecodeLinksURLs(course)
     
     template_args = {
+      "language": lang,
       "course": course,
       "back_link": self.uri_for("catalog", q=self.request.get("orig_q", ""),
                                 offset=self.request.get("orig_offset", ""),

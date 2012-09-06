@@ -4,6 +4,10 @@
   Copyright 2012 EPFL. All rights reserved.
 -#}
 
+{%- macro localized(text_en, text_fr) -%}
+{{ text_fr if language == "fr" else text_en }}
+{%- endmacro -%}
+
 <html>
   <head>
     {% block head %}
