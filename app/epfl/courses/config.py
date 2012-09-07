@@ -30,11 +30,11 @@ STUDY_PLANS = {
     "min": "Minor",
   },
   "fr": {
-    "prop": "Propedeutics",
-    "bachelor": "Bachelor",
-    "master": "Master",
-    "edoc": "Doctoral",
-    "min": "Minor",
+    "prop": u"Propédeutique",
+    "bachelor": u"Cycle Bachelor",
+    "master": u"Cycle Master",
+    "edoc": u"Ecole doctorale",
+    "min": u"Mineur",
   },
 }
 

@@ -145,9 +145,9 @@
           N/A
         {% endif %}
         {% if course.show_trio_ -%}
-        (<span title="Lecture hours">{{ searchable(course.lecture_time, "lecthours", quoted=False) if course.lecture_time else "0" }}</span><!--
-      -->-<span title="Recitation hours">{{ searchable(course.recitation_time, "recithours", quoted=False) if course.recitation_time else "0" }}</span><!--
-      -->-<span title="Project/practice/lab hours">{{ searchable(course.project_time, "projhours", quoted=False) if course.project_time else "0" }}</span>)
+        (<span title="{{ localized('Lecture hours', 'Heures cours') }}">{{ searchable(course.lecture_time, "lecthours", quoted=False) if course.lecture_time else "0" }}</span><!--
+      -->-<span title="{{ localized('Recitation hours', 'Heures exercices') }}">{{ searchable(course.recitation_time, "recithours", quoted=False) if course.recitation_time else "0" }}</span><!--
+      -->-<span title="{{ localized('Project/practice/lab hours', 'Heures projet/TP/labo') }}">{{ searchable(course.project_time, "projhours", quoted=False) if course.project_time else "0" }}</span>)
         {%- endif %}
       {% endcall %}
       
@@ -259,7 +259,7 @@
     </div>
     <div class="sec-content footer-content">
       {% for section, study_plan, url in course.sections_ %}
-        <a href="{{ url }}" title="{{ section.display_name() }}">{{ section.display_name(short=True) }}</a>{{ "," if not loop.last }}
+        <a href="{{ url }}" title="{{ section.display_name(use_french=(language=='fr')) }}">{{ section.display_name(use_french=(language=="fr"), short=True) }}</a>{{ "," if not loop.last }}
       {% endfor %}
     </div>
   </div>

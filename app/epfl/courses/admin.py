@@ -160,15 +160,16 @@ class ImportCourseCatalog(base_handler.BaseHandler):
     if course_bucket:
       db.put(course_bucket)
   
-  def get(self, lang):
-    if lang not in ["en", "fr"]:
+  def get(self, operation):
+    if operation not in ["en", "fr", "sections"]:
       self.abort(400)
       
     self.PopulateSections()
-    self.ImportAllCourses(lang)
+    if operation in ["en", "fr"]:
+      self.ImportAllCourses(operation)
     
     self.SetTextMode()
-    self.response.out.write("OK (%s).\n" % lang)
+    self.response.out.write("OK (%s).\n" % operation)
     
 
 class SitemapHandler(base_handler.BaseHandler):

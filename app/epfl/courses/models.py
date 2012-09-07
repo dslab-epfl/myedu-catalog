@@ -52,7 +52,7 @@ class Section(db.Model):
       name = self.title(use_french)
 
     if self.minor:
-      name += " (minor)"
+      name += " (minor)" if not use_french else " (mineur)"
     elif self.master:
       name += " (master)"
       
