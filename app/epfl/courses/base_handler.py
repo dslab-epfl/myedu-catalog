@@ -61,6 +61,12 @@ class BaseHandler(webapp2.RequestHandler):
     
   def SetTextMode(self):
     self.response.headers['Content-Type'] = 'text/plain'
+    
+  def encoded_query(self, encoding="utf-8", **kwargs):
+    result = dict([(k.encode(encoding), v.encode(encoding))
+                   for k, v in self.request.GET.items()])
+    result.update(kwargs)
+    return result
 
   @staticmethod
   def ConvertToASCII(text):

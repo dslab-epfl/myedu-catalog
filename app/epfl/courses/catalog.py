@@ -110,19 +110,23 @@ class CatalogPage(base_handler.BaseHandler):
   
   @webapp2.cached_property
   def section_data(self):
-    data = []
-    for school in models.School.all():
-      sections = []
-      for section in school.section_set:
-        sections.append((section.code, section.display_name()))
-
-      sections.sort(key=lambda section: section[1])
-      data.append((school.code if school.code != models.School.OTHER else "",
-                   school.title(), sections))
-
-    data.sort(key=lambda school: school[1])
+    result = {}
+    for language in ["en", "fr"]:
+      data = []
+      for school in models.School.all():
+        sections = []
+        for section in school.section_set:
+          sections.append((section.code,
+                           section.display_name(use_french=(language == "fr"))))
+  
+        sections.sort(key=lambda section: section[1])
+        data.append((school.code if school.code != models.School.OTHER else "",
+                     school.title(use_french=(language == "fr")), sections))
+  
+      data.sort(key=lambda school: school[1])
+      result[language] = data
     
-    return data
+    return result
     
   def get(self, lang=None):
     if not lang:
@@ -171,7 +175,7 @@ class CatalogPage(base_handler.BaseHandler):
       'language': lang,
       'courses': found_courses,
       'static': {
-        'sections': self.section_data,
+        'sections': self.section_data[lang],
         'exam': config.EXAM,
         'credits': config.CREDITS,
         'coeff': config.COEFFICIENT,
@@ -195,7 +199,7 @@ class CatalogPage(base_handler.BaseHandler):
       },
       "switch_lang_link": self.uri_for("catalog",
                                        lang="en" if lang == "fr" else "fr",
-                                       **self.request.GET),
+                                       **self.encoded_query()),
     }
     
     self.RenderTemplate('catalog.html', template_args)
@@ -247,12 +251,12 @@ class CoursePage(base_handler.BaseHandler):
       "language": lang,
       "course": course,
       "back_link": self.uri_for("catalog", lang=lang,
-                                q=self.request.get("orig_q", ""),
-                                offset=self.request.get("orig_offset", ""),
-                                exact=self.request.get("orig_exact", "")),
+                                q=self.request.get("orig_q", "").encode("utf-8"),
+                                offset=self.request.get("orig_offset", "").encode("utf-8"),
+                                exact=self.request.get("orig_exact", "")).encode("utf-8"),
       "switch_lang_link": self.uri_for("course", course_key=course_key,
                                        lang="en" if lang == "fr" else "fr",
-                                       **self.request.GET),
+                                       **self.encoded_query()),
     }
     
     self.RenderTemplate('course.html', template_args)
