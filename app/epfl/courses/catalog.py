@@ -176,7 +176,7 @@ class CatalogPage(base_handler.BaseHandler):
       'courses': found_courses,
       'static': {
         'sections': self.section_data[lang],
-        'exam': config.EXAM,
+        'exam': config.EXAM[lang],
         'credits': config.CREDITS,
         'coeff': config.COEFFICIENT,
         'lecture': config.LECTURE_TIME,

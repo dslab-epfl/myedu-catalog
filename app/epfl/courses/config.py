@@ -38,22 +38,40 @@ STUDY_PLANS = {
   },
 }
 
-EXAM = [
-  "During the semester",
-  "Oral",
-  "Term paper",
-  "Written"
-]
 
-CREDITS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 20, 30]
+EXAM = {
+  "en": [
+    u'During the semester',
+    u'Multiple',
+    u'Oral',
+    u'Oral presentation',
+    u'Project report',
+    u'Term paper',
+    u'Written',
+    u'Written & Oral',
+  ],
+  "fr": [
+    u'Ecrit',
+    u'Ecrit & Oral',
+    u'Exposé',
+    u'Multiple',
+    u'Mémoire',
+    u'Oral',
+    u'Pendant le semestre',
+    u'Rapport de TP',
+  ],
+}
 
-COEFFICIENT = [ 0.5, 1.0, 1.5, 2.0, 3.0, 4.0 ]
+CREDITS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 20, 30]
 
-LECTURE_TIME = [ 1, 2, 3, 4, 5, 6 ]
+COEFFICIENT = [ 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0 ]
+
+LECTURE_TIME = [ 1, 2, 3, 4, 6 ]
 
 RECITATION_TIME = [ 1, 2, 3, 4 ]
 
-PROJECT_TIME = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 16 ]
+PROJECT_TIME = [ 1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 16 ]
+
 
 SAMPLE_QUERIES = [
   ('plan:"SHS-BA3" literature OR design',
