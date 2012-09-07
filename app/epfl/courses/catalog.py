@@ -190,8 +190,7 @@ class CatalogPage(base_handler.BaseHandler):
       'offset': search_results.offset,
       'exact': exact_search,
       'pagination': SearchPagination(search_results),
-      'debug_mode': (os.environ['SERVER_NAME'].endswith('appspot.com')
-                     or os.environ['SERVER_NAME'].endswith('localhost')),
+      'debug_mode': os.environ['SERVER_NAME'].endswith('localhost'),
       'debug': {
         'results': search_results.results,
         'provider': None,
