@@ -160,7 +160,11 @@
                   </td>
                 </tr>
                 <tr>
-                  <td class="adv_label"><label for="exam">Exam:</label>
+                  <td class="adv_label">
+                    <label for="exam">
+                      {{ localized("Exam:", "Examen:") }}
+                    </label>
+                  </td>
                   <td class="adv_value">
                     {{ multichoice("exam", "aq_exam", static["exam"]) }}
                   </td>
@@ -222,7 +226,7 @@
     </div>
     <div id="feedback-box">
       <a href="https://docs.google.com/spreadsheet/viewform?formkey=dDJ1UVpEM1VFRkszclBrdTRjc3JfYkE6MQ#gid=0" target="_blank">
-        {{ localized("Got feedback?", "Passez nous votre feedback") }}
+        {{ localized("Got feedback?", "Donnez-nous votre avis") }}
       </a>
     </div>
     {% if not query %}
