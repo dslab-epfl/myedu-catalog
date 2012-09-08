@@ -1,3 +1,7 @@
+#wrapper {
+  padding-bottom: 20px;
+}
+
 body.centered {
 	text-align: center;
 }
