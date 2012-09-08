@@ -16,6 +16,8 @@ from google.appengine.runtime import apiproxy_errors
 class AppSearchProvider(object):
   INDEX_NAME = 'courses-index'
   
+  MAX_SORT_LIMIT = 500
+  
   @classmethod
   def GetIndex(cls):
     return search.Index(name=cls.INDEX_NAME)
@@ -34,9 +36,22 @@ class AppSearchProvider(object):
     results.latest_results = []
     
     try:
+      sort_expr = [
+        search.SortExpression("_score",
+                              direction=search.SortExpression.DESCENDING,
+                              default_value=0.0),
+        search.SortExpression("title",
+                              direction=search.SortExpression.ASCENDING,
+                              default_value="")
+      ]
+      sort_opts = search.SortOptions(sort_expr,
+                                     match_scorer=search.MatchScorer(),
+                                     limit=cls.MAX_SORT_LIMIT)
+      
       search_query = search.Query(query_string,
                                   search.QueryOptions(limit=limit,
                                                       offset=offset,
+                                                      sort_options=sort_opts,
                                                       number_found_accuracy=accuracy,
                                                       ids_only=True))
       search_results = cls.GetIndex().search(search_query)
