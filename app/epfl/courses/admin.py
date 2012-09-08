@@ -67,14 +67,27 @@ class ImportCourseCatalog(base_handler.BaseHandler):
                     title_en=school.title_en,
                     title_fr=school.title_fr).put()
                     
-    for section in static_data.SECTIONS.values():
+    for section in static_data.SECTIONS.values():      
       models.Section(key_name=section.code,
                      title_short=section.title_short,
                      title_en=section.title_en,
                      title_fr=section.title_fr,
                      school=models.School.get_by_key_name(section.school),
                      minor=section.minor,
-                     master=section.master).put()
+                     alias=section.alias).put()
+                     
+  @staticmethod
+  def ResolveSectionKeys(section_key_names):
+    """Compute the set of unique keys after resolving all aliases."""
+    
+    sections = [models.Section.get_by_key_name(section)
+                for section in section_key_names]
+    aliased_key_names = set([(section.alias if section.alias
+                              else section.key().name())
+                             for section in sections])
+    
+    return [models.Section.get_by_key_name(section).key()
+            for section in list(aliased_key_names)]
   
   @classmethod
   def CreateCourse(cls, course_desc, language):
@@ -91,9 +104,10 @@ class ImportCourseCatalog(base_handler.BaseHandler):
     course.title = course_desc_lang["title"]
     course.language = course_desc_lang["language"]
     
-    sections = [e["section"] for e in course_desc["study_plan_entry"]]
-    course.section_keys = [models.Section.get_by_key_name(section).key()
-                           for section in sections]
+    section_keys = cls.ResolveSectionKeys(
+      [e["section"] for e in course_desc["study_plan_entry"]])
+    course.section_keys = section_keys
+    
     course.study_plans = [e["plan"] for e in course_desc["study_plan_entry"]]
     
     course.instructors = [i["name"]
@@ -205,6 +219,37 @@ class BuildSearchIndexHandler(base_handler.BaseHandler):
         self.response.out.write("Search quota exceeded. Try again later.\n")
     else:
       self.abort(400)
+      
+
+class RemoveSectionHandler(base_handler.BaseHandler):
+  def get(self, sec_id, dest_id):
+    self.SetTextMode()
+    
+    section = models.Section.get_by_key_name(sec_id)
+    destination = models.Section.get_by_key_name(dest_id)
+    
+    if section is None or destination is None:
+      self.abort(400)
+      
+    courses = []
+      
+    for course in models.Course.all().filter("section_keys =", section.key()):
+      course.needs_indexing_ = True
+      
+      section_set = set(course.section_keys)
+      section_set.remove(section.key())
+      section_set.add(destination.key())
+      
+      course.section_keys = list(section_set)
+      courses.append(course)
+      
+    self.response.out.write("Affected courses: %d...\n" % len(courses))
+    
+    db.put(courses)
+    
+    section.delete()
+    
+    self.response.out.write("OK. The search index needs to be rebuilt.")
       
 
 class QueryStatsHandler(base_handler.BaseHandler):  

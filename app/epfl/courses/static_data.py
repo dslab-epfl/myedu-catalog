@@ -54,7 +54,8 @@ SCHOOLS = dict([(school.code, school) for school in [
 class Section(object):
   def __init__(self, code, school, title_short=None,
                title_en=None, title_fr=None,
-               master=False, minor=False):
+               master=False, minor=False,
+               alias=None):
     self.code = code
     
     self.title_short = title_short
@@ -63,6 +64,7 @@ class Section(object):
     self.school = school
     self.minor = minor
     self.master = master
+    self.alias = alias
     
     SCHOOLS[school].sections.append(self)
 
@@ -100,14 +102,11 @@ SECTIONS = dict([(section.code, section) for section in [
   Section('SC-EPFL', 'IC', title_short='IC-SSC-MS',
           title_en='Communication Systems',
           title_fr=u'Systèmes de communication',
-          master=True),
+          alias='SC'),
   Section('MIN-BIOCOMP', 'IC', title_short='IC-BIOCOMP',
           title_en='Biocomputing',
           title_fr=u'Biocomputing',
           minor=True),
-#  Section('MIN-IN-SEC', 'IC', title_short='IC-INSEC',
-#          title_en='Information Security',
-#          minor=True),
   
   # SB
   Section('CGC', 'SB', title_short='SB-SCGC',
@@ -131,7 +130,7 @@ SECTIONS = dict([(section.code, section) for section in [
   Section('MATH', 'SB', title_short='SB-SMA-MS',
           title_en='Mathematics',
           title_fr=u'Mathématiques',
-          master=True),
+          alias='MA'),
   Section('MA-CO', 'SB', title_short='SB-SMA-CO',
           title_en='Computational Science and Engineering',
           title_fr=u'Science et ingénierie computationnelles'),
@@ -149,7 +148,7 @@ SECTIONS = dict([(section.code, section) for section in [
   Section('PHYS', 'SB', title_short='SB-SPH-MS',
           title_en='Physics',
           title_fr=u'Physique',
-          master=True),
+          alias='PHYS'),
   Section('PH-NE', 'SB', title_short='SB-SPH-NE',
           title_en='Nuclear Engineering',
           title_fr=u'Génie nucléaire'),
@@ -193,7 +192,7 @@ SECTIONS = dict([(section.code, section) for section in [
   Section('SV-STV', 'SV', title_short='SV-SSV-STV',
           title_en='Life Sciences and Technologies',
           title_fr='Sciences et technologies du vivant',
-          master=True),
+          alias='SV'),
   
   # CDH
   Section('MIN-AREA-CULTURAL', 'CDH', title_short='CDH-AREACULTURAL',

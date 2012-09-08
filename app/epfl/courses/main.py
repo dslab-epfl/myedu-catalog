@@ -49,5 +49,7 @@ app = webapp2.WSGIApplication([
      webapp2.Route('/reinit/<operation>', handler=admin.ImportCourseCatalog),
      webapp2.Route('/index/<operation>', handler=admin.BuildSearchIndexHandler),
      webapp2.Route('/qstats', handler=admin.QueryStatsHandler),
+     webapp2.Route('/section/<sec_id>/remove/<dest_id>',
+                   handler=admin.RemoveSectionHandler),
    ])],
    debug=True, config=config)

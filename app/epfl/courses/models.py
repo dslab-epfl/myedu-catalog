@@ -39,6 +39,8 @@ class Section(db.Model):
   minor = db.BooleanProperty(default=False)
   master = db.BooleanProperty(default=False)
   
+  alias = db.StringProperty()
+  
   def title(self, use_french=False):
     if use_french:
       return self.title_fr or self.title_en
