@@ -333,7 +333,7 @@
         </td>
         <td class="td_section">
         {% for section in course.sections %}
-          <span title="{{ section.display_name() }}">{{ section.display_name(short=True) }}</span>{{ ", " if not loop.last }}
+          <span title="{{ section.display_name(use_french=(language=='fr')) }}">{{ section.display_name(short=True, use_french=(language=='fr')) }}</span>{{ ", " if not loop.last }}
         {% endfor %}
         </td>
       </tr>
