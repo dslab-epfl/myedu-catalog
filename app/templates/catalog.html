@@ -33,9 +33,22 @@
   	// Disable unused fields
   	$(function (){
   		$("#searchform").submit(function(e) {
-  	  		$(this).find(':input[value=""]').attr("disabled", "disabled");
-  	  		return true;
-  	  	});
+  			e.preventDefault();
+  			var _form = $(this);
+  			var data = {};
+  			var formData = _form.serializeArray();
+  			
+  			$.each(formData, function (index, value) {
+  				var data_name = formData[index].name;
+  				var data_value = formData[index].value;
+  				if (data_value != "") {
+  					data[data_name] = data_value;
+  				}
+  			});
+  			
+	  		document.location = _form.attr("action") + "?" + $.param(data);
+	  	});
+  		
   		$("#query").focus();
   	});
   	
