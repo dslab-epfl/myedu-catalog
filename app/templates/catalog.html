@@ -248,7 +248,7 @@
                    "Des exemples de requêtes avancées (cliquez sur les liens ci-dessous pour les voir):") }}
       <div style="padding-left: 5px;">
         {% for sample_query, text in static['samples'] %}
-        <a href='{{ url_for_lang("catalog", q=sample_query) }}'>{{ text }}</a>
+        <a href='{{ url_for_lang("catalog", q=sample_query.encode("utf-8")) }}'>{{ text }}</a>
         {% if not loop.last %}<br/>{% endif %}
         {% endfor %}
       </div>

@@ -155,9 +155,10 @@
       {% macro planning(name, hours, weeks) -%}
         {%- if hours -%}
           {%- if weeks -%}
-            {{name}} {{hours}}h/week x {{weeks}} weeks<br/>
+            {{ localized("%s %dh/week x %d weeks",
+                         "%s %dh hebdo x %d semaines") % (name, hours, weeks) }}<br/>
           {%- else -%}
-            {{hours}}h/term {{name}}<br/>
+            {{ localized("%s %dh/term", "%s %dh/semestre") % (name, hours) }}<br/>
           {%- endif -%}
         {%- endif -%} 
       {%- endmacro %}

@@ -73,13 +73,25 @@ RECITATION_TIME = [ 1, 2, 3, 4 ]
 PROJECT_TIME = [ 1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 16 ]
 
 
-SAMPLE_QUERIES = [
-  ('plan:"SHS-BA3" literature OR design',
-   'SHS courses on literature or design, taught in the 3rd bachelor semester'),
-  ('credits:2 "organic materials"',
-   '2-credit courses on organic materials'),
-  ('semester:fall java',
-   'Java-related courses taught in the Fall'),
-  ('section:"MIN-IN-SEC" -cryptography',
-   'Courses in the computer security minor that do not teach cryptography'),
-]
+SAMPLE_QUERIES = {
+  "en": [
+    ('section:shs literature OR design',
+     'SHS courses on literature or design'),
+    ('credits:2 organic materials',
+     '2-credit courses related to organic materials'),
+    ('semester:fall java',
+     'Java-related courses taught in the Fall'),
+    ('section:in ~compile',
+     'Computer science courses about compilers/compilations'),
+  ],
+  "fr": [
+    (u'section:shs littérature OR design',
+     u'Cours SHS sur la littérature ou le design'),
+    (u'credits:2 matériaux organiques',
+     u'Cours à 2 crédits liés aux matériaux organiques'),
+    (u'semester:automne java',
+     u"Cours lié à Java et enseigné en automne"),
+    (u'section:in ~compile',
+     u"Cours d'informatique sur les compilateurs / compilations"),
+  ]
+}

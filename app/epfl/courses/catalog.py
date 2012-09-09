@@ -196,7 +196,7 @@ class CatalogPage(base_handler.BaseHandler):
         'lecture': config.LECTURE_TIME,
         'recitation': config.RECITATION_TIME,
         'project': config.PROJECT_TIME,
-        'samples': config.SAMPLE_QUERIES,
+        'samples': config.SAMPLE_QUERIES[self.language],
       },
       'query': query_string,
       'original_query': autocorr_provider.original_query,
