@@ -16,6 +16,7 @@ import webapp2
 from lxml import html
 
 from webapp2_extras import jinja2
+from webapp2_extras import sessions
 
 
 class BaseHandler(webapp2.RequestHandler):
@@ -31,17 +32,59 @@ class BaseHandler(webapp2.RequestHandler):
     "[li]": u"•  ",
   }
   
+  # TODO(bucur): Make this a global configuration parameter
+  default_language = "en"
+  
+  def dispatch(self):
+    self.session_store = sessions.get_store(request=self.request)
+    
+    try:
+      webapp2.RequestHandler.dispatch(self)
+    finally:
+      self.session_store.save_sessions(self.response)
+  
   @webapp2.cached_property
   def jinja2(self):
     """The Jinja object."""
     
     return jinja2.get_jinja2(app=self.app)
   
+  @webapp2.cached_property
+  def session(self):
+    return self.session_store.get_session()
+  
+  @classmethod
+  def language_prefix(cls, handler_method):
+    """Decorator that adds language support to a handler."""
+
+    def language_handler(self, lang, *args, **kwargs):
+      if lang not in ["en", "fr"]:
+        self.abort(404)
+      
+      if self.language != lang:
+        self.session["language"] = lang
+        
+      handler_method(self, *args, **kwargs)
+
+    return language_handler
+  
+  @property
+  def language(self):
+    return self.session.get("language", self.default_language)
+  
+  def GetLanguageURLFor(self, _name, language=None, *args, **kwargs):
+    language = language or self.language
+    if language == "__switch__":
+      language = "en" if self.language != "en" else "fr"
+    
+    return self.uri_for(_name, lang=language, *args, **kwargs)
+  
   def RenderTemplate(self, filename, template_args):
     """Render a template to the response output stream."""
     
     values = {
-      "language": "en",
+      "language": self.language,
+      "url_for_lang": self.GetLanguageURLFor,
     }
     values.update(template_args)
     
@@ -59,12 +102,18 @@ class BaseHandler(webapp2.RequestHandler):
     json.dump(data, self.response.out, indent=True, encoding="utf-8")
     
   def SetAttachment(self, file_name):
+    """Configure the response to be a file attachment."""
+    
     self.response.headers['Content-Disposition'] = 'attachment;filename=%s' % file_name
     
   def SetTextMode(self):
+    """Set the response content type to plain text."""
+    
     self.response.headers['Content-Type'] = 'text/plain'
     
-  def encoded_query(self, encoding="utf-8", **kwargs):
+  def EncodedQuery(self, encoding="utf-8", **kwargs):
+    """Encode the URL query of the request."""
+    
     result = dict([(k.encode(encoding), v.encode(encoding))
                    for k, v in self.request.GET.items()])
     result.update(kwargs)
@@ -72,6 +121,8 @@ class BaseHandler(webapp2.RequestHandler):
 
   @staticmethod
   def ConvertToASCII(text):
+    """Strip accents from Unicode text."""
+    
     return unicodedata.normalize('NFKD', text).encode("ascii", "ignore")
   
   @classmethod

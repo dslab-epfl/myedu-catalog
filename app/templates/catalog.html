@@ -56,7 +56,7 @@
 {% endblock head %}
 
 {% macro jumpoffset(target_offset, label) -%}
-{% set url = url_for("catalog", lang=language, q=query.encode("utf-8"), offset=target_offset,
+{% set url = url_for_lang("catalog", q=query.encode("utf-8"), offset=target_offset,
                      exact=exact if exact else "") %}
 <a href="{{ url }}">{{ label }}</a>
 {%- endmacro %}
@@ -73,7 +73,7 @@
   <div id="search_box_wrapper">
   <div id="search_box">
     <div id="form_box">
-    <form action="{{ url_for('catalog', lang=language) }}" method="get" id="searchform" name="searchform">
+    <form action="{{ url_for_lang('catalog') }}" method="get" id="searchform" name="searchform">
       <div id="query_box">
         <input id="query" type="search" name="q" value="{{ query }}" maxlength="1024" />
       </div>
@@ -248,7 +248,7 @@
                    "Des exemples de requêtes avancées (cliquez sur les liens ci-dessous pour les voir):") }}
       <div style="padding-left: 5px;">
         {% for sample_query, text in static['samples'] %}
-        <a href='{{ url_for("catalog", lang=language, q=sample_query) }}'>{{ text }}</a>
+        <a href='{{ url_for_lang("catalog", q=sample_query) }}'>{{ text }}</a>
         {% if not loop.last %}<br/>{% endif %}
         {% endfor %}
       </div>
@@ -280,14 +280,14 @@
     <div class="suggestion_box">
       {{ localized("Showing results for", "Affichage des résultats pour") }}
       <span class="suggestion">
-        <a href="{{ url_for('catalog', lang=language, q=suggested_query) }}">
+        <a href="{{ url_for_lang('catalog', q=suggested_query) }}">
           {{ suggested_query }}</a></span>.
       {{ localized("Search instead for", "Essayez avec l'orthographe") }}
-      <span class="suggestion"><a href="{{ url_for('catalog', lang=language, q=original_query, exact=1) }}">{{ original_query }}</a></span>.
+      <span class="suggestion"><a href="{{ url_for_lang('catalog', q=original_query, exact=1) }}">{{ original_query }}</a></span>.
     </div>
     {% elif suggested_query %}
     <div class="suggestion_box">
-      Did you mean <span class="suggestion"><a href="{{ url_for('catalog', lang=language, q=suggested_query) }}">{{ suggested_query }}</a></span>?
+      Did you mean <span class="suggestion"><a href="{{ url_for_lang('catalog', q=suggested_query) }}">{{ suggested_query }}</a></span>?
     </div>
     {% endif %}
     <div class="info_box">
@@ -313,8 +313,7 @@
       <tr>
         <td class="td_index">{{ offset + loop.index }}</td>
         <td class="td_title">
-          <a href="{{ url_for('course', lang=language,
-                              course_key=course.course_id,
+          <a href="{{ url_for_lang('course', course_key=course.course_id,
                               orig_q=query.encode('utf-8'),
                               orig_offset=offset if offset else '',
                               orig_exact=exact if exact else '') }}">

@@ -47,7 +47,7 @@
                     quoted=True) -%}
 {%- set formatter = '%s: "%s"' if quoted else "%s: %s" -%}
 {%- set query = formatter % (query_field, query_value if query_value else content) -%}
-{%- set url = url_for("catalog", lang=language, q=query.encode("utf-8")) -%}                                  
+{%- set url = url_for_lang("catalog", q=query.encode("utf-8")) -%}                                  
 <a rel="nofollow" {% if tooltip %}title="{{ tooltip }}"{% endif %}
    href='{{ url }}'>{{ content }}</a>
 {%- endmacro %}
@@ -72,7 +72,7 @@
                 <li>
                   <span class="prop">
                   {% set query = 'section: "%s" plan: "%s"' % (code, study_code) %}
-                  <a href="{{ url_for('catalog', lang=language, q=query.encode('utf-8')) }}">
+                  <a href="{{ url_for_lang('catalog', q=query.encode('utf-8')) }}">
                     {{ study_plan }}
                   </a>
                   </span>
@@ -100,7 +100,7 @@
           {%- for study_plan, study_code in study_plans -%}
           <span class="prop">
           {%- set query = 'section: "%s" plan: "%s"' % (code, study_code) -%}
-          <a href="{{ url_for('catalog', lang=language, q=query.encode('utf-8')) }}">
+          <a href="{{ url_for_lang('catalog', q=query.encode('utf-8')) }}">
             {{- study_plan -}}
           </a></span>
           {{- ", " if not loop.last -}}

@@ -128,11 +128,8 @@ class CatalogPage(base_handler.BaseHandler):
     
     return result
     
-  def get(self, lang=None):
-    if not lang:
-      return self.redirect_to("catalog", lang="en")
-    if lang not in ["en", "fr"]:
-      self.abort(404)
+  @base_handler.BaseHandler.language_prefix
+  def get(self):
       
     ACCURACY = 2000
     
@@ -168,15 +165,14 @@ class CatalogPage(base_handler.BaseHandler):
         q_record.put()
         
         found_courses = models.Course.GetByCourseID(search_results.results,
-                                                    lang=lang)
+                                                    lang=self.language)
         found_courses = filter(lambda course: course is not None, found_courses)
     
     template_args = {
-      'language': lang,
       'courses': found_courses,
       'static': {
-        'sections': self.section_data[lang],
-        'exam': config.EXAM[lang],
+        'sections': self.section_data[self.language],
+        'exam': config.EXAM[self.language],
         'credits': config.CREDITS,
         'coeff': config.COEFFICIENT,
         'lecture': config.LECTURE_TIME,
@@ -196,16 +192,21 @@ class CatalogPage(base_handler.BaseHandler):
         'provider': None,
         'url': search_results.original_url_,
       },
-      "switch_lang_link": self.uri_for("catalog",
-                                       lang="en" if lang == "fr" else "fr",
-                                       **self.encoded_query()),
+      "switch_lang_link": self.GetLanguageURLFor("catalog",
+                                                 language="__switch__",
+                                                 **self.EncodedQuery()),
     }
     
     self.RenderTemplate('catalog.html', template_args)
     
+    
+class LanguageRedirect(base_handler.BaseHandler):
+  def get(self, *args, **kwargs):
+    return self.redirect("/%s%s" % (self.language, self.request.path_qs))
+
 
 class CoursePage(base_handler.BaseHandler):
-  def ComputeSectionHierarchy(self, course, lang):
+  def ComputeSectionHierarchy(self, course):
     course.sections_ = zip(course.sections, course.study_plans, course.urls)
     
     course.hierarchy_ = {}
@@ -213,16 +214,16 @@ class CoursePage(base_handler.BaseHandler):
     for section_trio in course.sections_:
       school = section_trio[0].school
       if school.code == school.OTHER:
-        title = school.title(use_french=(lang == "fr"))
+        title = school.title(use_french=(self.language == "fr"))
       else:
         title = "%s - %s" % (school.code,
-                             school.title(use_french=(lang == "fr")))
+                             school.title(use_french=(self.language == "fr")))
       
       school_ = course.hierarchy_.setdefault(title, {})
       
-      section_ = school_.setdefault(section_trio[0].title(use_french=(lang == "fr")),
+      section_ = school_.setdefault(section_trio[0].title(use_french=(self.language == "fr")),
                                     (section_trio[0].code, []))
-      section_[1].append((config.STUDY_PLANS[lang][section_trio[1]], section_trio[1]))
+      section_[1].append((config.STUDY_PLANS[self.language][section_trio[1]], section_trio[1]))
     
   def ComputeHoursVisibility(self, course):
     show_vector = [getattr(course, '%s_time' % s, None)
@@ -235,31 +236,27 @@ class CoursePage(base_handler.BaseHandler):
     decoded_links = [urllib.unquote_plus(link) for link in course.links]
     course.links_ = zip(course.links, decoded_links)
     
-  def get(self, course_key, lang=None):
-    if not lang:
-      return self.redirect_to("course", course_key=course_key, lang="en")
-    if lang not in ["en", "fr"]:
-      self.abort(404)
-    
-    course = models.Course.GetByCourseID(course_key, lang)
+  @base_handler.BaseHandler.language_prefix
+  def get(self, course_key):    
+    course = models.Course.GetByCourseID(course_key, self.language)
     
     if not course:
       self.abort(404)
     
-    self.ComputeSectionHierarchy(course, lang)
+    self.ComputeSectionHierarchy(course)
     self.ComputeHoursVisibility(course)
     self.DecodeLinksURLs(course)
     
     template_args = {
-      "language": lang,
       "course": course,
-      "back_link": self.uri_for("catalog", lang=lang,
+      "back_link": self.GetLanguageURLFor("catalog",
                                 q=self.request.get("orig_q", "").encode("utf-8"),
                                 offset=self.request.get("orig_offset", "").encode("utf-8"),
                                 exact=self.request.get("orig_exact", "")).encode("utf-8"),
-      "switch_lang_link": self.uri_for("course", course_key=course_key,
-                                       lang="en" if lang == "fr" else "fr",
-                                       **self.encoded_query()),
+      "switch_lang_link": self.GetLanguageURLFor("course",
+                                                 language="__switch__",
+                                                 course_key=course_key,
+                                                 **self.EncodedQuery()),
     }
     
     self.RenderTemplate('course.html', template_args)

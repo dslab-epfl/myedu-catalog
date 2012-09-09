@@ -31,19 +31,22 @@ config['webapp2_extras.jinja2'] = {
 
 
 app = webapp2.WSGIApplication([
-   routes.RedirectRoute('/', handler=catalog.CatalogPage,
-                        name='catalog-stripped', strict_slash=True),
-   routes.RedirectRoute('/<lang>', handler=catalog.CatalogPage,
-                        name="catalog", strict_slash=True),
-                               
    webapp2.Route('/sitemap.xml', handler=admin.SitemapHandler),
+   
+   webapp2.Route('/', handler=catalog.LanguageRedirect,
+                 name="catalog-redir"),
+   routes.RedirectRoute('/course/<course_key>',
+                        handler=catalog.LanguageRedirect, name="course-redir"),
+   
+   routes.PathPrefixRoute('/<lang:\w+>', [
+     routes.RedirectRoute('/', handler=catalog.CatalogPage,
+                          name="catalog", strict_slash=True),
                                
-   routes.RedirectRoute('/course', name="no-course",
-                        redirect_to_name="catalog-stripped", strict_slash=True),
-   routes.RedirectRoute("/course/<course_key>", handler=catalog.CoursePage,
-                        name="course-stripped", strict_slash=True),
-   webapp2.Route('/course/<course_key>/<lang>', handler=catalog.CoursePage,
-                 name="course"),
+     routes.RedirectRoute('/course', name="no-course",
+                          redirect_to_name="catalog", strict_slash=True),
+     routes.RedirectRoute('/course/<course_key>', handler=catalog.CoursePage,
+                           name="course", strict_slash=True),
+   ]),
                                
    routes.PathPrefixRoute('/admin', [
      webapp2.Route('/reinit/<operation>', handler=admin.ImportCourseCatalog),
