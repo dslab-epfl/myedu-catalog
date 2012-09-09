@@ -92,7 +92,7 @@
 <div id="section-info-bread">
   <ul class="school-list">
     {% for school, sections in course.hierarchy_|dictsort %}
-    <li class="school"><span class="school">{{ school }}</span>
+    <li class="school {{-' last' if loop.last-}}"><span class="school">{{ school }}</span>
       <ul class="sec-list">
         {% for section, (code, study_plans) in sections|dictsort %}
         <li class="section">
