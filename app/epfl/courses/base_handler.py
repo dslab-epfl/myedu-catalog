@@ -13,6 +13,8 @@ import re
 import unicodedata
 import webapp2
 
+from lxml import html
+
 from webapp2_extras import jinja2
 
 
@@ -73,7 +75,7 @@ class BaseHandler(webapp2.RequestHandler):
     return unicodedata.normalize('NFKD', text).encode("ascii", "ignore")
   
   @classmethod
-  def ISAMarkup(cls, value):
+  def ISAMarkup(cls, value, cleanup=False):
     """Jinja filter for converting IS Academia markup to HTML."""
     
     value = value.replace("&amp;", "&")
@@ -90,4 +92,10 @@ class BaseHandler(webapp2.RequestHandler):
         value = value.replace(tag, "")
         
     
-    return " ".join([x.strip() for x in value.split('\n')]).strip()
+    value = " ".join([x.strip() for x in value.split('\n')]).strip()
+    
+    if cleanup:
+      html_doc = html.fromstring(value)
+      value = html.tostring(html_doc)
+    
+    return value

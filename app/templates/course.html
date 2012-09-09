@@ -218,7 +218,7 @@
   {% if content %}
   <div>
     <div class="sec-title isa-title">{{ title }}</div>
-    <div class="sec-content isa-content">{{ content|isamarkup|safe }}</div>
+    <div class="sec-content isa-content">{{ content|isamarkup(cleanup=True)|safe }}</div>
   </div>
   {% endif %}
   {% endfor %}
