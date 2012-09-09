@@ -92,23 +92,24 @@
 <div id="section-info-bread">
   <ul class="school-list">
     {% for school, sections in course.hierarchy_|dictsort %}
-    <li><ul class="sec-list">
-      {% for section, (code, study_plans) in sections|dictsort %}
-      <li>
-        <span class="school">{{ school }}</span> /
-        <span>{{ searchable(section, "section", code) }}</span> (
-        {%- for study_plan, study_code in study_plans -%}
-        <span class="prop">
-        {%- set query = 'section: "%s" plan: "%s"' % (code, study_code) -%}
-        <a href="{{ url_for('catalog', lang=language, q=query.encode('utf-8')) }}">
-          {{- study_plan -}}
-        </a></span>
-        {{- ", " if not loop.last -}}
-        {%- endfor -%}
-        )
-      </li>
-      {% endfor %}
-    </ul></li>
+    <li class="school"><span class="school">{{ school }}</span>
+      <ul class="sec-list">
+        {% for section, (code, study_plans) in sections|dictsort %}
+        <li class="section">
+          <span>{{ searchable(section, "section", code) }}</span> (
+          {%- for study_plan, study_code in study_plans -%}
+          <span class="prop">
+          {%- set query = 'section: "%s" plan: "%s"' % (code, study_code) -%}
+          <a href="{{ url_for('catalog', lang=language, q=query.encode('utf-8')) }}">
+            {{- study_plan -}}
+          </a></span>
+          {{- ", " if not loop.last -}}
+          {%- endfor -%}
+          )
+        </li>
+        {% endfor %}
+      </ul>
+    </li>
     {% endfor %}
   </ul>
 </div>
