@@ -9,6 +9,7 @@ __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 
 import json
+import logging
 import re
 import unicodedata
 import webapp2
@@ -59,6 +60,7 @@ class BaseHandler(webapp2.RequestHandler):
 
     def language_handler(self, lang, *args, **kwargs):
       if lang not in ["en", "fr"]:
+        logging.info("Invalid language specified: %s" % lang)
         self.abort(404)
       
       if self.language != lang:

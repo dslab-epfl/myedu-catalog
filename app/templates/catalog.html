@@ -313,10 +313,7 @@
       <tr>
         <td class="td_index">{{ offset + loop.index }}</td>
         <td class="td_title">
-          <a href="{{ url_for_lang('course', course_key=course.course_id,
-                              orig_q=query.encode('utf-8'),
-                              orig_offset=offset if offset else '',
-                              orig_exact=exact if exact else '') }}">
+          <a href="{{ url_for_lang('course', course_key=course.course_id) }}">
             {{ course.title }}
           </a>
         </td>

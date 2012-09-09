@@ -9,7 +9,9 @@ __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 import logging
 import os
+import re
 import urllib
+import urlparse
 import webapp2
 
 from epfl.courses import base_handler
@@ -130,7 +132,18 @@ class CatalogPage(base_handler.BaseHandler):
     
   @base_handler.BaseHandler.language_prefix
   def get(self):
-      
+    if self.request.referer and self.session.get("q"):
+      split_referer = urlparse.urlsplit(self.request.referer)
+      if re.match(r"/(\w+)/course/(\w+)", split_referer.path):
+        
+        redirect_url = self.GetLanguageURLFor("catalog", q=self.session.get("q"),
+                                              offset=self.session.get("offset", ""),
+                                              exact=self.session.get("exact", ""))
+        self.session.pop("q", None)
+        self.session.pop("offset", None)
+        self.session.pop("exact", None)
+        return self.redirect(redirect_url)
+    
     ACCURACY = 2000
     
     query = self.BuildQueryFromRequest()
@@ -167,6 +180,11 @@ class CatalogPage(base_handler.BaseHandler):
         found_courses = models.Course.GetByCourseID(search_results.results,
                                                     lang=self.language)
         found_courses = filter(lambda course: course is not None, found_courses)
+        
+        # Save the query in the session, so one can come back to it
+        self.session['q'] = query_string
+        self.session['offset'] = search_results.offset
+        self.session['exact'] = exact_search
     
     template_args = {
       'courses': found_courses,
@@ -249,10 +267,6 @@ class CoursePage(base_handler.BaseHandler):
     
     template_args = {
       "course": course,
-      "back_link": self.GetLanguageURLFor("catalog",
-                                q=self.request.get("orig_q", "").encode("utf-8"),
-                                offset=self.request.get("orig_offset", "").encode("utf-8"),
-                                exact=self.request.get("orig_exact", "")).encode("utf-8"),
       "switch_lang_link": self.GetLanguageURLFor("course",
                                                  language="__switch__",
                                                  course_key=course_key,
