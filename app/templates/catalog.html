@@ -346,7 +346,7 @@
     </span>
   {% endif %}
   {% for crt_page, crt_offset in pagination.pages %}
-    {% if crt_page == page %}
+    {% if crt_page == pagination.page %}
       <span style="font-weight: bold;">{{ crt_page + 1}}</span> 
     {% else %}
       {{ jumpoffset(crt_offset, crt_page + 1) }}
