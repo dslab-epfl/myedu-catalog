@@ -131,19 +131,7 @@ class CatalogPage(base_handler.BaseHandler):
     return result
     
   @base_handler.BaseHandler.language_prefix
-  def get(self):
-    if self.request.referer and self.session.get("q"):
-      split_referer = urlparse.urlsplit(self.request.referer)
-      if re.match(r"/(\w+)/course/(\w+)", split_referer.path):
-        
-        redirect_url = self.GetLanguageURLFor("catalog", q=self.session.get("q"),
-                                              offset=self.session.get("offset", ""),
-                                              exact=self.session.get("exact", ""))
-        self.session.pop("q", None)
-        self.session.pop("offset", None)
-        self.session.pop("exact", None)
-        return self.redirect(redirect_url)
-    
+  def get(self):    
     ACCURACY = 2000
     
     query = self.BuildQueryFromRequest()
@@ -180,11 +168,6 @@ class CatalogPage(base_handler.BaseHandler):
         found_courses = models.Course.GetByCourseID(search_results.results,
                                                     lang=self.language)
         found_courses = filter(lambda course: course is not None, found_courses)
-        
-        # Save the query in the session, so one can come back to it
-        self.session['q'] = query_string
-        self.session['offset'] = search_results.offset
-        self.session['exact'] = exact_search
     
     template_args = {
       'courses': found_courses,
