@@ -104,6 +104,13 @@ def _FetchCoursesInSection(plan_id, section_id, section_url):
 
     course_name = course_entry.a.string.strip()
     course_url = course_entry.a["href"]
+    
+    course_code_ = course_entry.find_next_sibling("div", class_="cours-code")
+    course_code = course_code_.string.strip().split("-")
+    
+    course_program_ = course_entry.find_next_sibling("div",
+                                                     class_="section-name")
+    course_program = course_program_.string.strip()
 
     # A valid course URL points to the IS Academia website
     parsed_url = urlparse.urlsplit(course_url)
@@ -119,6 +126,8 @@ def _FetchCoursesInSection(plan_id, section_id, section_url):
       "url_fr": course_url_fr,
       "plan": plan_id,
       "section": section_id,
+      "code": course_code,
+      "program": course_program,
     })
 
   return courses
