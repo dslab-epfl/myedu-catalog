@@ -78,16 +78,17 @@ class ImportCourseCatalog(base_handler.BaseHandler):
                      
   @staticmethod
   def ResolveSectionKeys(section_key_names):
-    """Compute the set of unique keys after resolving all aliases."""
+    """Compute the set of keys after resolving all aliases."""
     
     sections = [models.Section.get_by_key_name(section)
                 for section in section_key_names]
-    aliased_key_names = set([(section.alias if section.alias
-                              else section.key().name())
-                             for section in sections])
+    
+    aliased_key_names = [(section.alias if section.alias
+                          else section.key().name())
+                         for section in sections]
     
     return [models.Section.get_by_key_name(section).key()
-            for section in list(aliased_key_names)]
+            for section in aliased_key_names]
   
   @classmethod
   def CreateCourse(cls, course_desc, language):
@@ -235,6 +236,10 @@ class RemoveSectionHandler(base_handler.BaseHandler):
       
     for course in models.Course.all().filter("section_keys =", section.key()):
       course.needs_indexing_ = True
+      
+      course.section_keys = map(lambda key: destination.key()
+                                if key == section.key() else key,
+                                course.section_keys)
       
       section_set = set(course.section_keys)
       section_set.remove(section.key())

@@ -181,7 +181,7 @@ class AppEngineIndex(object):
                            fields=doc_fields)
   
   @classmethod  
-  def _IndexDocuments(cls, doc_bag):
+  def _IndexDocuments(cls, doc_bag, language_index=False):
     """Atomically index a bag of documents and update their indexing status."""
     
     docs, courses = zip(*doc_bag)
@@ -191,8 +191,9 @@ class AppEngineIndex(object):
     
     try:
       cls.GetIndex().add(docs_all)
-      cls.GetIndex(language="en").add(docs_en)
-      cls.GetIndex(language="fr").add(docs_fr)
+      if language_index:
+        cls.GetIndex(language="en").add(docs_en)
+        cls.GetIndex(language="fr").add(docs_fr)
     except apiproxy_errors.OverQuotaError:
       logging.error("Over quota error.")
       return False
@@ -202,7 +203,7 @@ class AppEngineIndex(object):
       return True
 
   @classmethod
-  def UpdateCourseIndex(cls):
+  def UpdateCourseIndex(cls, language_index=False):
     """Update the search index for the given courses."""
     
     queries = {}
@@ -211,7 +212,7 @@ class AppEngineIndex(object):
       q = models.Course.all().filter("needs_indexing_ =", True)
       q.filter("desc_language_ =", language)
       q.order("__key__")
-      queries[language] = q.run()
+      queries[language] = q.fetch(limit=None)
     
     BATCH_SIZE = 50
     doc_bag = []
@@ -230,13 +231,13 @@ class AppEngineIndex(object):
       doc_bag_item = ((doc_all, doc_en, doc_fr), (course_en, course_fr))
       
       if len(doc_bag) == BATCH_SIZE:
-        if not cls._IndexDocuments(doc_bag):
+        if not cls._IndexDocuments(doc_bag, language_index):
           return False
         doc_bag = [doc_bag_item]
       else:
         doc_bag.append(doc_bag_item)
     if doc_bag:
-      if not cls._IndexDocuments(doc_bag):
+      if not cls._IndexDocuments(doc_bag, language_index):
         return False
       
     return True

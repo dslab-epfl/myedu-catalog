@@ -1,0 +1,3 @@
+backends:
+- name: admin
+  options: dynamic
