@@ -116,6 +116,8 @@ class CatalogPage(base_handler.BaseHandler):
       for school in models.School.all():
         sections = []
         for section in school.section_set:
+          if section.alias:
+            continue
           sections.append((section.code,
                            section.display_name(use_french=(language == "fr"))))
 
