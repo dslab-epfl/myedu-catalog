@@ -9,10 +9,12 @@ __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 
 import json
+import logging
 import re
 import unicodedata
 import webapp2
 
+from lxml import etree
 from lxml import html
 
 from webapp2_extras import jinja2
@@ -146,7 +148,10 @@ class BaseHandler(webapp2.RequestHandler):
     value = " ".join([x.strip() for x in value.split('\n')]).strip()
     
     if cleanup:
-      html_doc = html.fromstring(value)
-      value = html.tostring(html_doc)
+      try:
+        html_doc = html.fromstring(value)
+        value = html.tostring(html_doc)
+      except etree.XMLSyntaxError:
+        logging.warning("Very broken HTML encountered in ISA markup.")
     
     return value
