@@ -97,13 +97,8 @@
         {% for section, (code, study_plans) in sections|dictsort %}
         <li class="section">
           <span>{{ searchable(section, "section", code) }}</span> (
-          {%- for study_plan, study_code in study_plans -%}
-          <span class="prop">
-          {%- set query = 'section: "%s" plan: "%s"' % (code, study_code) -%}
-          <a href="{{ url_for_lang('catalog', q=query.encode('utf-8')) }}">
-            {{- study_plan -}}
-          </a></span>
-          {{- ", " if not loop.last -}}
+          {%- for study_plan in study_plans -%}
+          <span class="prop">{{ study_plan }}</span>{{- ", " if not loop.last -}}
           {%- endfor -%}
           )
         </li>
@@ -260,7 +255,7 @@
       {{ localized("IS-Academia homepage(s)", "IS-Academia homepage(s)") }}
     </div>
     <div class="sec-content footer-content">
-      {% for section, study_plan, url in course.sections_ %}
+      {% for section, study_plan, url, code_prefix, code_number in course.sections_ %}
         <a href="{{ url }}" title="{{ section.display_name(use_french=(language=='fr')) }}">{{ section.display_name(use_french=(language=="fr"), short=True) }}</a>{{ "," if not loop.last }}
       {% endfor %}
     </div>

@@ -110,6 +110,12 @@ class ImportCourseCatalog(base_handler.BaseHandler):
     course.section_keys = section_keys
     
     course.study_plans = [e["plan"] for e in course_desc["study_plan_entry"]]
+    course.code_prefix = [(e["code"][0]
+                           if e["code"][0] else "XX")
+                          for e in course_desc["study_plan_entry"]]
+    course.code_number = [(e["code"][1]
+                           if e["code"][0] else "000")
+                          for e in course_desc["study_plan_entry"]]
     
     course.instructors = [i["name"]
                           for i in course_desc_lang["instructors"]]

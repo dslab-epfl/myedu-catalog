@@ -209,7 +209,8 @@ class LanguageRedirect(base_handler.BaseHandler):
 
 class CoursePage(base_handler.BaseHandler):
   def ComputeSectionHierarchy(self, course):
-    course.sections_ = zip(course.sections, course.study_plans, course.urls)
+    course.sections_ = zip(course.sections, course.study_plans, course.urls,
+                           course.code_prefix, course.code_number)
 
     course.hierarchy_ = {}
 
@@ -224,8 +225,9 @@ class CoursePage(base_handler.BaseHandler):
       school_ = course.hierarchy_.setdefault(title, {})
 
       section_ = school_.setdefault(section_trio[0].title(use_french=(self.language == "fr")),
-                                    (section_trio[0].code, []))
-      section_[1].append((config.STUDY_PLANS[self.language][section_trio[1]], section_trio[1]))
+                                    (section_trio[0].code, set()))
+      if section_trio[3] != "XX":
+        section_[1].add("-".join([section_trio[3], section_trio[4]]))
 
   def ComputeHoursVisibility(self, course):
     show_vector = [getattr(course, '%s_time' % s, None)
@@ -240,7 +242,10 @@ class CoursePage(base_handler.BaseHandler):
 
   @base_handler.BaseHandler.language_prefix
   def get(self, course_key):
-    course = models.Course.GetByCourseID(course_key, self.language)
+    try:
+      course = models.Course.GetByCourseID(course_key, self.language)
+    except UnicodeDecodeError:
+      self.abort(404)
 
     if not course:
       self.abort(404)

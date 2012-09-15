@@ -7,6 +7,7 @@ __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 import itertools
 import logging
+import re
 import unicodedata
 
 from google.appengine.api import search
@@ -88,6 +89,8 @@ class AppEngineIndex(object):
     """Return language agnostic fields if language is None, otherwise return
     language-specific fields."""
     
+    number_re = re.compile(r"(\d+).*")
+    
     if not language:
       # Language-agnostic fields
       mappings = [
@@ -100,6 +103,12 @@ class AppEngineIndex(object):
         # The study plan codes
         cls.FieldMapper(course.study_plans, search.TextField, 'plan',
                         multi=True),
+        cls.FieldMapper(course.code_prefix, search.AtomField, 'codeprefix',
+                        multi=True),
+        cls.FieldMapper(course.code_number, search.AtomField, 'codenumber',
+                        multi=True),
+        cls.FieldMapper(course.code_number, search.AtomField, 'codeplan',
+                        lambda s: s[0], multi=True),
         cls.FieldMapper(course.credit_count, search.NumberField, 'credits'),
         cls.FieldMapper(course.coefficient, search.NumberField, 'coefficient'),
         cls.FieldMapper(course.lecture_time, search.NumberField, 'lecthours'),

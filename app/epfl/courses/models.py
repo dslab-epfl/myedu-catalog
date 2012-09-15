@@ -74,6 +74,8 @@ class Course(db.Model):
   
   section_keys = db.ListProperty(db.Key)
   study_plans = db.StringListProperty()
+  code_prefix = db.StringListProperty()
+  code_number = db.StringListProperty()
   
   instructors = db.StringListProperty()
   urls = db.StringListProperty()
@@ -120,6 +122,10 @@ class Course(db.Model):
   @property
   def course_id(self):
     return self.key().name()[3:]
+  
+  @property
+  def codes(self):
+    pass
   
   @classmethod
   def GetByCourseID(cls, course_id, lang="en"):
