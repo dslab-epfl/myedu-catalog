@@ -3,72 +3,72 @@
   {
    "sections": [
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_prop_ar", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_prop_ar", 
      "id": "AR", 
      "title": "Architecture"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_prop_cgc", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_prop_cgc", 
      "id": "CGC", 
      "title": "Chemistry and Chemical Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_prop_gc", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_prop_gc", 
      "id": "GC", 
      "title": "Civil Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_prop_sc", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_prop_sc", 
      "id": "SC", 
      "title": "Communication Systems"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_prop_in", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_prop_in", 
      "id": "IN", 
      "title": "Computer Science"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_prop_el", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_prop_el", 
      "id": "EL", 
      "title": "Electrical and Electronics Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_prop_sie", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_prop_sie", 
      "id": "SIE", 
      "title": "Environmental Sciences and Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_prop_shs", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_prop_shs", 
      "id": "SHS", 
      "title": "Humanities and Social Sciences"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_prop_sv", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_prop_sv", 
      "id": "SV", 
      "title": "Life Sciences and Technologies"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_prop_mx", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_prop_mx", 
      "id": "MX", 
      "title": "Materials Science and Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_prop_ma", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_prop_ma", 
      "id": "MA", 
      "title": "Mathematics"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_prop_gm", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_prop_gm", 
      "id": "GM", 
      "title": "Mechanical Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_prop_mt", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_prop_mt", 
      "id": "MT", 
      "title": "Microengineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_prop_ph", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_prop_ph", 
      "id": "PH", 
      "title": "Physics"
     }
@@ -79,77 +79,77 @@
   {
    "sections": [
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclebachelor_ar", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclebachelor_ar", 
      "id": "AR", 
      "title": "Architecture"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclebachelor_cgc", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclebachelor_cgc", 
      "id": "CGC", 
      "title": "Chemistry and Chemical Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclebachelor_gc", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclebachelor_gc", 
      "id": "GC", 
      "title": "Civil Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclebachelor_sc", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclebachelor_sc", 
      "id": "SC", 
      "title": "Communication Systems"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclebachelor_in", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclebachelor_in", 
      "id": "IN", 
      "title": "Computer Science"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclebachelor_enac", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclebachelor_enac", 
      "id": "ENAC", 
      "title": "Design & Build Together ENAC"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclebachelor_el", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclebachelor_el", 
      "id": "EL", 
      "title": "Electrical and Electronics Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclebachelor_sie", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclebachelor_sie", 
      "id": "SIE", 
      "title": "Environmental Sciences and Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclebachelor_shs", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclebachelor_shs", 
      "id": "SHS", 
      "title": "Humanities and Social Sciences"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclebachelor_sv", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclebachelor_sv", 
      "id": "SV", 
      "title": "Life Sciences and Technologies"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclebachelor_mx", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclebachelor_mx", 
      "id": "MX", 
      "title": "Materials Science and Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclebachelor_ma", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclebachelor_ma", 
      "id": "MA", 
      "title": "Mathematics"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclebachelor_gm", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclebachelor_gm", 
      "id": "GM", 
      "title": "Mechanical Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclebachelor_mt", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclebachelor_mt", 
      "id": "MT", 
      "title": "Microengineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclebachelor_ph", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclebachelor_ph", 
      "id": "PH", 
      "title": "Physics"
     }
@@ -160,122 +160,122 @@
   {
    "sections": [
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_ing_math", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_ing_math", 
      "id": "ING-MATH", 
      "title": "Applied Mathematics sciences"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_ing_phys", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_ing_phys", 
      "id": "ING-PHYS", 
      "title": "Applied Physics"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_ar", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_ar", 
      "id": "AR", 
      "title": "Architecture"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_sv_b", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_sv_b", 
      "id": "SV-B", 
      "title": "Bioengineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_cgc_ing", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_cgc_ing", 
      "id": "CGC-ING", 
      "title": "Chemical Engineering and Biotechnology"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_gc", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_gc", 
      "id": "GC", 
      "title": "Civil Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_sc_epfl", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_sc_epfl", 
      "id": "SC-EPFL", 
      "title": "Communication Systems"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_ma_co", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_ma_co", 
      "id": "MA-CO", 
      "title": "Computational science and Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_in", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_in", 
      "id": "IN", 
      "title": "Computer Science"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_el", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_el", 
      "id": "EL", 
      "title": "Electrical and Electronics Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_eme_mes", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_eme_mes", 
      "id": "EME-MES", 
      "title": "Energy Management and Sustainability"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_sie", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_sie", 
      "id": "SIE", 
      "title": "Environmental Sciences and Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_if", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_if", 
      "id": "IF", 
      "title": "Financial engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_shs", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_shs", 
      "id": "SHS", 
      "title": "Humanities and Social Sciences"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_sv_stv", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_sv_stv", 
      "id": "SV-STV", 
      "title": "Life Sciences and Technologies"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_mte", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_mte", 
      "id": "MTE", 
      "title": "Management of Technology and Entrepreneurship"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_mx", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_mx", 
      "id": "MX", 
      "title": "Materials Science and Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_math", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_math", 
      "id": "MATH", 
      "title": "Mathematics"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_gm", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_gm", 
      "id": "GM", 
      "title": "Mechanical Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_mnis", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_mnis", 
      "id": "MNIS", 
      "title": "Micro and Nanotechnologies for Integrated Systems"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_mt", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_mt", 
      "id": "MT", 
      "title": "Microengineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_cgc_chim", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_cgc_chim", 
      "id": "CGC-CHIM", 
      "title": "Molecular & Biological Chemistry"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_ph_ne", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_ph_ne", 
      "id": "PH-NE", 
      "title": "Nuclear engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=bama_cyclemaster_phys", 
+     "url": "http://search.epfl.ch/studyplan.action?section=bama_cyclemaster_phys", 
      "id": "PHYS", 
      "title": "Physics"
     }
@@ -286,92 +286,92 @@
   {
    "sections": [
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=edoc_edar", 
+     "url": "http://search.epfl.ch/studyplan.action?section=edoc_edar", 
      "id": "EDAR", 
      "title": "Architecture and Sciences of the City"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=edoc_edbb", 
+     "url": "http://search.epfl.ch/studyplan.action?section=edoc_edbb", 
      "id": "EDBB", 
      "title": "Biotechnology and Bioengineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=edoc_edch", 
+     "url": "http://search.epfl.ch/studyplan.action?section=edoc_edch", 
      "id": "EDCH", 
      "title": "Chemistry and Chemical Engineering (edoc)"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=edoc_edce", 
+     "url": "http://search.epfl.ch/studyplan.action?section=edoc_edce", 
      "id": "EDCE", 
      "title": "Civil and Environmental Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=edoc_edic", 
+     "url": "http://search.epfl.ch/studyplan.action?section=edoc_edic", 
      "id": "EDIC", 
      "title": "Computer, Communication and Information Sciences"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=edoc_edee", 
+     "url": "http://search.epfl.ch/studyplan.action?section=edoc_edee", 
      "id": "EDEE", 
      "title": "Electrical Engineering"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=edoc_edey", 
+     "url": "http://search.epfl.ch/studyplan.action?section=edoc_edey", 
      "id": "EDEY", 
      "title": "Energy (edoc)"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=edoc_edfi", 
+     "url": "http://search.epfl.ch/studyplan.action?section=edoc_edfi", 
      "id": "EDFI", 
      "title": "Finance"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=edoc_edmt", 
+     "url": "http://search.epfl.ch/studyplan.action?section=edoc_edmt", 
      "id": "EDMT", 
      "title": "Management of technology (edoc)"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=edoc_edpr", 
+     "url": "http://search.epfl.ch/studyplan.action?section=edoc_edpr", 
      "id": "EDPR", 
      "title": "Manufacturing Systems and Robotics"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=edoc_edmx", 
+     "url": "http://search.epfl.ch/studyplan.action?section=edoc_edmx", 
      "id": "EDMX", 
      "title": "Materials Science and Engineering (edoc)"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=edoc_edma", 
+     "url": "http://search.epfl.ch/studyplan.action?section=edoc_edma", 
      "id": "EDMA", 
      "title": "Mathematics (edoc)"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=edoc_edme", 
+     "url": "http://search.epfl.ch/studyplan.action?section=edoc_edme", 
      "id": "EDME", 
      "title": "Mechanics (edoc)"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=edoc_edmi", 
+     "url": "http://search.epfl.ch/studyplan.action?section=edoc_edmi", 
      "id": "EDMI", 
      "title": "Microsystems and Microelectronics"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=edoc_edms", 
+     "url": "http://search.epfl.ch/studyplan.action?section=edoc_edms", 
      "id": "EDMS", 
      "title": "Molecular Life Sciences"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=edoc_edne", 
+     "url": "http://search.epfl.ch/studyplan.action?section=edoc_edne", 
      "id": "EDNE", 
      "title": "Neuroscience"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=edoc_edpo", 
+     "url": "http://search.epfl.ch/studyplan.action?section=edoc_edpo", 
      "id": "EDPO", 
      "title": "Photonics"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=edoc_edpy", 
+     "url": "http://search.epfl.ch/studyplan.action?section=edoc_edpy", 
      "id": "EDPY", 
      "title": "Physics (edoc)"
     }
@@ -382,52 +382,52 @@
   {
    "sections": [
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=min__min_area_cultural", 
+     "url": "http://search.epfl.ch/studyplan.action?section=min__min_area_cultural", 
      "id": "MIN-AREA-CULTURAL", 
      "title": "Area and Cultural Studies"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=min__min_biocomp", 
+     "url": "http://search.epfl.ch/studyplan.action?section=min__min_biocomp", 
      "id": "MIN-BIOCOMP", 
      "title": "Biocomputing"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=min__min_biomed", 
+     "url": "http://search.epfl.ch/studyplan.action?section=min__min_biomed", 
      "id": "MIN-BIOMED", 
      "title": "Biomedical technologies"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=min__min_biotech", 
+     "url": "http://search.epfl.ch/studyplan.action?section=min__min_biotech", 
      "id": "MIN-BIOTECH", 
      "title": "Biotechnologie"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=min__min_ener", 
+     "url": "http://search.epfl.ch/studyplan.action?section=min__min_ener", 
      "id": "MIN-ENER", 
      "title": "Energy"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=min__min_mte", 
+     "url": "http://search.epfl.ch/studyplan.action?section=min__min_mte", 
      "id": "MIN-MTE", 
      "title": "Management of Technology and Entrepreneurship"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=min__min_neupro", 
+     "url": "http://search.epfl.ch/studyplan.action?section=min__min_neupro", 
      "id": "MIN-NEUPRO", 
      "title": "Neuroprosth\u00e9tiques"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=min__min_neur_comp", 
+     "url": "http://search.epfl.ch/studyplan.action?section=min__min_neur_comp", 
      "id": "MIN-NEUR-COMP", 
      "title": "Neurosciences computationnelles"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=min__min_tec_space", 
+     "url": "http://search.epfl.ch/studyplan.action?section=min__min_tec_space", 
      "id": "MIN-TEC-SPACE", 
      "title": "Space technologies"
     }, 
     {
-     "url": "http://search-test.epfl.ch/studyplan.action?section=min__min_dev_ter", 
+     "url": "http://search.epfl.ch/studyplan.action?section=min__min_dev_ter", 
      "id": "MIN-DEV-TER", 
      "title": "Territorial development"
     }

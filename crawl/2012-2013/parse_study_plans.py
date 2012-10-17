@@ -22,7 +22,7 @@ import caching
 
 
 # The root of our parsing
-search_base_url = "http://search-test.epfl.ch"
+search_base_url = "http://search.epfl.ch"
 study_plans_url = urlparse.urljoin(search_base_url, "/eduweb.action")
 
 
@@ -181,7 +181,7 @@ class ParsedCourseDescription(object):
   coefficient_label = "Coefficient"
   subjects_label = "Subject examined"
   lecture_label = "Lecture"
-  recitation_label = "Recitation"
+  recitation_label = "Exercises"
   project_label = "Project"
   labs_label = "Labs"
   practical_label = "Practical work"
@@ -347,13 +347,11 @@ class ParsedCourseDescription(object):
                              if s != item_label])
 
       if not item_value:
-        print "** Empty item value for '%s'" % item_label
+        print "** Empty item value for '%s'" % item_label.encode("utf-8")
         continue
 
-      print item_label, "=", item_value
+      print item_label.encode("utf-8"), "=", item_value.encode("utf-8")
 
-      # TODO(bucur): Move string constants to class definition, to support
-      # French in the future.
       if item_label == self.semester_label:
         self.semester = item_value
       elif item_label == self.exam_form_label:
@@ -474,12 +472,12 @@ def FetchCourseDescriptions(courses):
       print "Section title: '%s'" % course["title"],
       print "Description title: '%s'" % description["en"]["title"]
 
-    print "-- Title:", description["en"]["title"],
-    print "/", description["fr"]["title"]
+    print "-- Title:", description["en"]["title"].encode("utf-8"),
+    print "/", description["fr"]["title"].encode("utf-8")
     
     print "-- Instructors:", ", ".join(["%s <%s>" % (i["name"], i["url"])
-                                        for i in description["en"]["instructors"]])
-    print "-- Language:", description["en"]["language"]
+                                        for i in description["en"]["instructors"]]).encode("utf-8")
+    print "-- Language:", (description["en"]["language"] or "N/A").encode("utf-8")
 
   return {
     "descriptions": descriptions,

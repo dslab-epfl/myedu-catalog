@@ -2331,8 +2331,7 @@
   {
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1772000&ww_x_anneeAcad=2012-2013&ww_i_section=246696&ww_i_niveau=&ww_c_langue=fr", 
    "code": [
-    "ChE", 
-    "311"
+    ""
    ], 
    "title": "Biochemical engineering", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1772000&ww_x_anneeAcad=2012-2013&ww_i_section=246696&ww_i_niveau=&ww_c_langue=en", 
@@ -7912,7 +7911,7 @@
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1499247990&ww_x_anneeAcad=2012-2013&ww_i_section=943936&ww_i_niveau=&ww_c_langue=fr", 
    "code": [
     "ME", 
-    "323"
+    "325"
    ], 
    "title": "Control systems + TP", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1499247990&ww_x_anneeAcad=2012-2013&ww_i_section=943936&ww_i_niveau=&ww_c_langue=en", 
@@ -8713,13 +8712,13 @@
    "plan": "prop"
   }, 
   {
-   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1773502&ww_x_anneeAcad=2012-2013&ww_i_section=943936&ww_i_niveau=&ww_c_langue=fr", 
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1619438071&ww_x_anneeAcad=2012-2013&ww_i_section=943936&ww_i_niveau=&ww_c_langue=fr", 
    "code": [
     "EE", 
     "565"
    ], 
    "title": "Industrial electronics II", 
-   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1773502&ww_x_anneeAcad=2012-2013&ww_i_section=943936&ww_i_niveau=&ww_c_langue=en", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1619438071&ww_x_anneeAcad=2012-2013&ww_i_section=943936&ww_i_niveau=&ww_c_langue=en", 
    "section": "EL", 
    "program": "EL", 
    "plan": "prop"
@@ -10438,6 +10437,17 @@
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=134558496&ww_x_anneeAcad=2012-2013&ww_i_section=942953&ww_i_niveau=&ww_c_langue=en", 
    "section": "SIE", 
    "program": "SIE", 
+   "plan": "prop"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1617054865&ww_x_anneeAcad=2012-2013&ww_i_section=1751774&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    ""
+   ], 
+   "title": "Contemporary environmental issues", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1617054865&ww_x_anneeAcad=2012-2013&ww_i_section=1751774&ww_i_niveau=&ww_c_langue=en", 
+   "section": "SHS", 
+   "program": "SHS", 
    "plan": "prop"
   }, 
   {
@@ -16636,7 +16646,7 @@
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=354956496&ww_x_anneeAcad=2012-2013&ww_i_section=944263&ww_i_niveau=&ww_c_langue=fr", 
    "code": [
     "ME", 
-    "455"
+    "461"
    ], 
    "title": "Instability and turbulence", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=354956496&ww_x_anneeAcad=2012-2013&ww_i_section=944263&ww_i_niveau=&ww_c_langue=en", 
@@ -17428,7 +17438,7 @@
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1499247990&ww_x_anneeAcad=2012-2013&ww_i_section=945244&ww_i_niveau=&ww_c_langue=fr", 
    "code": [
     "ME", 
-    "323"
+    "325"
    ], 
    "title": "Control systems + TP", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1499247990&ww_x_anneeAcad=2012-2013&ww_i_section=945244&ww_i_niveau=&ww_c_langue=en", 
@@ -20509,8 +20519,7 @@
   {
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1772000&ww_x_anneeAcad=2012-2013&ww_i_section=246696&ww_i_niveau=6683117&ww_c_langue=fr", 
    "code": [
-    "ChE", 
-    "311"
+    ""
    ], 
    "title": "Biochemical engineering", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1772000&ww_x_anneeAcad=2012-2013&ww_i_section=246696&ww_i_niveau=6683117&ww_c_langue=en", 
@@ -22946,7 +22955,7 @@
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1499247990&ww_x_anneeAcad=2012-2013&ww_i_section=943936&ww_i_niveau=6683117&ww_c_langue=fr", 
    "code": [
     "ME", 
-    "323"
+    "325"
    ], 
    "title": "Control systems + TP", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1499247990&ww_x_anneeAcad=2012-2013&ww_i_section=943936&ww_i_niveau=6683117&ww_c_langue=en", 
@@ -26630,7 +26639,7 @@
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1499247990&ww_x_anneeAcad=2012-2013&ww_i_section=945244&ww_i_niveau=6683117&ww_c_langue=fr", 
    "code": [
     "ME", 
-    "323"
+    "325"
    ], 
    "title": "Control systems + TP", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1499247990&ww_x_anneeAcad=2012-2013&ww_i_section=945244&ww_i_niveau=6683117&ww_c_langue=en", 
@@ -32277,54 +32286,6 @@
    "plan": "master"
   }, 
   {
-   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=355561756&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=fr", 
-   "code": [
-    "MATH", 
-    "595"
-   ], 
-   "title": "Engineering internship (master in computational sciences and engineering", 
-   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=355561756&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=en", 
-   "section": "MA-CO", 
-   "program": "MA", 
-   "plan": "master"
-  }, 
-  {
-   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=243791097&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=fr", 
-   "code": [
-    "MATH", 
-    "591"
-   ], 
-   "title": "Semester project I", 
-   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=243791097&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=en", 
-   "section": "MA-CO", 
-   "program": "MA", 
-   "plan": "master"
-  }, 
-  {
-   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=243791456&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=fr", 
-   "code": [
-    "MATH", 
-    "592"
-   ], 
-   "title": "Semester project II", 
-   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=243791456&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=en", 
-   "section": "MA-CO", 
-   "program": "MA", 
-   "plan": "master"
-  }, 
-  {
-   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=243791526&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=fr", 
-   "code": [
-    "MATH", 
-    "593"
-   ], 
-   "title": "Semester project III", 
-   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=243791526&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=en", 
-   "section": "MA-CO", 
-   "program": "MA", 
-   "plan": "master"
-  }, 
-  {
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1578290162&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=fr", 
    "code": [
     "MATH", 
@@ -32469,6 +32430,54 @@
    "plan": "master"
   }, 
   {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=355561756&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=fr", 
+   "code": [
+    "MATH", 
+    "595"
+   ], 
+   "title": "Engineering internship (master in computational sciences and engineering", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=355561756&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=en", 
+   "section": "MA-CO", 
+   "program": "MA", 
+   "plan": "master"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=243791097&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=fr", 
+   "code": [
+    "MATH", 
+    "591"
+   ], 
+   "title": "Semester project I", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=243791097&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=en", 
+   "section": "MA-CO", 
+   "program": "MA", 
+   "plan": "master"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=243791456&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=fr", 
+   "code": [
+    "MATH", 
+    "592"
+   ], 
+   "title": "Semester project II", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=243791456&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=en", 
+   "section": "MA-CO", 
+   "program": "MA", 
+   "plan": "master"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=243791526&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=fr", 
+   "code": [
+    "MATH", 
+    "593"
+   ], 
+   "title": "Semester project III", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=243791526&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=en", 
+   "section": "MA-CO", 
+   "program": "MA", 
+   "plan": "master"
+  }, 
+  {
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1501614035&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=fr", 
    "code": [
     "BIO", 
@@ -32520,7 +32529,7 @@
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=354956496&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=fr", 
    "code": [
     "ME", 
-    "455"
+    "461"
    ], 
    "title": "Instability and turbulence", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=354956496&ww_x_anneeAcad=2012-2013&ww_i_section=236572097&ww_i_niveau=6683147&ww_c_langue=en", 
@@ -34341,13 +34350,13 @@
    "plan": "master"
   }, 
   {
-   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1773502&ww_x_anneeAcad=2012-2013&ww_i_section=943936&ww_i_niveau=6683147&ww_c_langue=fr", 
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1619438071&ww_x_anneeAcad=2012-2013&ww_i_section=943936&ww_i_niveau=6683147&ww_c_langue=fr", 
    "code": [
     "EE", 
     "565"
    ], 
    "title": "Industrial electronics II", 
-   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1773502&ww_x_anneeAcad=2012-2013&ww_i_section=943936&ww_i_niveau=6683147&ww_c_langue=en", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1619438071&ww_x_anneeAcad=2012-2013&ww_i_section=943936&ww_i_niveau=6683147&ww_c_langue=en", 
    "section": "EL", 
    "program": "EL", 
    "plan": "master"
@@ -35268,7 +35277,7 @@
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=354956496&ww_x_anneeAcad=2012-2013&ww_i_section=637843547&ww_i_niveau=6683147&ww_c_langue=fr", 
    "code": [
     "ME", 
-    "455"
+    "461"
    ], 
    "title": "Instability and turbulence", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=354956496&ww_x_anneeAcad=2012-2013&ww_i_section=637843547&ww_i_niveau=6683147&ww_c_langue=en", 
@@ -38389,10 +38398,10 @@
     "MGT", 
     "500"
    ], 
-   "title": "Innovation management I : Schumpeterian competition", 
+   "title": "Innovation management: between early detection and systematic creativity", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1543121763&ww_x_anneeAcad=2012-2013&ww_i_section=946882&ww_i_niveau=6683147&ww_c_langue=en", 
    "section": "MTE", 
-   "program": "EDMT", 
+   "program": "MTE", 
    "plan": "master"
   }, 
   {
@@ -40163,7 +40172,7 @@
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=354956496&ww_x_anneeAcad=2012-2013&ww_i_section=944263&ww_i_niveau=6683147&ww_c_langue=fr", 
    "code": [
     "ME", 
-    "455"
+    "461"
    ], 
    "title": "Instability and turbulence", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=354956496&ww_x_anneeAcad=2012-2013&ww_i_section=944263&ww_i_niveau=6683147&ww_c_langue=en", 
@@ -42150,23 +42159,23 @@
    "plan": "master"
   }, 
   {
-   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=432427491&ww_x_anneeAcad=2012-2013&ww_i_section=99177298&ww_i_niveau=6683147&ww_c_langue=fr", 
-   "code": [
-    ""
-   ], 
-   "title": "Nuclear Safety", 
-   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=432427491&ww_x_anneeAcad=2012-2013&ww_i_section=99177298&ww_i_niveau=6683147&ww_c_langue=en", 
-   "section": "PH-NE", 
-   "program": "HPLANS", 
-   "plan": "master"
-  }, 
-  {
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=432434411&ww_x_anneeAcad=2012-2013&ww_i_section=99177298&ww_i_niveau=6683147&ww_c_langue=fr", 
    "code": [
     ""
    ], 
    "title": "Radiobiology & radiation protection", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=432434411&ww_x_anneeAcad=2012-2013&ww_i_section=99177298&ww_i_niveau=6683147&ww_c_langue=en", 
+   "section": "PH-NE", 
+   "program": "HPLANS", 
+   "plan": "master"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=432427491&ww_x_anneeAcad=2012-2013&ww_i_section=99177298&ww_i_niveau=6683147&ww_c_langue=fr", 
+   "code": [
+    ""
+   ], 
+   "title": "Safety of Nuclear Power Plants", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=432427491&ww_x_anneeAcad=2012-2013&ww_i_section=99177298&ww_i_niveau=6683147&ww_c_langue=en", 
    "section": "PH-NE", 
    "program": "HPLANS", 
    "plan": "master"
@@ -43361,10 +43370,22 @@
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1389409946&ww_x_anneeAcad=2012-2013&ww_i_section=2137742&ww_i_niveau=&ww_c_langue=fr", 
    "code": [
     "ENG", 
-    "613"
+    "613(A)"
    ], 
-   "title": "Scientific Writing (EDCH)", 
+   "title": "Scientific Writing (EDCH) (A)", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1389409946&ww_x_anneeAcad=2012-2013&ww_i_section=2137742&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDCH", 
+   "program": "EDCH", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1617096447&ww_x_anneeAcad=2012-2013&ww_i_section=2137742&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "ENG", 
+    "613(B)"
+   ], 
+   "title": "Scientific Writing (EDCH) (B)", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1617096447&ww_x_anneeAcad=2012-2013&ww_i_section=2137742&ww_i_niveau=&ww_c_langue=en", 
    "section": "EDCH", 
    "program": "EDCH", 
    "plan": "edoc"
@@ -43591,7 +43612,7 @@
     "CIVIL", 
     "604"
    ], 
-   "title": "Introduction to matlab and signal processing for civil engineer", 
+   "title": "Introduction to digital signal processing using Matlab, applied to environmental sciences and civil engineering", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1596481293&ww_x_anneeAcad=2012-2013&ww_i_section=327379170&ww_i_niveau=&ww_c_langue=en", 
    "section": "EDCE", 
    "program": "EDCE", 
@@ -44244,6 +44265,90 @@
    "plan": "edoc"
   }, 
   {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1770718&ww_x_anneeAcad=2012-2013&ww_i_section=192994568&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "MICRO", 
+    "613"
+   ], 
+   "title": "Advanced design of digital VLSI systems", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1770718&ww_x_anneeAcad=2012-2013&ww_i_section=192994568&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDEE", 
+   "program": "EDMI", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=2977980&ww_x_anneeAcad=2012-2013&ww_i_section=192994568&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "ME", 
+    "601"
+   ], 
+   "title": "Advanced energy conversion technologies", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=2977980&ww_x_anneeAcad=2012-2013&ww_i_section=192994568&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDEE", 
+   "program": "EDEY", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=2978019&ww_x_anneeAcad=2012-2013&ww_i_section=192994568&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "CIVIL", 
+    "600"
+   ], 
+   "title": "Hydropower plants", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=2978019&ww_x_anneeAcad=2012-2013&ww_i_section=192994568&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDEE", 
+   "program": "EDEY", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=51647362&ww_x_anneeAcad=2012-2013&ww_i_section=192994568&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "CS", 
+    "607"
+   ], 
+   "title": "Machine Learning", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=51647362&ww_x_anneeAcad=2012-2013&ww_i_section=192994568&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDEE", 
+   "program": "EDIC", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=37729516&ww_x_anneeAcad=2012-2013&ww_i_section=192994568&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "EE", 
+    "602"
+   ], 
+   "title": "Power electronic devices understanding and use in circuits", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=37729516&ww_x_anneeAcad=2012-2013&ww_i_section=192994568&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDEE", 
+   "program": "EDEY", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=447696294&ww_x_anneeAcad=2012-2013&ww_i_section=192994568&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "MICRO", 
+    "619"
+   ], 
+   "title": "PowerMEMS: Power generation and energy conversion based on microsystems technology", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=447696294&ww_x_anneeAcad=2012-2013&ww_i_section=192994568&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDEE", 
+   "program": "EDMI", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=2978028&ww_x_anneeAcad=2012-2013&ww_i_section=192994568&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "EE", 
+    "603"
+   ], 
+   "title": "Transient and dynamic analysis of electric power systems", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=2978028&ww_x_anneeAcad=2012-2013&ww_i_section=192994568&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDEE", 
+   "program": "EDEY", 
+   "plan": "edoc"
+  }, 
+  {
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=2977980&ww_x_anneeAcad=2012-2013&ww_i_section=2138185&ww_i_niveau=&ww_c_langue=fr", 
    "code": [
     "ME", 
@@ -44807,6 +44912,18 @@
    "plan": "edoc"
   }, 
   {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1617162681&ww_x_anneeAcad=2012-2013&ww_i_section=32211080&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "MGT", 
+    "699(2)"
+   ], 
+   "title": "Swiss Program for Beginning Doctoral Students in Economics - Study Center Gerzensee (2012)", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1617162681&ww_x_anneeAcad=2012-2013&ww_i_section=32211080&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDMT", 
+   "program": "EDMT", 
+   "plan": "edoc"
+  }, 
+  {
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=840843421&ww_x_anneeAcad=2012-2013&ww_i_section=32211080&ww_i_niveau=&ww_c_langue=fr", 
    "code": [
     "MGT", 
@@ -44910,6 +45027,18 @@
    ], 
    "title": "3D Electron Microscopy and FIB-Nanotomography", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=127775050&ww_x_anneeAcad=2012-2013&ww_i_section=2141714&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDMX", 
+   "program": "EDMX", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1619822259&ww_x_anneeAcad=2012-2013&ww_i_section=2141714&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "MSE", 
+    "630"
+   ], 
+   "title": "CCMX Summer School \"Multiscale Modelling of Materials\"", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1619822259&ww_x_anneeAcad=2012-2013&ww_i_section=2141714&ww_i_niveau=&ww_c_langue=en", 
    "section": "EDMX", 
    "program": "EDMX", 
    "plan": "edoc"
@@ -45275,6 +45404,18 @@
    "plan": "edoc"
   }, 
   {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1623567851&ww_x_anneeAcad=2012-2013&ww_i_section=2139509&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "MATH", 
+    "784"
+   ], 
+   "title": "Applications of homogeneous dynamics to Number theory", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1623567851&ww_x_anneeAcad=2012-2013&ww_i_section=2139509&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDMA", 
+   "program": "EDMA", 
+   "plan": "edoc"
+  }, 
+  {
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1597425393&ww_x_anneeAcad=2012-2013&ww_i_section=2139509&ww_i_niveau=&ww_c_langue=fr", 
    "code": [
     "MATH", 
@@ -45587,6 +45728,18 @@
    "plan": "edoc"
   }, 
   {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=80878456&ww_x_anneeAcad=2012-2013&ww_i_section=984786&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "ME", 
+    "621"
+   ], 
+   "title": "Mechanical wave propagation", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=80878456&ww_x_anneeAcad=2012-2013&ww_i_section=984786&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDME", 
+   "program": "EDME", 
+   "plan": "edoc"
+  }, 
+  {
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1771298&ww_x_anneeAcad=2012-2013&ww_i_section=984786&ww_i_niveau=&ww_c_langue=fr", 
    "code": [
     "ME", 
@@ -45618,18 +45771,6 @@
    ], 
    "title": "Methods of asymptotic analysis in mechanics", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=240313914&ww_x_anneeAcad=2012-2013&ww_i_section=984786&ww_i_niveau=&ww_c_langue=en", 
-   "section": "EDME", 
-   "program": "EDME", 
-   "plan": "edoc"
-  }, 
-  {
-   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=965844355&ww_x_anneeAcad=2012-2013&ww_i_section=984786&ww_i_niveau=&ww_c_langue=fr", 
-   "code": [
-    "ME", 
-    "703"
-   ], 
-   "title": "Selected Topics in Fluid Dynamics", 
-   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=965844355&ww_x_anneeAcad=2012-2013&ww_i_section=984786&ww_i_niveau=&ww_c_langue=en", 
    "section": "EDME", 
    "program": "EDME", 
    "plan": "edoc"
@@ -45668,6 +45809,18 @@
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=380775672&ww_x_anneeAcad=2012-2013&ww_i_section=984786&ww_i_niveau=&ww_c_langue=en", 
    "section": "EDME", 
    "program": "EDME", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=348615098&ww_x_anneeAcad=2012-2013&ww_i_section=984786&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "CIVIL", 
+    "527"
+   ], 
+   "title": "Selected topics in mechanics of solids and structures", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=348615098&ww_x_anneeAcad=2012-2013&ww_i_section=984786&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDME", 
+   "program": "GC", 
    "plan": "edoc"
   }, 
   {
@@ -46667,6 +46820,294 @@
    "plan": "edoc"
   }, 
   {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=80890310&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "PHYS", 
+    "719"
+   ], 
+   "title": "Advanced biomedical imaging methods and instrumentation", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=80890310&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "EDPY", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=400819476&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "PHYS", 
+    "630"
+   ], 
+   "title": "Advanced experimental methods in condensed matter and nanophysics", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=400819476&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "EDPY", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=113368068&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "PHYS", 
+    "702"
+   ], 
+   "title": "Advanced quantum field theory", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=113368068&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "EDPY", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=51560486&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "CH", 
+    "701"
+   ], 
+   "title": "Advanced topics in photomedicine", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=51560486&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "EDCH", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=51956510&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "PHYS", 
+    "615"
+   ], 
+   "title": "Electronic properties of solids and superconductivity", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=51956510&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "EDPY", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=238845350&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "PHYS", 
+    "627"
+   ], 
+   "title": "Magnetic and semiconducting nanostructures", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=238845350&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "EDPY", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=399861968&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "MGT", 
+    "620"
+   ], 
+   "title": "MINTT: Management of innovatIon and technology transfer", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=399861968&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "EDMT", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=127891186&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "CH", 
+    "715"
+   ], 
+   "title": "Multiscale modelling of nano-systems", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=127891186&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "EDCH", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1771453&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "MICRO", 
+    "605"
+   ], 
+   "title": "Optical MEMS and micro-optics", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1771453&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "EDMI", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1771558&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "PHYS", 
+    "622"
+   ], 
+   "title": "Principles and Practicals in X-Ray Scattering", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1771558&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "EDPY", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=24103304&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "COM", 
+    "611"
+   ], 
+   "title": "Quantum Information Theory and Computation", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=24103304&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "EDIC", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=2978399&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "COM", 
+    "711"
+   ], 
+   "title": "Selected Topics in Computer Vision", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=2978399&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "EDIC", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=239677901&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "CH", 
+    "725"
+   ], 
+   "title": "Surface and thin films processes", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=239677901&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "EDCH", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=238853796&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "PHYS", 
+    "728"
+   ], 
+   "title": "Three-dimensional reconstruction of biological macromolecules from electron microscope images", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=238853796&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "EDPY", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1771789&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "PHYS", 
+    "724"
+   ], 
+   "title": "Ultrafast phenomena", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1771789&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "EDPY", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1771799&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "PHYS", 
+    "625(a)"
+   ], 
+   "title": "Using Mathematica to analyse and model experimental data (Autumn)", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1771799&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "EDPY", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=350860841&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "MICRO", 
+    "420"
+   ], 
+   "title": "Advanced optics", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=350860841&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "MT", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=47830388&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "BIOENG", 
+    "561"
+   ], 
+   "title": "Biomicroscopy I", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=47830388&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "SV", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=47830400&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "BIOENG", 
+    "562"
+   ], 
+   "title": "Biomicroscopy II", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=47830400&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "SV", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=71877719&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "CH", 
+    "444"
+   ], 
+   "title": "Electronic spectroscopy", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=71877719&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "CGC", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=24374779&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "PHYS", 
+    "438"
+   ], 
+   "title": "Fundamentals of biomedical imaging", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=24374779&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "PH", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=824206088&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "MICRO", 
+    "422"
+   ], 
+   "title": "Lasers and optics of nanostructures", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=824206088&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "MT", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1775257&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "CH", 
+    "442"
+   ], 
+   "title": "Photochemistry I", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1775257&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "CGC", 
+   "plan": "edoc"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1771488&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "CH", 
+    "443"
+   ], 
+   "title": "Photochemistry II", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1771488&ww_x_anneeAcad=2012-2013&ww_i_section=2140832&ww_i_niveau=&ww_c_langue=en", 
+   "section": "EDPO", 
+   "program": "CGC", 
+   "plan": "edoc"
+  }, 
+  {
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=80890310&ww_x_anneeAcad=2012-2013&ww_i_section=2141273&ww_i_niveau=&ww_c_langue=fr", 
    "code": [
     "PHYS", 
@@ -47603,8 +48044,7 @@
   {
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1772000&ww_x_anneeAcad=2012-2013&ww_i_section=925516681&ww_i_niveau=&ww_c_langue=fr", 
    "code": [
-    "ChE", 
-    "311"
+    ""
    ], 
    "title": "Biochemical engineering", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1772000&ww_x_anneeAcad=2012-2013&ww_i_section=925516681&ww_i_niveau=&ww_c_langue=en", 
@@ -47716,6 +48156,18 @@
    ], 
    "title": "Food biotechnology", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=903779034&ww_x_anneeAcad=2012-2013&ww_i_section=925516681&ww_i_niveau=&ww_c_langue=en", 
+   "section": "MIN-BIOTECH", 
+   "program": "CGC", 
+   "plan": "min"
+  }, 
+  {
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1772492&ww_x_anneeAcad=2012-2013&ww_i_section=925516681&ww_i_niveau=&ww_c_langue=fr", 
+   "code": [
+    "ENG", 
+    "433"
+   ], 
+   "title": "Food chemistry", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1772492&ww_x_anneeAcad=2012-2013&ww_i_section=925516681&ww_i_niveau=&ww_c_langue=en", 
    "section": "MIN-BIOTECH", 
    "program": "CGC", 
    "plan": "min"
@@ -48033,13 +48485,13 @@
    "plan": "min"
   }, 
   {
-   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1773502&ww_x_anneeAcad=2012-2013&ww_i_section=84482827&ww_i_niveau=&ww_c_langue=fr", 
+   "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1619438071&ww_x_anneeAcad=2012-2013&ww_i_section=84482827&ww_i_niveau=&ww_c_langue=fr", 
    "code": [
     "EE", 
     "565"
    ], 
    "title": "Industrial electronics II", 
-   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1773502&ww_x_anneeAcad=2012-2013&ww_i_section=84482827&ww_i_niveau=&ww_c_langue=en", 
+   "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1619438071&ww_x_anneeAcad=2012-2013&ww_i_section=84482827&ww_i_niveau=&ww_c_langue=en", 
    "section": "MIN-ENER", 
    "program": "EL", 
    "plan": "min"
@@ -48374,10 +48826,10 @@
     "MGT", 
     "500"
    ], 
-   "title": "Innovation management I : Schumpeterian competition", 
+   "title": "Innovation management: between early detection and systematic creativity", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=1543121763&ww_x_anneeAcad=2012-2013&ww_i_section=84483036&ww_i_niveau=&ww_c_langue=en", 
    "section": "MIN-MTE", 
-   "program": "EDMT", 
+   "program": "MTE", 
    "plan": "min"
   }, 
   {
@@ -49152,7 +49604,7 @@
    "url_fr": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=354956496&ww_x_anneeAcad=2012-2013&ww_i_section=84483323&ww_i_niveau=&ww_c_langue=fr", 
    "code": [
     "ME", 
-    "455"
+    "461"
    ], 
    "title": "Instability and turbulence", 
    "url": "http://isa.epfl.ch/imoniteur_ISAP/!itffichecours.htm?ww_i_matiere=354956496&ww_x_anneeAcad=2012-2013&ww_i_section=84483323&ww_i_niveau=&ww_c_langue=en", 
