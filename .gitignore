@@ -12,3 +12,6 @@ bulkloader-progress-*
 .project
 .pydevproject
 .settings/
+
+# MacOS files
+.DS_Store
