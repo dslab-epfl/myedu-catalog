@@ -23,7 +23,7 @@ import caching
 
 # The root of our parsing
 search_base_url = "http://search.epfl.ch"
-study_plans_url = urlparse.urljoin(search_base_url, "/eduweb.action")
+study_plans_url = urlparse.urljoin(search_base_url, "/eduweb.action?request_locale=en")
 
 
 this_dir = os.path.dirname(__file__)
@@ -41,7 +41,7 @@ def _ProcessStudyPlan(plan_id, plan_name, plan_soup, id_trim_size=3):
   for list_item in plan_soup.find_all('li'):
     section_id = "-".join(list_item['id'].split("_")[id_trim_size:]).upper()
     section_title = list_item.a.string.strip()
-    section_url = search_base_url + list_item.a["href"]
+    section_url = search_base_url + list_item.a["href"] + "&request_locale=en"
 
     sections.append({
       "id": section_id,
@@ -115,7 +115,8 @@ def _FetchCoursesInSection(plan_id, section_id, section_url):
     # A valid course URL points to the IS Academia website
     parsed_url = urlparse.urlsplit(course_url)
     if parsed_url.netloc != "isa.epfl.ch":
-      print "-- Invalid course entry for ", course_name, "at", course_url
+      print "-- Invalid course entry for ", course_name.encode("utf-8"),
+      print "at", course_url
       continue
 
     course_url_fr = re.sub(r"ww_c_langue=en", "ww_c_langue=fr", course_url)
@@ -163,6 +164,12 @@ class ParsingError(Exception):
   """Occurs when the parser doesn't recognize the page structure."""
   
   pass
+  
+  
+class EmptyContentError(ParsingError):
+    """Occurs when the page is empty."""
+    
+    pass
 
 
 class ParsedCourseDescription(object):
@@ -285,6 +292,9 @@ class ParsedCourseDescription(object):
 
   def _ParseMainContent(self):
     main_content = self._soup.find(id="content")
+    
+    if not main_content:
+        raise EmptyContentError("The page main content is missing.")
 
     # Title
     self.title = main_content.h2.string.strip()
@@ -434,43 +444,47 @@ def FetchCourseDescriptions(courses):
     description = {
       "study_plan_entry": course,
     }
-    for language, url, parser in [("en", course["url"],
-                                   ParsedCourseDescription),
-                                  ("fr", course["url_fr"],
-                                   ParsedCourseDescriptionFrench)]:
-      course_desc_html = caching.CachedURLGet(url)
-      soup = BeautifulSoup(course_desc_html)
-      course_desc = parser(soup)
-      try:
-        course_desc.ParseDescription()
-      except ParsingError as e:
-        print "** Parsing error:", e.message
-        raise
-      description[language] = {
-        "title": course_desc.title,
-        "instructors": [{ "name": i[0], "url": i[1] }
-                        for i in course_desc.instructors],
-        "language": course_desc.language,
-        "semester": course_desc.semester,
-        "credits": course_desc.credits,
-        "coefficient": course_desc.coefficient,
-        "exam_form": course_desc.exam_form,
-        "lecture": course_desc.lecture_hours,
-        "recitation": course_desc.recitation_hours,
-        "project": course_desc.project_hours,
-        "lab": course_desc.lab_hours,
-        "practical": course_desc.practical_hours,
-        "free_text": dict(course_desc.free_text_desc),
-        "links": course_desc.links,
-        "library_recommends": course_desc.library_rec,
-      }
+    try:
+      for language, url, parser in [("en", course["url"],
+                                     ParsedCourseDescription),
+                                    ("fr", course["url_fr"],
+                                     ParsedCourseDescriptionFrench)]:
+        course_desc_html = caching.CachedURLGet(url)
+        soup = BeautifulSoup(course_desc_html)
+        course_desc = parser(soup)
+        try:
+          course_desc.ParseDescription()
+        except ParsingError as e:
+          print "** Parsing error:", e.message
+          raise
+        description[language] = {
+          "title": course_desc.title,
+          "instructors": [{ "name": i[0], "url": i[1] }
+                          for i in course_desc.instructors],
+          "language": course_desc.language,
+          "semester": course_desc.semester,
+          "credits": course_desc.credits,
+          "coefficient": course_desc.coefficient,
+          "exam_form": course_desc.exam_form,
+          "lecture": course_desc.lecture_hours,
+          "recitation": course_desc.recitation_hours,
+          "project": course_desc.project_hours,
+          "lab": course_desc.lab_hours,
+          "practical": course_desc.practical_hours,
+          "free_text": dict(course_desc.free_text_desc),
+          "links": course_desc.links,
+          "library_recommends": course_desc.library_rec,
+        }
+    except EmptyContentError:
+      print "** Page content is empty, skipping."
+      continue
 
     descriptions.append(description)
 
     if course["title"] != description["en"]["title"]:
       print "** Mismatched course titles.",
-      print "Section title: '%s'" % course["title"],
-      print "Description title: '%s'" % description["en"]["title"]
+      print "Section title: '%s'" % course["title"].encode("utf-8"),
+      print "Description title: '%s'" % description["en"]["title"].encode("utf-8")
 
     print "-- Title:", description["en"]["title"].encode("utf-8"),
     print "/", description["fr"]["title"].encode("utf-8")
