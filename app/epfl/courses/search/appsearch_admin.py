@@ -75,7 +75,7 @@ class AppEngineIndex(object):
                         for document in docindex.get_range(ids_only=True)]
         if not document_ids:
           break
-        docindex.erase(document_ids)
+        docindex.delete(document_ids)
         logging.info('Removed %d documents.' % len(document_ids))
       
   @classmethod
