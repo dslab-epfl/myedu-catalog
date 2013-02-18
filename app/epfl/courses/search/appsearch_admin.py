@@ -72,10 +72,10 @@ class AppEngineIndex(object):
     for docindex in [cls.GetIndex(), cls.GetIndex("en"), cls.GetIndex("fr")]:
       while True:
         document_ids = [document.doc_id
-                        for document in docindex.list_documents(ids_only=True)]
+                        for document in docindex.get_range(ids_only=True)]
         if not document_ids:
           break
-        docindex.remove(document_ids)
+        docindex.erase(document_ids)
         logging.info('Removed %d documents.' % len(document_ids))
       
   @classmethod
@@ -199,10 +199,10 @@ class AppEngineIndex(object):
     courses_en, courses_fr = zip(*courses)
     
     try:
-      cls.GetIndex().add(docs_all)
+      cls.GetIndex().put(docs_all)
       if language_index:
-        cls.GetIndex(language="en").add(docs_en)
-        cls.GetIndex(language="fr").add(docs_fr)
+        cls.GetIndex(language="en").put(docs_en)
+        cls.GetIndex(language="fr").put(docs_fr)
     except apiproxy_errors.OverQuotaError:
       logging.error("Over quota error.")
       return False

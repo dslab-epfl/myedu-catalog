@@ -331,7 +331,7 @@
         {% endif %}
         </td>
         <td class="td_section">
-        {% for section in course.sections %}
+        {% for section in course.sections_unique %}
           <span title="{{ section.display_name(use_french=(language=='fr')) }}">{{ section.display_name(short=True, use_french=(language=='fr')) }}</span>{{ ", " if not loop.last }}
         {% endfor %}
         </td>

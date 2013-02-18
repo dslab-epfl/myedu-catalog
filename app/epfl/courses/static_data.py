@@ -214,6 +214,10 @@ SECTIONS = dict([(section.code, section) for section in [
   Section('MTE', 'CDM', title_short='CDM-MTE',
           title_en='Management of Technology and Entrepreneurship',
           title_fr=u'Management de la technologie et entrepreneuriat'),
+  Section('MTEE', 'CDM', title_short='CDM-MTEE',
+          title_en='Management of Technology and Entrepreneurship',
+          title_fr=u'Management de la technologie et entrepreneuriat',
+          alias='MTE'),
                                                          
   # EDOC
   Section('EDAR', 'EDOC', title_short='EDAR',

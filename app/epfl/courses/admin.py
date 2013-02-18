@@ -9,6 +9,7 @@ __author__ = "stefan.bucur@epfl.ch (Stefan Bucur)"
 
 
 import json
+import logging
 import pprint
 
 from epfl.courses import base_handler
@@ -171,12 +172,17 @@ class ImportCourseCatalog(base_handler.BaseHandler):
     course_bucket = []
     
     for course_desc in course_data["consolidations"]:
-      course = cls.CreateCourse(course_desc, language)
-      course_bucket.append(course)
-      
-      if len(course_bucket) >= cls.bucket_size:
-        db.put(course_bucket)
-        course_bucket = []
+      try:
+        course = cls.CreateCourse(course_desc, language)
+        course_bucket.append(course)
+        
+        if len(course_bucket) >= cls.bucket_size:
+          db.put(course_bucket)
+          course_bucket = []
+      except:
+        logging.error("Error in processing course %s in language %s"
+                      % (course_desc["id"], language))
+        raise
         
     if course_bucket:
       db.put(course_bucket)

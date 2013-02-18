@@ -118,6 +118,12 @@ class Course(db.Model):
   @property
   def sections(self):
     return Section.get(self.section_keys)
+
+  @property
+  def sections_unique(self):
+    return sorted({section.display_name(short=True): section
+                   for section in self.sections}.values(),
+                  key=lambda section: section.display_name(short=True))
   
   @property
   def course_id(self):
