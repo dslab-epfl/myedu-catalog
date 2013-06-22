@@ -24,10 +24,10 @@ the repository.
 
 1. Create a new Google App Engine project.  The project must use the
 High Replicated Datastore (which is by default for new projects).  In
-the rest of the document, we assume the project name is ``[app id]``.
+the rest of the document, we assume the project name is ``[app_id]``.
 
 2. Edit the ``app.yaml`` file and change the name of the application
-to ``[app id]``.
+to ``[app_id]``.
 
 3. Deploy the application code (including the backends).  From the
 command line, you can run ``appcfg.py update`` and ``appcfg.py
@@ -37,29 +37,75 @@ At this point, the application should be accessible at http://[app
 id].appspot.com, but the database is empty.  In order to populate it,
 perform the following steps:
 
-1. Visit http://admin.[app id].appspot.com/admin/reinit/all to import
-all courses in the database.
+1. Visit http://admin.[app_id].appspot.com/admin/reinit/en, followed
+by http://admin.[app_id].appspot.com/admin/reinit/fr to import all
+courses in the database.
 
-2. Visit http://admin.[app id].appspot.com/admin/index/all to index
-all courses in the database using App Engine's search facility.
+2. Visit http://admin.[app_id].appspot.com/admin/index/erase, followed
+by http://admin.[app_id].appspot.com/admin/index/rebuild to index all
+courses in the database using App Engine's search facility.
+
+At this point, the search function of the catalog should be
+functional.  There are still some features missing, like
+autocorrecting spelling mistakes, which are covered by an external
+Google search service (see the next section).
+
 
 Using Google Site Search
 ------------------------
 
-The feature is optional, can be disabled in code.  Otherwise, it
-requires a (paid) subscription to Google Site Search, which must be
-configured to index the domain where the application is serving from.
-The indexing is not immediate, it typically takes a few days until the
-crawling is complete.
+For accurate search results, the MyEdu catalog combines results from
+two search providers: the internal App Engine search API and an
+external Google Site Search service.  If the former service yields no
+results (e.g., because of a typo in the query), the second service is
+used.
+
+Here are the steps to set up Google Site Search with the MyEdu
+catalog:
+
+1. Obtain a Google Site Search account (it is a paid service).
+
+2. Configure the service to index the pages following the pattern
+``[app_id].appspot.com/*/course/*``.  The indexing will not be
+immediate; it typically takes a few days until the crawling is
+complete.
+
+3. Update the ``SEARCH_ENGINE_ID`` variable in
+``app/epfl/courses/config.py`` with your own Site Search ID, which you
+can obtain from the Site Search configuration page.
 
 
 Updating the Course Information
 -------------------------------
 
-The official EPFL course information is offered on IS-Academia. To
-avoid straining the ISA servers, the crawling scripts were design to
-fetch one request at a time.  Crawling all courses of ISA typically
-takes a few hours when ran on a connection with fast access to the
-EPFL servers. Moreover, once fetched, all the web pages are cached
-locally, so any modification of the crawling scripts would not trigger
-a recrawl.
+The official EPFL course information is offered on IS-Academia pages.
+The MyEdu course catalog obtains its information by downloading
+(crawling) all the HTML pages of the courses available, and then
+extracting the various pieces of information on each page (title,
+semester, credits, description, etc.)
+
+This process is automated through a set of Python scripts available in
+the ``crawl/`` directory.  To avoid straining the ISA servers, the
+crawling scripts are design to fetch one request at a time.  Crawling
+all courses of ISA typically takes a few hours when ran on a
+connection with fast access to the EPFL servers. Moreover, once
+fetched, all the web pages are cached locally, so any modification of
+the crawling scripts would not trigger a recrawl.
+
+To crawl and update the course information on MyEdu:
+
+1. Run on your local machine the
+``crawl/2012-2013/parse_study_plans.py``, followed by
+``crawl/2012-2013/consolidate_courses.py``.  The first script
+downloads locally all course information and assembles it into a
+single large JSON document, while the second script merges duplicate
+course information into a final JSON document called
+``consolidated_desc.json``.
+
+2. Copy the generated ``consolidated_desc.json`` file to the
+``app/data/`` directory.
+
+3. Re-upload the application to Google App Engine.
+
+4. Rebuild the existing course information by following the steps
+presented in the first section.
