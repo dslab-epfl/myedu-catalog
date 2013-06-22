@@ -24,23 +24,23 @@ the repository.
 
 1. Create a new Google App Engine project.  The project must use the
 High Replicated Datastore (which is by default for new projects).  In
-the rest of the document, we assume the project name is ``<app id>``.
+the rest of the document, we assume the project name is ``[app id]``.
 
 2. Edit the ``app.yaml`` file and change the name of the application
-to ``<app id>``.
+to ``[app id]``.
 
 3. Deploy the application code (including the backends).  From the
 command line, you can run ``appcfg.py update`` and ``appcfg.py
 backends update``.
 
-At this point, the application should be accessible at http://<app
-id>.appspot.com, but the database is empty.  In order to populate it,
+At this point, the application should be accessible at http://[app
+id].appspot.com, but the database is empty.  In order to populate it,
 perform the following steps:
 
-1. Visit http://admin.<app id>.appspot.com/admin/reinit/all to import
+1. Visit http://admin.[app id].appspot.com/admin/reinit/all to import
 all courses in the database.
 
-2. Visit http://admin.<app id>.appspot.com/admin/index/all to index
+2. Visit http://admin.[app id].appspot.com/admin/index/all to index
 all courses in the database using App Engine's search facility.
 
 Using Google Site Search
